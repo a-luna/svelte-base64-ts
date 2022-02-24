@@ -108,7 +108,7 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 			createBinaryChunks: {
 				id: 'createBinaryChunks',
 				after: {
-					1000: { target: 'mapChunkBytesToBase64', cond: 'autoPlayEnabled' }
+					3000: { target: 'mapChunkBytesToBase64', cond: 'autoPlayEnabled' }
 				},
 				on: {
 					START_AUTO_PLAY: { target: 'mapChunkBytesToBase64', actions: 'startAutoPlay', cond: 'autoPlayDisabled' },
@@ -135,7 +135,7 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 						entry: ['getCurrentChunk'],
 						exit: ['markChunkAsComplete'],
 						after: {
-							1000: { target: 'autoPlayMapSingleChunk', cond: 'chunksRemaining' }
+							3000: { target: 'autoPlayMapSingleChunk', cond: 'chunksRemaining' }
 						},
 						on: {
 							STOP_AUTO_PLAY: { actions: 'stopAutoPlay', cond: 'autoPlayEnabled' },
@@ -169,7 +169,7 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 					mapLastPaddedChunk: {
 						entry: ['getCurrentChunk'],
 						after: {
-							1000: { target: 'mappingComplete', actions: 'markChunkAsComplete', cond: 'autoPlayEnabled' }
+							5000: { target: 'mappingComplete', actions: 'markChunkAsComplete', cond: 'autoPlayEnabled' }
 						},
 						on: {
 							START_AUTO_PLAY: {

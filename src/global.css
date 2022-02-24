@@ -164,13 +164,27 @@ main.encode {
 	--sec-color: var(--pink4);
 
 	--nav-button-text-color: var(--black2);
-	--nav-button-bg-color: hsla(171 92% 53% / 0.3);
-	--nav-button-border-color: hsla(171 92% 53% / 0.6);
+	--nav-button-bg-color: hsla(171 100% 63% / 0.45);
+	--nav-button-border-color: hsla(171 100% 63% / 0.7);
 	--nav-button-hover-text-color: var(--black4);
-	--nav-button-hover-bg-color: hsla(171 92% 53% / 0.6);
+	--nav-button-hover-bg-color: hsla(171 100% 63% / 0.7);
 	--nav-button-active-text-color: var(--black4);
-	--nav-button-active-bg-color: hsla(171 92% 53% / 0.75);
-	--nav-button-active-border-color: hsla(171 92% 53% / 0.75);
+	--nav-button-active-bg-color: hsla(171 100% 63% / 0.85);
+	--nav-button-active-border-color: hsla(171 100% 63% / 0.85);
+
+	--nav-button-autoplay-text-color: var(--black4);
+	--nav-button-autoplay-bg-color: hsla(301 93% 71% / 0.85);
+	--nav-button-autoplay-border-color: hsla(301 93% 71% / 0.85);
+	--nav-button-autoplay-idle-text-color: var(--dark-gray4);
+	--nav-button-autoplay-idle-bg-color: hsla(301 93% 88% / 0.25);
+	--nav-button-autoplay-idle-border-color: var(--nav-button-autoplay-border-color);
+	--nav-button-stop-autoplay-text-color: var(--black2);
+	--nav-button-stop-autoplay-bg-color: hsla(301 93% 71% / 0.45);
+	--nav-button-stop-autoplay-border-color: var(--nav-button-autoplay-border-color);
+
+	--button-disabled-text-color: var(--dark-gray4);
+	--button-disabled-bg-color: hsla(171 100% 88% / 0.25);
+	--button-disabled-border-color: var(--nav-button-border-color);
 }
 
 main.decode {
@@ -178,13 +192,27 @@ main.decode {
 	--sec-color: var(--indigo4);
 
 	--nav-button-text-color: var(--black2);
-	--nav-button-bg-color: hsla(113 100% 72% / 0.3);
-	--nav-button-border-color: hsla(113 100% 72% / 0.6);
+	--nav-button-bg-color: hsla(113 100% 72% / 0.45);
+	--nav-button-border-color: hsla(113 100% 72% / 0.7);
 	--nav-button-hover-text-color: var(--black4);
-	--nav-button-hover-bg-color: hsla(113 100% 72% / 0.6);
+	--nav-button-hover-bg-color: hsla(113 100% 72% / 0.7);
 	--nav-button-active-text-color: var(--black4);
-	--nav-button-active-bg-color: hsla(113 100% 72% / 0.75);
-	--nav-button-active-border-color: hsla(113 100% 72% / 0.75);
+	--nav-button-active-bg-color: hsla(113 100% 72% / 0.85);
+	--nav-button-active-border-color: hsla(113 100% 72% / 0.85);
+
+	--nav-button-autoplay-text-color: var(--black4);
+	--nav-button-autoplay-bg-color: hsla(261 100% 60% / 0.85);
+	--nav-button-autoplay-border-color: hsla(261 100% 60% / 0.85);
+	--nav-button-autoplay-idle-text-color: var(--dark-gray4);
+	--nav-button-autoplay-idle-bg-color: hsla(261 100% 77% / 0.25);
+	--nav-button-autoplay-idle-border-color: var(--nav-button-autoplay-border-color);
+	--nav-button-stop-autoplay-text-color: var(--black2);
+	--nav-button-stop-autoplay-bg-color: hsla(261 100% 60% / 0.45);
+	--nav-button-stop-autoplay-border-color: var(--nav-button-autoplay-border-color);
+
+	--button-disabled-text-color: var(--dark-gray4);
+	--button-disabled-bg-color: hsla(113 100% 87% / 0.2);
+	--button-disabled-border-color: var(--nav-button-border-color);
 }
 
 main {
@@ -221,6 +249,12 @@ textarea {
 	box-sizing: border-box;
 	border: 1px solid #ccc;
 	border-radius: 2px;
+}
+
+button {
+	transition-property: color, background-color, border-color, transform;
+	transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+	transition-duration: 150ms;
 }
 
 .hide-element {
