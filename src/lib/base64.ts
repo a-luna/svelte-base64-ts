@@ -30,7 +30,7 @@ export class Base64Decoder implements Decoder {
 	decode = (decoderInput: DecoderInput): DecoderOutput => b64Decode(decoderInput);
 }
 
-function b64Encode(encoderInput: EncoderInput): EncoderOutput {
+export function b64Encode(encoderInput: EncoderInput): EncoderOutput {
 	const { inputText, inputEncoding, outputEncoding } = encoderInput;
 	const encodedChunks = encoderInput.chunks.map((chunk, i) => encodeChunk(chunk, i, outputEncoding));
 	return {
@@ -91,7 +91,7 @@ function encodeChunk(
 	return addBitGroupsToOutputChunk(outputChunk, chunkNumber);
 }
 
-function b64Decode(decoderInput: DecoderInput): DecoderOutput {
+export function b64Decode(decoderInput: DecoderInput): DecoderOutput {
 	const { inputText, inputEncoding } = decoderInput;
 	const hexMap = createHexMap(decoderInput.chunks);
 	const outputChunks = mapHexBytesToBase64Chunks(inputText, inputEncoding, hexMap, decoderInput.chunks);

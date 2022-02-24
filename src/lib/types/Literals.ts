@@ -7,3 +7,6 @@ export type Encoding = Base64Encoding | StringEncoding;
 
 export const BUTTON_COLORS = ['red', 'pink', 'orange', 'teal', 'green', 'blue', 'gray', 'yellow', 'indigo'] as const;
 export type ButtonColor = typeof BUTTON_COLORS[number];
+
+export const NAV_ACTIONS = ['reset', 'first', 'previous', 'next', 'last', 'start-autoplay', 'stop-autoplay'] as const;
+export type NavAction = typeof NAV_ACTIONS[number];
