@@ -25,8 +25,6 @@ export function hexStringFromByteArray(byteArray: number[], upperCase = false, s
 export const byteArrayToBinaryStringArray = (byteArray: number[]): string[] =>
 	byteArray.map((byte) => decimalToBinaryString(byte));
 
-// bytes.map((byte) => byte.toString(16).toUpperCase().padStart(2, '0')).join(' ');
-
 export const decimalToBinaryString = (val: number): string =>
 	`${'0'.repeat(8 - val.toString(2).length)}${val.toString(2)}`;
 

@@ -47,7 +47,7 @@ function createEncoderInput(
 		const hex = hexStringFromByteArray(bytes);
 		const ascii = inputEncoding === 'ASCII' ? asciiStringFromByteArray(bytes) : '';
 		const byteStrings = byteArrayToBinaryStringArray(bytes);
-		const binary = `${byteStrings.join('')}${'0'.repeat(padLength)}`;
+		const binary = `${byteStrings.join('')}${'0'.repeat(isPadded ? padLength : 0)}`;
 		return {
 			bytes,
 			encoding: inputEncoding,

@@ -23,7 +23,7 @@
 		</div>
 		<section class="encoding-map">
 			<div>
-				{#if $app.chunks && $app.chunks.length}
+				{#if $app.totalBytesOut && $app.chunks && $app.chunks.length}
 					<ul>
 						{#each $app.chunks as chunk}
 							<li>

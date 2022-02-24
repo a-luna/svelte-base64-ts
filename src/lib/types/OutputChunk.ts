@@ -5,6 +5,7 @@ export interface OutputChunk {
 	binary: string;
 	ascii: string;
 	hex: string;
+	hexBytes: string[];
 	bytes: number[];
 	isASCII: boolean;
 	hexMap: HexByteMap[];

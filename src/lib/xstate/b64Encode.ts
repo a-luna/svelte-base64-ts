@@ -1,10 +1,10 @@
 import { b64Encode } from '$lib/base64';
-import { defaultEncoderInput, defaultEncoderOutput } from '$lib/constants';
+import { defaultEncoderInput, defaultEncoderOutput, defaultOutputChunk } from '$lib/constants';
 import { validateEncoderInput } from '$lib/dataPrep';
 import type { Base64Encoding, EncoderInput, EncoderOutput, OutputChunk, StringEncoding } from '$lib/types';
 import { assign, createMachine } from 'xstate';
 
-interface EncodingContext {
+export interface EncodingContext {
 	autoplay: boolean;
 	chunkIndex: number;
 	currentChunk: OutputChunk;
@@ -13,7 +13,7 @@ interface EncodingContext {
 	output: EncoderOutput;
 }
 
-type EncodingEvent =
+export type EncodingEvent =
 	| { type: 'RESET' }
 	| { type: 'VALIDATE_INPUT'; inputText: string; inputEncoding: StringEncoding; outputEncoding: Base64Encoding }
 	| { type: 'GO_TO_FIRST_STEP' }
@@ -21,15 +21,20 @@ type EncodingEvent =
 	| { type: 'GO_TO_NEXT_STEP' }
 	| { type: 'GO_TO_LAST_STEP' }
 	| { type: 'START_AUTO_PLAY'; inputText: string; inputEncoding: StringEncoding; outputEncoding: Base64Encoding }
-	| { type: 'STOP_AUTO_PLAY' };
+	| { type: 'STOP_AUTO_PLAY' }
+	| { type: 'TEARDOWN' };
 
-type EncodingTypeState =
+export type EncodingTypeState =
 	| {
 			value: 'inactive';
 			context: EncodingContext;
 	  }
 	| {
 			value: 'validateInputText';
+			context: EncodingContext;
+	  }
+	| {
+			value: 'inputTextError';
 			context: EncodingContext;
 	  }
 	| {
@@ -41,24 +46,33 @@ type EncodingTypeState =
 			context: EncodingContext;
 	  }
 	| {
-			value: 'mapLastPaddedChunk';
+			value: { mapChunkBytesToBase64: 'idle' };
+			context: EncodingContext;
+	  }
+	| {
+			value: { mapChunkBytesToBase64: 'autoPlayMapSingleChunk' };
+			context: EncodingContext;
+	  }
+	| {
+			value: { mapChunkBytesToBase64: 'mapSingleChunk' };
+			context: EncodingContext;
+	  }
+	| {
+			value: { mapChunkBytesToBase64: 'mapLastPaddedChunk' };
+			context: EncodingContext;
+	  }
+	| {
+			value: { mapChunkBytesToBase64: 'mappingComplete' };
 			context: EncodingContext;
 	  }
 	| {
 			value: 'finished';
 			context: EncodingContext;
+	  }
+	| {
+			value: 'teardown';
+			context: EncodingContext;
 	  };
-
-const defaultOutputChunk: OutputChunk = {
-	base64: '',
-	binary: '',
-	ascii: '',
-	hex: '',
-	bytes: [],
-	isASCII: false,
-	hexMap: [],
-	base64Map: []
-};
 
 export const encodingMachine = createMachine<EncodingContext, EncodingEvent, EncodingTypeState>(
 	{
@@ -99,7 +113,7 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 				on: {
 					START_AUTO_PLAY: { target: 'mapChunkBytesToBase64', actions: 'startAutoPlay', cond: 'autoPlayDisabled' },
 					STOP_AUTO_PLAY: { actions: 'stopAutoPlay', cond: 'autoPlayEnabled' },
-					RESET: { target: 'inactive', actions: 'reset', cond: 'autoPlayDisabled' },
+					RESET: { target: 'inactive', actions: 'RESET', cond: 'autoPlayDisabled' },
 					GO_TO_FIRST_STEP: { target: 'inactive', cond: 'autoPlayDisabled' },
 					GO_TO_PREV_STEP: { target: 'inactive', cond: 'autoPlayDisabled' },
 					GO_TO_NEXT_STEP: { target: 'mapChunkBytesToBase64', cond: 'autoPlayDisabled' },
@@ -122,7 +136,7 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 						},
 						on: {
 							STOP_AUTO_PLAY: { actions: 'stopAutoPlay', cond: 'autoPlayEnabled' },
-							RESET: { target: '#inactive', actions: 'reset', cond: 'autoPlayDisabled' },
+							RESET: { target: '#inactive', actions: 'RESET', cond: 'autoPlayDisabled' },
 							GO_TO_FIRST_STEP: { target: '#inactive', cond: 'autoPlayDisabled' },
 							GO_TO_PREV_STEP: { target: '#createBinaryChunks', cond: 'autoPlayDisabled' },
 							GO_TO_NEXT_STEP: { target: 'mapSingleChunk', cond: 'autoPlayDisabled' },
@@ -139,7 +153,7 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 								cond: 'autoPlayDisabled'
 							},
 							STOP_AUTO_PLAY: { actions: 'stopAutoPlay', cond: 'autoPlayEnabled' },
-							RESET: { target: '#inactive', actions: 'reset', cond: 'autoPlayDisabled' },
+							RESET: { target: '#inactive', actions: 'RESET', cond: 'autoPlayDisabled' },
 							GO_TO_FIRST_STEP: { target: '#inactive', cond: 'autoPlayDisabled' },
 							GO_TO_PREV_STEP: { target: '#createBinaryChunks', cond: 'autoPlayDisabled' },
 							GO_TO_NEXT_STEP: { target: 'mapSingleChunk', actions: 'markChunkAsComplete', cond: 'autoPlayDisabled' },
@@ -158,7 +172,7 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 								cond: 'autoPlayDisabled'
 							},
 							STOP_AUTO_PLAY: { actions: 'stopAutoPlay', cond: 'autoPlayEnabled' },
-							RESET: { target: '#inactive', actions: 'reset', cond: 'autoPlayDisabled' },
+							RESET: { target: '#inactive', actions: 'RESET', cond: 'autoPlayDisabled' },
 							GO_TO_FIRST_STEP: { target: '#inactive', cond: 'autoPlayDisabled' },
 							GO_TO_NEXT_STEP: { target: 'mappingComplete', actions: 'markChunkAsComplete', cond: 'autoPlayDisabled' },
 							GO_TO_LAST_STEP: { target: 'mappingComplete', actions: 'markChunkAsComplete', cond: 'autoPlayDisabled' }
@@ -172,14 +186,17 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 				onDone: 'finished'
 			},
 			finished: {
-				type: 'final',
 				entry: ['stopAutoPlay'],
 				on: {
 					START_AUTO_PLAY: { target: 'validateInputText', actions: 'startAutoPlay', cond: 'autoPlayDisabled' },
-					RESET: { target: '#inactive', actions: 'reset', cond: 'autoPlayDisabled' },
+					RESET: { target: '#inactive', actions: 'RESET', cond: 'autoPlayDisabled' },
 					GO_TO_FIRST_STEP: { target: '#inactive', cond: 'autoPlayDisabled' },
-					GO_TO_PREV_STEP: { target: 'mapChunkBytesToBase64', cond: 'autoPlayDisabled' }
+					GO_TO_PREV_STEP: { target: 'mapChunkBytesToBase64', cond: 'autoPlayDisabled' },
+					TEARDOWN: { target: 'teardown' }
 				}
+			},
+			teardown: {
+				type: 'final'
 			}
 		}
 	},

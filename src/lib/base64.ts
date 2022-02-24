@@ -77,12 +77,12 @@ function encodeChunk(
 			})
 		);
 	}
-	const base64 = outputMap.map((map) => map.b64).join('');
 	const outputChunk = {
-		base64,
+		base64: outputMap.map((map) => map.b64).join(''),
 		binary,
 		ascii,
 		hex,
+		hexBytes: hexStringFromByteArray(bytes, true, ' ').split(' '),
 		bytes,
 		isASCII: validateAsciiBytes(bytes),
 		hexMap: inputMap,
@@ -153,6 +153,7 @@ function mapHexBytesToBase64Chunks(
 			binary: inputChunks[i].binary,
 			ascii: asciiStringFromByteArray(bytes),
 			hex: hexStringFromByteArray(bytes),
+			hexBytes: hexStringFromByteArray(bytes, true, ' ').split(' '),
 			bytes,
 			isASCII: validateAsciiBytes(bytes),
 			hexMap: bytesInChunk,

@@ -162,11 +162,29 @@ body {
 main.encode {
 	--pri-color: var(--teal4);
 	--sec-color: var(--pink4);
+
+	--nav-button-text-color: var(--black2);
+	--nav-button-bg-color: hsla(171 92% 53% / 0.3);
+	--nav-button-border-color: hsla(171 92% 53% / 0.6);
+	--nav-button-hover-text-color: var(--black4);
+	--nav-button-hover-bg-color: hsla(171 92% 53% / 0.6);
+	--nav-button-active-text-color: var(--black4);
+	--nav-button-active-bg-color: hsla(171 92% 53% / 0.75);
+	--nav-button-active-border-color: hsla(171 92% 53% / 0.75);
 }
 
 main.decode {
 	--pri-color: var(--green4);
 	--sec-color: var(--indigo4);
+
+	--nav-button-text-color: var(--black2);
+	--nav-button-bg-color: hsla(113 100% 72% / 0.3);
+	--nav-button-border-color: hsla(113 100% 72% / 0.6);
+	--nav-button-hover-text-color: var(--black4);
+	--nav-button-hover-bg-color: hsla(113 100% 72% / 0.6);
+	--nav-button-active-text-color: var(--black4);
+	--nav-button-active-bg-color: hsla(113 100% 72% / 0.75);
+	--nav-button-active-border-color: hsla(113 100% 72% / 0.75);
 }
 
 main {

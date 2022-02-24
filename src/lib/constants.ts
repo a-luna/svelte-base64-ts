@@ -1,4 +1,12 @@
-import type { DecoderInput, DecoderOutput, EncoderInput, EncoderOutput } from './types';
+import type {
+	DecoderInput,
+	DecoderInputChunk,
+	DecoderOutput,
+	EncoderInput,
+	EncoderInputChunk,
+	EncoderOutput,
+	OutputChunk
+} from './types';
 
 export const B64_ALPHABET_COMMON = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
@@ -21,6 +29,116 @@ export const BIN_TO_HEX = {
 	'1111': 'F'
 };
 
+export const rotatingColors = [
+	'--red4',
+	'--blue4',
+	'--orange3',
+	'--teal4',
+	'--orange-yellow3',
+	'--purple3',
+	'--green3',
+	'--indigo4',
+	'--yellow3',
+	'--pink4',
+	'--dark-teal2',
+	'--yellow-green3',
+	'--white3'
+];
+
+export const defaultDecoderInputChunk: DecoderInputChunk = {
+	base64: '',
+	binary: '',
+	encoding: 'base64',
+	isPadded: false,
+	padLength: 0,
+	inputMap: [
+		{
+			bin: '',
+			dec: 0,
+			b64: '',
+			isPad: false,
+			groupId: '',
+			bitGroups: [
+				{
+					groupId: '',
+					bits: ''
+				}
+			]
+		}
+	]
+};
+
+export const defaultEncoderInputChunk: EncoderInputChunk = {
+	bytes: [],
+	encoding: 'ASCII',
+	hex: '',
+	ascii: '',
+	binary: '',
+	isPadded: false,
+	padLength: 0,
+	inputMap: [
+		{
+			byte: 0,
+			bin_word1: '',
+			bin_word2: '',
+			hex_word1: '',
+			hex_word2: '',
+			ascii: '',
+			isWhiteSpace: false,
+			groupId: '',
+			bitGroups: [
+				{
+					groupId: '',
+					bits: ''
+				}
+			]
+		}
+	]
+};
+
+export const defaultOutputChunk: OutputChunk = {
+	base64: '',
+	binary: '',
+	ascii: '',
+	hex: '',
+	hexBytes: [],
+	bytes: [],
+	isASCII: true,
+	hexMap: [
+		{
+			byte: 0,
+			bin_word1: '',
+			bin_word2: '',
+			hex_word1: '',
+			hex_word2: '',
+			ascii: '',
+			isWhiteSpace: false,
+			groupId: '',
+			bitGroups: [
+				{
+					groupId: '',
+					bits: ''
+				}
+			]
+		}
+	],
+	base64Map: [
+		{
+			bin: '',
+			dec: 0,
+			b64: '',
+			isPad: false,
+			groupId: '',
+			bitGroups: [
+				{
+					groupId: '',
+					bits: ''
+				}
+			]
+		}
+	]
+};
+
 export const defaultDecoderInput: DecoderInput = {
 	inputText: '',
 	inputEncoding: 'base64',
@@ -30,7 +148,7 @@ export const defaultDecoderInput: DecoderInput = {
 	totalChunks: 0,
 	lastChunkPadded: false,
 	padLength: 0,
-	chunks: []
+	chunks: [defaultDecoderInputChunk]
 };
 
 export const defaultDecoderOutput: DecoderOutput = {
@@ -39,7 +157,7 @@ export const defaultDecoderOutput: DecoderOutput = {
 	output: '',
 	bytes: [],
 	outputEncoding: 'ASCII',
-	chunks: []
+	chunks: [defaultOutputChunk]
 };
 
 export const defaultEncoderInput: EncoderInput = {
@@ -54,7 +172,7 @@ export const defaultEncoderInput: EncoderInput = {
 	totalChunks: 0,
 	lastChunkPadded: false,
 	padLength: 0,
-	chunks: []
+	chunks: [defaultEncoderInputChunk]
 };
 
 export const defaultEncoderOutput: EncoderOutput = {
@@ -64,5 +182,5 @@ export const defaultEncoderOutput: EncoderOutput = {
 	output: '',
 	bytes: [],
 	outputEncoding: 'base64',
-	chunks: []
+	chunks: [defaultOutputChunk]
 };
