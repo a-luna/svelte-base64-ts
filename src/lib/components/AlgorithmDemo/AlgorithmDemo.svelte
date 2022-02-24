@@ -2,13 +2,13 @@
 	import NavButtons from '$lib/components/AlgorithmDemo/NavButtons.svelte';
 	import { rotatingColors } from '$lib/constants';
 	import { app } from '$lib/stores/app';
-	import { isBase64Encoding, isStringEncoding } from '$lib/typeguards';
+	import { isBase64Encoding,isStringEncoding } from '$lib/typeguards';
 	import type { NavAction } from '$lib/types';
 	import { encodingMachine } from '$lib/xstate/b64Encode';
 	import { useMachine } from '@xstate/svelte';
 	import { onDestroy } from 'svelte';
 
-	// TODO: Investigate why createBinaryChunks state is no longer occurring after input is successfully validated
+	// TODO: Fix: When lastChunkPadded = false, state machine never transitions to mapLastPaddedChunk state (stuck in either autoPlayMapSingleChunk/mapSingleChunk)
 	// TODO: Extract BinaryChunks component from this component
 	// TODO: Change BinaryChunks to use $state.context.input.chunks[...].inputMap[...]
 	// TODO: Add data attributes (e.g., chunk-N-Byte-M) to BinaryChunks to allow highlighting in ASCII/B64 lookup tables AND/OR inputText?
