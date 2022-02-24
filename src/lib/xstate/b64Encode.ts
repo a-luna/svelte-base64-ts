@@ -128,7 +128,10 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 						always: [{ target: 'autoPlayMapSingleChunk', cond: 'autoPlayEnabled' }, { target: 'mapSingleChunk' }]
 					},
 					autoPlayMapSingleChunk: {
-						always: { target: 'mapLastPaddedChunk', cond: 'finalPaddedChunkRemaining' },
+						always: [
+							{ target: 'mapLastPaddedChunk', cond: 'finalPaddedChunkRemaining' },
+							{ target: 'mappingComplete', cond: 'allChunksMapped' }
+						],
 						entry: ['getCurrentChunk'],
 						exit: ['markChunkAsComplete'],
 						after: {
@@ -144,7 +147,10 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 						}
 					},
 					mapSingleChunk: {
-						always: [{ target: 'mapLastPaddedChunk', cond: 'finalPaddedChunkRemaining' }],
+						always: [
+							{ target: 'mapLastPaddedChunk', cond: 'finalPaddedChunkRemaining' },
+							{ target: 'mappingComplete', cond: 'allChunksMapped' }
+						],
 						entry: ['getCurrentChunk'],
 						on: {
 							START_AUTO_PLAY: {
@@ -254,7 +260,8 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 				(context.remainingChunks > 0 && !context.input.lastChunkPadded) ||
 				(context.remainingChunks > 1 && context.input.lastChunkPadded),
 			finalPaddedChunkRemaining: (context: EncodingContext) =>
-				context.remainingChunks === 1 && context.input.lastChunkPadded
+				context.remainingChunks === 1 && context.input.lastChunkPadded,
+			allChunksMapped: (context: EncodingContext) => context.remainingChunks === 0 && !context.input.lastChunkPadded
 		}
 	}
 );
