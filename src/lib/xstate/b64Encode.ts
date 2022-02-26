@@ -296,7 +296,7 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 			finalPaddedChunkRemaining: (context: EncodingContext) =>
 				context.remainingChunks === 1 && context.input.lastChunkPadded,
 			noChunksRemaining: (context: EncodingContext) => context.remainingChunks === 0,
-			allChunksRemaining: (context: EncodingContext) => context.remainingChunks === context.input.totalChunks,
+			allChunksRemaining: (context: EncodingContext) => context.remainingChunks + 1 === context.input.totalChunks,
 			hasPreviousChunk: (context: EncodingContext) => context.chunkIndex > 0
 		}
 	}
