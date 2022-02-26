@@ -20,7 +20,7 @@
 		autoplay || (!$state.matches('inactive') && !$state.matches('inputTextError') && !$state.can('GO_TO_NEXT_STEP'));
 </script>
 
-<div class="algo-nav-buttons">
+<div class="algo-nav-buttons" class:autoplay>
 	<button
 		type="button"
 		title="Reset"
@@ -32,15 +32,14 @@
 	<button
 		type="button"
 		title="Start AutoPlay"
-		class:autoplay
+		disabled={autoplay}
 		on:click={() => navButtonEventDispatcher('navButtonEvent', { action: 'START_AUTO_PLAY' })}
 		><div class="icon play-icon"><StartAutoPlay /></div></button
 	>
 	<button
 		type="button"
 		title="Stop AutoPlay"
-		class:stop-autoplay={autoplay}
-		disabled={!$state.can('STOP_AUTO_PLAY')}
+		disabled={!autoplay}
 		on:click={() => navButtonEventDispatcher('navButtonEvent', { action: 'STOP_AUTO_PLAY' })}
 		><div class="icon"><StopAutoPlay /></div></button
 	>
@@ -171,15 +170,11 @@
 		border-top: 2px solid var(--button-disabled-border-color);
 		border-bottom: 2px solid var(--button-disabled-border-color);
 	}
-	.autoplay,
-	.autoplay:hover,
-	.autoplay:focus,
-	.autoplay:active,
-	.autoplay:active:focus,
-	.stop-autoplay:hover,
-	.stop-autoplay:focus,
-	.stop-autoplay:active,
-	.stop-autoplay:active:focus {
+	.autoplay button,
+	.autoplay button:hover,
+	.autoplay button:focus,
+	.autoplay button:active,
+	.autoplay button:active:focus {
 		color: var(--nav-button-autoplay-text-color);
 		background-color: var(--nav-button-autoplay-bg-color);
 		border-right: none;
@@ -187,16 +182,16 @@
 		border-top: 2px solid var(--nav-button-autoplay-border-color);
 		border-bottom: 2px solid var(--nav-button-autoplay-border-color);
 	}
-	button.idle,
-	button.idle:hover,
-	button.idle:focus,
-	button.idle:active,
-	button.idle:active:focus,
-	button.idle:disabled,
-	button.idle:disabled:hover,
-	button.idle:disabled:focus,
-	button.idle:disabled:active,
-	button.idle:disabled:active:focus {
+	.autoplay button.idle,
+	.autoplay button.idle:hover,
+	.autoplay button.idle:focus,
+	.autoplay button.idle:active,
+	.autoplay button.idle:active:focus,
+	.autoplay button:disabled,
+	.autoplay button:disabled:hover,
+	.autoplay button:disabled:focus,
+	.autoplay button:disabled:active,
+	.autoplay button:disabled:active:focus {
 		color: var(--nav-button-autoplay-idle-text-color);
 		background-color: var(--nav-button-autoplay-idle-bg-color);
 		border-right: none;
@@ -204,28 +199,35 @@
 		border-top: 2px solid var(--nav-button-autoplay-idle-border-color);
 		border-bottom: 2px solid var(--nav-button-autoplay-idle-border-color);
 	}
-	button.idle:last-child,
-	button.idle:hover:last-child,
-	button.idle:focus:last-child,
-	button.idle:active:last-child,
-	button.idle:active:focus:last-child,
-	button.idle:disabled:last-child,
-	button.idle:disabled:hover:last-child,
-	button.idle:disabled:focus:last-child,
-	button.idle:disabled:active:last-child,
-	button.idle:disabled:active:focus:last-child {
+	.autoplay button.idle:last-child,
+	.autoplay button.idle:hover:last-child,
+	.autoplay button.idle:focus:last-child,
+	.autoplay button.idle:active:last-child,
+	.autoplay button.idle:active:focus:last-child,
+	.autoplay button:disabled:last-child,
+	.autoplay button:disabled:hover:last-child,
+	.autoplay button:disabled:focus:last-child,
+	.autoplay button:disabled:active:last-child,
+	.autoplay button:disabled:active:focus:last-child {
 		border-right: 2px solid var(--nav-button-autoplay-idle-border-color);
 		border-left: 0.5px solid var(--nav-button-autoplay-idle-border-color);
 		border-top: 2px solid var(--nav-button-autoplay-idle-border-color);
 		border-bottom: 2px solid var(--nav-button-autoplay-idle-border-color);
 	}
-	.stop-autoplay {
-		color: var(--nav-button-stop-autoplay-text-color);
-		background-color: var(--nav-button-stop-autoplay-bg-color);
+	.autoplay button.idle:first-child,
+	.autoplay button.idle:hover:first-child,
+	.autoplay button.idle:focus:first-child,
+	.autoplay button.idle:active:first-child,
+	.autoplay button.idle:active:focus:first-child,
+	.autoplay button:disabled:first-child,
+	.autoplay button:disabled:hover:first-child,
+	.autoplay button:disabled:focus:first-child,
+	.autoplay button:disabled:active:first-child,
+	.autoplay button:disabled:active:focus:first-child {
 		border-right: none;
-		border-left: 0.5px solid var(--nav-button-stop-autoplay-border-color);
-		border-top: 2px solid var(--nav-button-stop-autoplay-border-color);
-		border-bottom: 2px solid var(--nav-button-stop-autoplay-border-color);
+		border-left: 2px solid var(--nav-button-autoplay-idle-border-color);
+		border-top: 2px solid var(--nav-button-autoplay-idle-border-color);
+		border-bottom: 2px solid var(--nav-button-autoplay-idle-border-color);
 	}
 	.icon {
 		width: 11px;
