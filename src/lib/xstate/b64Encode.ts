@@ -14,7 +14,6 @@ export interface EncodingContext {
 }
 
 export type EncodingEvent =
-	| { type: 'RESET' }
 	| { type: 'VALIDATE_INPUT'; inputText: string; inputEncoding: StringEncoding; outputEncoding: Base64Encoding }
 	| { type: 'GO_TO_FIRST_STEP' }
 	| { type: 'GO_TO_PREV_STEP' }
@@ -90,8 +89,8 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 				entry: ['stopAutoPlay'],
 				id: 'inactive',
 				on: {
-					START_AUTO_PLAY: { target: 'validateInputText', actions: ['validate', 'startAutoPlay'] },
-					VALIDATE_INPUT: { target: 'validateInputText', actions: 'validate' }
+					START_AUTO_PLAY: { target: 'validateInputText', actions: ['reset', 'validate', 'startAutoPlay'] },
+					VALIDATE_INPUT: { target: 'validateInputText', actions: ['reset', 'validate'] }
 				}
 			},
 			validateInputText: {
@@ -101,8 +100,7 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 				entry: ['stopAutoPlay'],
 				on: {
 					START_AUTO_PLAY: { target: 'validateInputText', actions: ['validate', 'startAutoPlay'] },
-					VALIDATE_INPUT: { target: 'validateInputText', actions: 'validate' },
-					RESET: { target: 'inactive', actions: 'reset', cond: 'autoPlayDisabled' }
+					VALIDATE_INPUT: { target: 'validateInputText', actions: 'validate' }
 				}
 			},
 			createBinaryChunks: {
@@ -113,7 +111,6 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 				on: {
 					START_AUTO_PLAY: { target: 'mapChunkBytesToBase64', actions: 'startAutoPlay', cond: 'autoPlayDisabled' },
 					STOP_AUTO_PLAY: { actions: 'stopAutoPlay', cond: 'autoPlayEnabled' },
-					RESET: { target: 'inactive', actions: 'reset', cond: 'autoPlayDisabled' },
 					GO_TO_FIRST_STEP: { target: 'inactive', cond: 'autoPlayDisabled' },
 					GO_TO_PREV_STEP: { target: 'inactive', cond: 'autoPlayDisabled' },
 					GO_TO_NEXT_STEP: { target: 'mapChunkBytesToBase64', cond: 'autoPlayDisabled' },
@@ -166,7 +163,6 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 								cond: 'autoPlayDisabled'
 							},
 							STOP_AUTO_PLAY: { actions: 'stopAutoPlay', cond: 'autoPlayEnabled' },
-							RESET: { target: '#inactive', actions: 'reset', cond: 'autoPlayDisabled' },
 							GO_TO_FIRST_STEP: { target: '#inactive', cond: 'autoPlayDisabled' },
 							GO_TO_PREV_STEP: { target: '#createBinaryChunks', cond: 'autoPlayDisabled' },
 							GO_TO_NEXT_STEP: { target: 'mapSingleChunk', cond: 'autoPlayDisabled' },
@@ -182,7 +178,6 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 								cond: 'autoPlayDisabled'
 							},
 							STOP_AUTO_PLAY: { actions: 'stopAutoPlay', cond: 'autoPlayEnabled' },
-							RESET: { target: '#inactive', actions: 'reset', cond: 'autoPlayDisabled' },
 							GO_TO_FIRST_STEP: { target: '#inactive', cond: 'autoPlayDisabled' },
 							GO_TO_PREV_STEP: [
 								{ target: 'mapSingleChunk', actions: 'mapPreviousChunk', cond: 'hasPreviousChunk' },
@@ -208,7 +203,6 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 								cond: 'autoPlayDisabled'
 							},
 							STOP_AUTO_PLAY: { actions: 'stopAutoPlay', cond: 'autoPlayEnabled' },
-							RESET: { target: '#inactive', actions: 'reset', cond: 'autoPlayDisabled' },
 							GO_TO_FIRST_STEP: { target: '#inactive', cond: 'autoPlayDisabled' },
 							GO_TO_PREV_STEP: [
 								{ target: 'mapSingleChunk', actions: 'mapPreviousChunk', cond: 'hasPreviousChunk' },
@@ -219,7 +213,6 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 						}
 					},
 					mappingComplete: {
-						entry: ['zeroRemainingChunks'],
 						type: 'final'
 					}
 				},
@@ -229,7 +222,6 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 				entry: ['stopAutoPlay'],
 				on: {
 					START_AUTO_PLAY: { target: 'validateInputText', actions: 'startAutoPlay', cond: 'autoPlayDisabled' },
-					RESET: { target: '#inactive', actions: 'reset', cond: 'autoPlayDisabled' },
 					GO_TO_FIRST_STEP: { target: '#inactive', cond: 'autoPlayDisabled' },
 					GO_TO_PREV_STEP: { target: 'mapChunkBytesToBase64', cond: 'autoPlayDisabled' }
 				}
@@ -279,11 +271,6 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 			mapPreviousChunk: assign({
 				chunkIndex: (context: EncodingContext) => context.chunkIndex - 1,
 				remainingChunks: (context: EncodingContext) => context.remainingChunks + 1
-			}),
-			zeroRemainingChunks: assign({
-				chunkIndex: (_: EncodingContext) => 0,
-				currentChunk: (_: EncodingContext) => defaultOutputChunk,
-				remainingChunks: (_: EncodingContext) => 0
 			})
 		},
 		guards: {

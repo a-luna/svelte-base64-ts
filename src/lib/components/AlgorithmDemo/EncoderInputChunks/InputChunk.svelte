@@ -13,7 +13,8 @@
 	$: chunkColor = rotatingColors[chunkIndex % rotatingColors.length];
 	$: currentChunk = $state.context.chunkIndex;
 	$: stateName = $state.toStrings().join(' ');
-	$: chunkMappingInProgress = stateName.includes('mapChunkBytesToBase64') && currentChunk === chunkIndex;
+	$: chunkMappingInProgress =
+		!stateName.includes('idle') && stateName.includes('mapChunkBytesToBase64') && currentChunk === chunkIndex;
 	$: currentChunkColor = chunkMappingInProgress ? chunkColor : '--white1';
 </script>
 
