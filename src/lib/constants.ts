@@ -72,6 +72,7 @@ export const defaultEncoderInputChunk: EncoderInputChunk = {
 	bytes: [],
 	encoding: 'ASCII',
 	hex: '',
+	hexBytes: [],
 	ascii: '',
 	binary: '',
 	isPadded: false,

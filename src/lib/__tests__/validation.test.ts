@@ -1,8 +1,9 @@
 /// <reference types="jest" />
 import { validateBase64Encoding, validateTextEncoding } from '$lib/validation';
+import { describe, expect, test } from 'vitest';
 
 describe('validateTextEncoding', () => {
-	it('can identify an empty string as an invalid value', () => {
+	test('can identify an empty string as an invalid value', () => {
 		const result1 = validateTextEncoding('', 'ASCII');
 		expect(result1.success).toBe(false);
 		expect(result1.error.message).toBe('You must provide a string value to encode, text box is empty.');
@@ -12,19 +13,19 @@ describe('validateTextEncoding', () => {
 		expect(result2.error.message).toBe('You must provide a string value to encode, text box is empty.');
 	});
 
-	it('can identify a valid ASCII string', () => {
+	test('can identify a valid ASCII string', () => {
 		const result = validateTextEncoding('dog', 'ASCII');
 		expect(result.success).toBe(true);
 		expect(result.value).toBe('dog');
 	});
 
-	it('can identify an invalid ASCII string (contains non-printable characters)', () => {
+	test('can identify an invalid ASCII string (contains non-printable characters)', () => {
 		const result = validateTextEncoding('do§', 'ASCII');
 		expect(result.success).toBe(false);
 		expect(result.error.message).toBe('"do§" contains data that is not part of the ASCII printable character set.');
 	});
 
-	it('can identify a valid hex string', () => {
+	test('can identify a valid hex string', () => {
 		const result1 = validateTextEncoding('1b57cc', 'hex');
 		expect(result1.success).toBe(true);
 		expect(result1.value).toBe('1b57cc');
@@ -34,7 +35,7 @@ describe('validateTextEncoding', () => {
 		expect(result2.value).toBe('1b57cc');
 	});
 
-	it('can identify an invalid hex string (contains non-hex digits)', () => {
+	test('can identify an invalid hex string (contains non-hex digits)', () => {
 		const result1 = validateTextEncoding('1g57cc', 'hex');
 		expect(result1.success).toBe(false);
 		expect(result1.error.message).toBe(
@@ -48,7 +49,7 @@ describe('validateTextEncoding', () => {
 		);
 	});
 
-	it('can identify an invalid hex string (length is not an even number)', () => {
+	test('can identify an invalid hex string (length is not an even number)', () => {
 		const result1 = validateTextEncoding('157cc', 'hex');
 		expect(result1.success).toBe(false);
 		expect(result1.error.message).toBe("Hex string must have an even number of digits, length('157cc') = 5");
@@ -60,7 +61,7 @@ describe('validateTextEncoding', () => {
 });
 
 describe('validateBase64Encoding', () => {
-	it('can identify an empty string as an invalid value', () => {
+	test('can identify an empty string as an invalid value', () => {
 		const result1 = validateBase64Encoding('', 'base64');
 		expect(result1.success).toBe(false);
 		expect(result1.error.message).toBe('You must provide a string value to encode, text box is empty.');
@@ -70,7 +71,7 @@ describe('validateBase64Encoding', () => {
 		expect(result2.error.message).toBe('You must provide a string value to encode, text box is empty.');
 	});
 
-	it('can identify a valid base64 string', () => {
+	test('can identify a valid base64 string', () => {
 		const result1 = validateBase64Encoding('ZG9n', 'base64');
 		expect(result1.success).toBe(true);
 
@@ -78,7 +79,7 @@ describe('validateBase64Encoding', () => {
 		expect(result2.success).toBe(true);
 	});
 
-	it('can identify a valid base64url string', () => {
+	test('can identify a valid base64url string', () => {
 		const result1 = validateBase64Encoding('ZG9n', 'base64url');
 		expect(result1.success).toBe(true);
 
@@ -86,7 +87,7 @@ describe('validateBase64Encoding', () => {
 		expect(result2.success).toBe(true);
 	});
 
-	it('can identify an invalid base64 string (lastChunkLength: 1)', () => {
+	test('can identify an invalid base64 string (lastChunkLength: 1)', () => {
 		const result1 = validateBase64Encoding('Z', 'base64');
 		expect(result1.success).toBe(false);
 		expect(result1.error.message).toBe('"Z" is not a valid base64 string.');
@@ -96,7 +97,7 @@ describe('validateBase64Encoding', () => {
 		expect(result2.error.message).toBe('"Z" is not a valid base64url string.');
 	});
 
-	it('can identify in invalid base64 string (has invalid characters)', () => {
+	test('can identify in invalid base64 string (has invalid characters)', () => {
 		const result1 = validateBase64Encoding('ZG$n', 'base64');
 		expect(result1.success).toBe(false);
 		expect(result1.error.message).toBe('"ZG$n" contains 1 invalid character:\n["$", 0x36]');
@@ -106,19 +107,19 @@ describe('validateBase64Encoding', () => {
 		expect(result2.error.message).toBe('"ZG$n" contains 1 invalid character:\n["$", 0x36]');
 	});
 
-	it('can identify an invalid base64 string (has base64url characters)', () => {
+	test('can identify an invalid base64 string (has base64url characters)', () => {
 		const result = validateBase64Encoding('Z-9n', 'base64');
 		expect(result.success).toBe(false);
 		expect(result.error.message).toBe('"Z-9n" contains 1 invalid character:\n["-", 0x45]');
 	});
 
-	it('can identify an invalid base64url string (has base64 characters)', () => {
+	test('can identify an invalid base64url string (has base64 characters)', () => {
 		const result = validateBase64Encoding('+G9n', 'base64url');
 		expect(result.success).toBe(false);
 		expect(result.error.message).toBe('"+G9n" contains 1 invalid character:\n["+", 0x43]');
 	});
 
-	it('can identify an invalid base64 string (pad character within string)', () => {
+	test('can identify an invalid base64 string (pad character within string)', () => {
 		const result1 = validateBase64Encoding('Z=9n', 'base64');
 		expect(result1.success).toBe(false);
 		expect(result1.error.message).toBe('"Z=9n" is not a valid base64 string.');

@@ -44,7 +44,8 @@ function createEncoderInput(
 	const inputChunks = Array.from({ length: totalChunks }, (_, i) => {
 		const isPadded = lastChunkPadded && i === totalChunks - 1;
 		const bytes = inputBytes.slice(i * 3, Math.min(inputBytes.length, i * 3 + 3));
-		const hex = hexStringFromByteArray(bytes);
+		const hex = hexStringFromByteArray(bytes, true, ' ');
+		const hexBytes = hex.split(' ');
 		const ascii = inputEncoding === 'ASCII' ? asciiStringFromByteArray(bytes) : '';
 		const byteStrings = byteArrayToBinaryStringArray(bytes);
 		const binary = `${byteStrings.join('')}${'0'.repeat(isPadded ? padLength : 0)}`;
@@ -52,6 +53,7 @@ function createEncoderInput(
 			bytes,
 			encoding: inputEncoding,
 			hex,
+			hexBytes,
 			ascii,
 			binary,
 			isPadded,

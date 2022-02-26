@@ -4,6 +4,7 @@ export interface EncoderInputChunk {
 	bytes: number[];
 	encoding: StringEncoding;
 	hex: string;
+	hexBytes: string[];
 	ascii: string;
 	binary: string;
 	isPadded: boolean;

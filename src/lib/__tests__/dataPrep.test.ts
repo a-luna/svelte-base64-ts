@@ -1,8 +1,9 @@
 /// <reference types="jest" />
 import { validateDecoderInput, validateEncoderInput } from '$lib/dataPrep';
+import { describe, expect, test } from 'vitest';
 
 describe('validateEncoderInputChunks', () => {
-	it('can create a map (no whitespace, no pad characters) for a 3-byte chunk of an ASCII string', () => {
+	test('can create a map (no whitespace, no pad characters) for a 3-byte chunk of an ASCII string', () => {
 		expect(validateEncoderInput('dog', 'ASCII', 'base64')).toEqual({
 			inputText: 'dog',
 			inputEncoding: 'ASCII',
@@ -23,7 +24,8 @@ describe('validateEncoderInputChunks', () => {
 				{
 					bytes: [100, 111, 103],
 					encoding: 'ASCII',
-					hex: '646f67',
+					hex: '64 6F 67',
+					hexBytes: ['64', '6F', '67'],
 					ascii: 'dog',
 					binary: '011001000110111101100111',
 					isPadded: false,
@@ -62,7 +64,7 @@ describe('validateEncoderInputChunks', () => {
 		});
 	});
 
-	it('can create a map (no whitespace, WITH pad characters) for a 3-byte chunk of an ASCII string', () => {
+	test('can create a map (no whitespace, WITH pad characters) for a 3-byte chunk of an ASCII string', () => {
 		expect(validateEncoderInput('do', 'ASCII', 'base64')).toEqual({
 			inputText: 'do',
 			inputEncoding: 'ASCII',
@@ -83,7 +85,8 @@ describe('validateEncoderInputChunks', () => {
 				{
 					bytes: [100, 111],
 					encoding: 'ASCII',
-					hex: '646f',
+					hex: '64 6F',
+					hexBytes: ['64', '6F'],
 					ascii: 'do',
 					binary: '011001000110111100',
 					isPadded: true,
@@ -113,7 +116,7 @@ describe('validateEncoderInputChunks', () => {
 		});
 	});
 
-	it('can create a map (WITH whitespace, no pad characters) for a single chunk of an ASCII string', () => {
+	test('can create a map (WITH whitespace, no pad characters) for a single chunk of an ASCII string', () => {
 		expect(validateEncoderInput(' do', 'ASCII', 'base64')).toEqual({
 			inputText: ' do',
 			inputEncoding: 'ASCII',
@@ -134,7 +137,8 @@ describe('validateEncoderInputChunks', () => {
 				{
 					bytes: [32, 100, 111],
 					encoding: 'ASCII',
-					hex: '20646f',
+					hex: '20 64 6F',
+					hexBytes: ['20', '64', '6F'],
 					ascii: ' do',
 					binary: '001000000110010001101111',
 					isPadded: false,
@@ -173,7 +177,7 @@ describe('validateEncoderInputChunks', () => {
 		});
 	});
 
-	it('can create a map (WITH whitespace, WITH pad characters) for a 3-byte chunk of an ASCII string', () => {
+	test('can create a map (WITH whitespace, WITH pad characters) for a 3-byte chunk of an ASCII string', () => {
 		expect(validateEncoderInput(' d', 'ASCII', 'base64')).toEqual({
 			inputText: ' d',
 			inputEncoding: 'ASCII',
@@ -194,7 +198,8 @@ describe('validateEncoderInputChunks', () => {
 				{
 					bytes: [32, 100],
 					encoding: 'ASCII',
-					hex: '2064',
+					hex: '20 64',
+					hexBytes: ['20', '64'],
 					ascii: ' d',
 					binary: '001000000110010000',
 					isPadded: true,
@@ -224,7 +229,7 @@ describe('validateEncoderInputChunks', () => {
 		});
 	});
 
-	it('can create a map (no whitespace, no pad characters) for a 3-byte chunk of a hex string', () => {
+	test('can create a map (no whitespace, no pad characters) for a 3-byte chunk of a hex string', () => {
 		expect(validateEncoderInput('5f3c0a', 'hex', 'base64')).toEqual({
 			inputText: '5f3c0a',
 			inputEncoding: 'hex',
@@ -245,7 +250,8 @@ describe('validateEncoderInputChunks', () => {
 				{
 					bytes: [95, 60, 10],
 					encoding: 'hex',
-					hex: '5f3c0a',
+					hex: '5F 3C 0A',
+					hexBytes: ['5F', '3C', '0A'],
 					ascii: '',
 					binary: '010111110011110000001010',
 					isPadded: false,
@@ -286,7 +292,7 @@ describe('validateEncoderInputChunks', () => {
 });
 
 describe('validateDecoderInputChunks', () => {
-	it('can create a map for a base64 string (encoding: base64, length: 4, padding: None)', () => {
+	test('can create a map for a base64 string (encoding: base64, length: 4, padding: None)', () => {
 		expect(validateDecoderInput('ZG9n', 'base64')).toEqual({
 			inputText: 'ZG9n',
 			inputEncoding: 'base64',
@@ -336,7 +342,7 @@ describe('validateDecoderInputChunks', () => {
 		});
 	});
 
-	it('can create a map for a base64 string (encoding: base64, length: 3, padding: 1)', () => {
+	test('can create a map for a base64 string (encoding: base64, length: 3, padding: 1)', () => {
 		expect(validateDecoderInput('ZG8=', 'base64')).toEqual({
 			inputText: 'ZG8=',
 			inputEncoding: 'base64',
