@@ -2,18 +2,19 @@
 	import InputBase64EncodingRadioButtons from '$lib/components/InputForm/InputBase64EncodingRadioButtons.svelte';
 	import InputStringEncodingRadioButtons from '$lib/components/InputForm/InputStringEncodingRadioButtons.svelte';
 	import OutputBase64EncodingRadioButtons from '$lib/components/InputForm/OutputBase64EncodingRadioButtons.svelte';
+	import InputTextBox from '$lib/components/InputTextBox.svelte';
 	import PushableButton from '$lib/components/PushableButton.svelte';
 	import { alert } from '$lib/stores/alert';
 	import { app } from '$lib/stores/app';
 	import { state } from '$lib/stores/state';
-	import { focusInput } from '$lib/util';
 
 	let inputText: string;
-	let inputTextElement: HTMLInputElement;
+	let inputTextBox: InputTextBox;
 	let inputStringEncodingButtons: InputStringEncodingRadioButtons;
 	let inputBase64EncodingOptions: InputBase64EncodingRadioButtons;
 	let outputBase64EncodingOptions: OutputBase64EncodingRadioButtons;
 
+	$: inputTextBoxGridStyles = 'grid-column: 1 / span 3;';
 	$: inputEncodingGridStyles = $state.mode === 'encode' ? 'grid-column: 1 / span 2;' : 'grid-column: 2 / span 2;';
 	$: outputEncodingGridStyles = $state.mode === 'encode' ? 'grid-column: 3 / span 2;' : 'grid-column: 4 / span 1;';
 	$: state.changeInputText(inputText);
@@ -24,13 +25,13 @@
 
 	function toggleMode() {
 		state.toggleMode();
-		inputTextElement.focus();
+		inputTextBox.focus();
 	}
 
 	function resetForm() {
 		state.reset();
 		resetRadioButtons();
-		inputTextElement.focus();
+		inputTextBox.focus();
 	}
 
 	function resetRadioButtons() {
@@ -48,12 +49,6 @@
 		}
 		if ($app.errorMessage) {
 			$alert = $app.errorMessage;
-		}
-	}
-
-	function handleKeyPress(key: string) {
-		if (key === 'Enter') {
-			submitForm();
 		}
 	}
 </script>
@@ -80,21 +75,14 @@
 			<div class="placeholder" />
 		{/if}
 	</div>
-	<input
-		type="text"
-		spellcheck="false"
-		bind:this={inputTextElement}
-		bind:value={inputText}
-		on:keydown={(e) => handleKeyPress(e.key)}
-		use:focusInput
-	/>
+	<InputTextBox bind:inputText bind:this={inputTextBox} style={inputTextBoxGridStyles} on:submit={() => submitForm()} />
 	<PushableButton size={'xs'} color={$app.buttonColor} on:click={() => submitForm()}>{$app.buttonLabel}</PushableButton>
 </div>
 
 <style lang="postcss">
 	.input-form {
 		display: grid;
-		grid-template-columns: auto auto auto 87px;
+		grid-template-columns: 87px auto auto 87px;
 		grid-template-rows: 31px auto 31px;
 		grid-auto-flow: row;
 		align-items: end;
@@ -112,24 +100,6 @@
 		text-shadow: 2px 2px var(--sec-color), 1.75px 1.75px var(--sec-color), 1.5px 1.5px var(--sec-color),
 			1.25px 1.25px var(--sec-color), 1px 1px var(--sec-color), 0.75px 0.75px var(--sec-color),
 			0.5px 0.5px var(--sec-color), 0.25px 0.25px var(--sec-color);
-	}
-	input {
-		grid-column: 1 / span 3;
-		font-size: 1rem;
-		color: var(--pri-color);
-		background-color: var(--page-bg-color);
-		outline: 1px solid var(--pri-color);
-		border: none;
-		border-radius: 6px;
-		margin: auto 0;
-		padding: 0.375rem 0.5rem;
-	}
-	input:focus {
-		outline: 1px solid var(--pri-color);
-	}
-	.error input {
-		outline: 1px solid var(--red4);
-		color: var(--red4);
 	}
 	.input-encoding-options,
 	.output-encoding-options {

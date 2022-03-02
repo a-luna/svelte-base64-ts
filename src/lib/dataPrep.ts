@@ -48,7 +48,7 @@ function createEncoderInput(
 		const hexBytes = hex.split(' ');
 		const ascii = inputEncoding === 'ASCII' ? asciiStringFromByteArray(bytes) : '';
 		const byteStrings = byteArrayToBinaryStringArray(bytes);
-		const binary = `${byteStrings.join('')}${'0'.repeat(isPadded ? padLength : 0)}`;
+		const binary = padBinaryString(byteStrings.join(''), 6);
 		return {
 			bytes,
 			encoding: inputEncoding,
@@ -71,10 +71,10 @@ function getEncodingParameters(
 	validationResult: Result<string>
 ): EncoderInput {
 	const bytes = stringToByteArray(inputText, inputEncoding);
+	const ascii = inputEncoding === 'ASCII' ? inputText : '';
+	const binary = inputEncoding === 'bin' ? inputText : byteArrayToBinaryStringArray(bytes).join('');
 	const hex = hexStringFromByteArray(bytes, true, ' ');
 	const hexBytes = hex.split(' ');
-	const ascii = inputEncoding === 'ASCII' ? inputText : '';
-	const binary = byteArrayToBinaryStringArray(bytes).join('');
 	const [chunkCount, lastChunkLength] = divmod(bytes.length, 3);
 	const lastChunkPadded = lastChunkLength > 0;
 	const totalChunks = lastChunkPadded ? chunkCount + 1 : chunkCount;
@@ -93,6 +93,13 @@ function getEncodingParameters(
 		lastChunkPadded,
 		padLength
 	};
+}
+
+function padBinaryString(input: string, divisor: number): string {
+	while (input.length % divisor) {
+		input = `${input}0`;
+	}
+	return input;
 }
 
 export function createEncoderInputChunk(

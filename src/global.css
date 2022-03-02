@@ -163,6 +163,7 @@ main.encode {
 	--pri-color: var(--teal4);
 	--sec-color: var(--pink4);
 
+	/* Algorithm Demo Nav Buttons (Manual Mode) */
 	--nav-button-text-color: var(--black2);
 	--nav-button-bg-color: hsla(171 100% 63% / 0.45);
 	--nav-button-border-color: hsla(171 100% 63% / 0.7);
@@ -172,6 +173,7 @@ main.encode {
 	--nav-button-active-bg-color: hsla(171 100% 63% / 0.85);
 	--nav-button-active-border-color: hsla(171 100% 63% / 0.85);
 
+	/* Algorithm Demo Nav Buttons (Auto Play Mode) */
 	--nav-button-autoplay-text-color: var(--black4);
 	--nav-button-autoplay-bg-color: hsla(301 93% 71% / 0.85);
 	--nav-button-autoplay-border-color: hsla(301 93% 71% / 0.85);
@@ -182,15 +184,27 @@ main.encode {
 	--nav-button-stop-autoplay-bg-color: hsla(301 93% 71% / 0.45);
 	--nav-button-stop-autoplay-border-color: var(--nav-button-autoplay-border-color);
 
+	/* Disabled Button */
 	--button-disabled-text-color: var(--dark-gray4);
 	--button-disabled-bg-color: hsla(171 100% 88% / 0.25);
 	--button-disabled-border-color: var(--nav-button-border-color);
+
+	/* Select Menu */
+	--select-bg-color: var(--nav-button-bg-color);
+	--select-bg-color-hov: var(--nav-button-hover-bg-color);
+	--select-text-color: var(--nav-button-text-color);
+	--select-text-color-no-selection: var(--button-disabled-text-color);
+	--select-border-color: var(--nav-button-border-color);
+	--selected-item-bg-color: var(--nav-button-hover-bg-color);
+	--select-text-color-disabled: var(--button-disabled-text-color);
+	--select-bg-color-disabled: var(--button-disabled-bg-color);
 }
 
 main.decode {
 	--pri-color: var(--green4);
 	--sec-color: var(--indigo4);
 
+	/* Algorithm Demo Nav Buttons (Manual Mode) */
 	--nav-button-text-color: var(--black2);
 	--nav-button-bg-color: hsla(113 100% 72% / 0.45);
 	--nav-button-border-color: hsla(113 100% 72% / 0.7);
@@ -200,6 +214,7 @@ main.decode {
 	--nav-button-active-bg-color: hsla(113 100% 72% / 0.85);
 	--nav-button-active-border-color: hsla(113 100% 72% / 0.85);
 
+	/* Algorithm Demo Nav Buttons (Auto Play Mode) */
 	--nav-button-autoplay-text-color: var(--black4);
 	--nav-button-autoplay-bg-color: hsla(261 100% 60% / 0.85);
 	--nav-button-autoplay-border-color: hsla(261 100% 60% / 0.85);
@@ -210,22 +225,20 @@ main.decode {
 	--nav-button-stop-autoplay-bg-color: hsla(261 100% 60% / 0.45);
 	--nav-button-stop-autoplay-border-color: var(--nav-button-autoplay-border-color);
 
+	/* Disabled Button */
 	--button-disabled-text-color: var(--dark-gray4);
 	--button-disabled-bg-color: hsla(113 100% 87% / 0.2);
 	--button-disabled-border-color: var(--nav-button-border-color);
-}
 
-main {
-	display: flex;
-	flex-flow: column nowrap;
-	justify-content: space-between;
-	gap: 1.5rem;
-	position: relative;
-	width: 510px;
-	background-color: var(--page-bg-color);
-	padding: 1.5rem;
-	margin: 0 auto;
-	box-sizing: border-box;
+	/* Select Menu */
+	--select-bg-color: var(--nav-button-bg-color);
+	--select-bg-color-hov: var(--nav-button-hover-bg-color);
+	--select-text-color: var(--nav-button-text-color);
+	--select-text-color-no-selection: var(--button-disabled-text-color);
+	--select-border-color: var(--nav-button-border-color);
+	--selected-item-bg-color: var(--nav-button-hover-bg-color);
+	--select-text-color-disabled: var(--button-disabled-text-color);
+	--select-bg-color-disabled: var(--button-disabled-bg-color);
 }
 
 code,
@@ -271,9 +284,5 @@ button {
 @media screen and (max-width: 400px) {
 	:global(body) {
 		background-color: var(--page-bg-color);
-	}
-
-	main {
-		padding: 15px;
 	}
 }

@@ -11,7 +11,7 @@ export const validateAsciiBytes = (byteArray: number[]): boolean =>
 
 export function validateTextEncoding(input: string, encoding: StringEncoding): Result<string> {
 	if (!input || input.length == 0) {
-		const error = 'You must provide a string value to encode, text box is empty.';
+		const error = 'You must provide a value to encode, text box is empty.';
 		return { success: false, error: Error(error) };
 	}
 	switch (encoding) {
@@ -19,6 +19,8 @@ export function validateTextEncoding(input: string, encoding: StringEncoding): R
 			return validateAsciiString(input);
 		case 'hex':
 			return validateHexString(input);
+		case 'bin':
+			return validateBinaryString(input);
 	}
 }
 
@@ -40,8 +42,20 @@ function validateHexString(input: string): Result<string> {
 		const error = `"${originalInput}" is not a valid hex string, must contain only hexadecimal digits (a-f, A-F, 0-9)`;
 		return { success: false, error: Error(error) };
 	}
-	if (input.length % 2 > 0) {
+	if (input.length % 2) {
 		const error = `Hex string must have an even number of digits, length('${originalInput}') = ${input.length}`;
+		return { success: false, error: Error(error) };
+	}
+	return { success: true, value: input };
+}
+
+function validateBinaryString(input) {
+	if (!/^[01]+$/.test(input)) {
+		const error = `Binary string can only contain zeroes ('0') or ones ('1'), "${input}" contains invalid characters.`;
+		return { success: false, error: Error(error) };
+	}
+	if (input.length % 8) {
+		const error = `Binary string must consist of 8-bit strings, length('${input}') = ${input.length}, which is not divisible by 8`;
 		return { success: false, error: Error(error) };
 	}
 	return { success: true, value: input };
@@ -89,8 +103,8 @@ function getInvalidCharacters(input: string, encoding: Base64Encoding): string[]
 			input
 				.replace(/[=]/g, '')
 				.split('')
-				.filter((char) => !base64Alphabet.includes(char))
-		)
+				.filter((char) => !base64Alphabet.includes(char)),
+		),
 	];
 	return distinct.map((char) => `["${char}", 0x${char.charCodeAt(0)}]`);
 }

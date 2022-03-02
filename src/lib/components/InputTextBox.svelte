@@ -1,0 +1,59 @@
+<script lang="ts">
+	import { app } from '$lib/stores/app';
+	import { focusInput } from '$lib/util';
+	import { createEventDispatcher } from 'svelte';
+
+	export let style: string;
+	export let inputText: string;
+	export let disabled: boolean = false;
+	let inputTextElement: HTMLInputElement;
+	const dispatch = createEventDispatcher();
+
+	export function focus() {
+		inputTextElement.focus();
+	}
+
+	function handleKeyPress(key: string) {
+		if (key === 'Enter') {
+			dispatch('submit');
+		}
+	}
+</script>
+
+<input
+	type="text"
+	spellcheck="false"
+	class:error={!$app.inputStringIsValid}
+	{style}
+	{disabled}
+	bind:this={inputTextElement}
+	bind:value={inputText}
+	on:keydown={(e) => handleKeyPress(e.key)}
+	use:focusInput
+/>
+
+<style lang="postcss">
+	input {
+		font-size: 1rem;
+		color: var(--pri-color);
+		background-color: var(--black3);
+		outline: 1px solid var(--pri-color);
+		border: none;
+		border-radius: 6px;
+		margin: auto 0;
+		padding: 0.375rem 0.5rem;
+		width: 100%;
+	}
+	input:focus {
+		outline: 1px solid var(--pri-color);
+	}
+	input.error {
+		outline: 1px solid var(--red4);
+		color: var(--red4);
+	}
+	input[disabled] {
+		color: var(--button-disabled-text-color);
+		background-color: var(--button-disabled-bg-color);
+		outline: 1px solid var(--button-disabled-border-color);
+	}
+</style>

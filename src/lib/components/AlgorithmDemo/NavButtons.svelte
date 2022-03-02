@@ -14,6 +14,7 @@
 
 	export let state: Readable<State<EncodingContext, EncodingEvent, any, EncodingTypeState, TypegenDisabled>>;
 	const navButtonEventDispatcher = createEventDispatcher<{ navButtonEvent: { action: NavAction } }>();
+	const dispatch = createEventDispatcher();
 
 	$: autoplay = $state.context.autoplay;
 	$: disableNextStep =
@@ -27,7 +28,7 @@
 		class:idle={autoplay}
 		disabled={!$state.can('GO_TO_FIRST_STEP')}
 		on:click={() => navButtonEventDispatcher('navButtonEvent', { action: 'GO_TO_FIRST_STEP' })}
-		><div class="icon reset-icon"><Reset /></div></button
+		on:click={() => dispatch('reset')}><div class="icon reset-icon"><Reset /></div></button
 	>
 	<button
 		type="button"
@@ -85,6 +86,7 @@
 	}
 	button {
 		padding: 8px 13px;
+		margin: 0;
 		color: var(--nav-button-text-color);
 		background-color: var(--nav-button-bg-color);
 		border-right: none;

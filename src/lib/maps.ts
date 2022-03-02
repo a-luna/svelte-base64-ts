@@ -10,10 +10,17 @@ export const getBase64LookupMap = (base64Encoding: Base64Encoding): { [key: stri
 	return base64Lookup;
 };
 
-export const getBase64CharacterMap = (base64Encoding: Base64Encoding): Base64CharacterMap[] =>
-	getChunkedBase64Map(base64Encoding).flat();
+export const getBase64CharacterMap = (args: {
+	base64Encoding: Base64Encoding;
+	chunkSize: number;
+}): Base64CharacterMap[] =>
+	getChunkedBase64Map({ base64Encoding: args.base64Encoding, chunkSize: args.chunkSize }).flat();
 
-export function getChunkedBase64Map(base64Encoding: Base64Encoding, chunkSize = 26): Base64CharacterMap[][] {
+export function getChunkedBase64Map(args: {
+	base64Encoding: Base64Encoding;
+	chunkSize: number;
+}): Base64CharacterMap[][] {
+	const { base64Encoding, chunkSize } = args;
 	const base64Alphabet = getBase64Alphabet(base64Encoding);
 	const base64Map: Base64CharacterMap[] = base64Alphabet.map((b64, index) => ({
 		b64,
@@ -25,7 +32,7 @@ export function getChunkedBase64Map(base64Encoding: Base64Encoding, chunkSize = 
 		bin: '------',
 		dec: '--'
 	});
-	return chunkify<Base64CharacterMap>(base64Map, chunkSize);
+	return chunkify<Base64CharacterMap>({ inputList: base64Map, chunkSize });
 }
 
 export function getBase64Alphabet(base64Encoding: Base64Encoding): string[] {
@@ -37,7 +44,8 @@ export function getBase64Alphabet(base64Encoding: Base64Encoding): string[] {
 	}
 }
 
-export function getChunkedAsciiMap(chunkSize = 32): AsciiCharacterMap[][] {
+export function getChunkedAsciiMap(args: { chunkSize: number }): AsciiCharacterMap[][] {
+	const { chunkSize } = args;
 	const asciiMap = [];
 	// ASCII printable range is 0x20 (i.e., 32) through 0x7F (i.e., 127)
 	for (let i = 32; i < 127; i++) {
@@ -51,5 +59,5 @@ export function getChunkedAsciiMap(chunkSize = 32): AsciiCharacterMap[][] {
 			dec: i
 		});
 	}
-	return chunkify<AsciiCharacterMap>(asciiMap, chunkSize);
+	return chunkify<AsciiCharacterMap>({ inputList: asciiMap, chunkSize });
 }

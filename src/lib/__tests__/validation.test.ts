@@ -6,11 +6,11 @@ describe('validateTextEncoding', () => {
 	test('can identify an empty string as an invalid value', () => {
 		const result1 = validateTextEncoding('', 'ASCII');
 		expect(result1.success).toBe(false);
-		expect(result1.error.message).toBe('You must provide a string value to encode, text box is empty.');
+		expect(result1.error.message).toBe('You must provide a value to encode, text box is empty.');
 
 		const result2 = validateTextEncoding('', 'hex');
 		expect(result2.success).toBe(false);
-		expect(result2.error.message).toBe('You must provide a string value to encode, text box is empty.');
+		expect(result2.error.message).toBe('You must provide a value to encode, text box is empty.');
 	});
 
 	test('can identify a valid ASCII string', () => {
@@ -39,13 +39,13 @@ describe('validateTextEncoding', () => {
 		const result1 = validateTextEncoding('1g57cc', 'hex');
 		expect(result1.success).toBe(false);
 		expect(result1.error.message).toBe(
-			'"1g57cc" is not a valid hex string, must contain only hexadecimal digits (a-f, A-F, 0-9)'
+			'"1g57cc" is not a valid hex string, must contain only hexadecimal digits (a-f, A-F, 0-9)',
 		);
 
 		const result2 = validateTextEncoding('0x1g57cc', 'hex');
 		expect(result2.success).toBe(false);
 		expect(result2.error.message).toBe(
-			'"0x1g57cc" is not a valid hex string, must contain only hexadecimal digits (a-f, A-F, 0-9)'
+			'"0x1g57cc" is not a valid hex string, must contain only hexadecimal digits (a-f, A-F, 0-9)',
 		);
 	});
 

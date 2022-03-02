@@ -1,68 +1,68 @@
 <script lang="ts">
 	import { rotatingColors } from '$lib/constants';
 	import type { EncoderInputChunk } from '$lib/types';
+	import { getBase64CharIndexFromGroupId } from '$lib/util';
 	import type { EncodingContext, EncodingEvent, EncodingTypeState } from '$lib/xstate/b64Encode';
 	import type { Readable } from 'svelte/store';
+	import { slide } from 'svelte/transition';
 	import type { State, TypegenDisabled } from 'xstate';
 
-	export let chunk: EncoderInputChunk;
-	export let chunkNumber: number;
 	export let state: Readable<State<EncodingContext, EncodingEvent, any, EncodingTypeState, TypegenDisabled>>;
+	export let chunk: EncoderInputChunk;
+	export let chunkIndex: number;
 
-	$: chunkIndex = chunkNumber - 1;
+	$: chunkNumber = chunkIndex + 1;
 	$: chunkColor = rotatingColors[chunkIndex % rotatingColors.length];
-	$: currentChunk = $state.context.chunkIndex;
 	$: stateName = $state.toStrings().join(' ');
-	$: chunkMappingInProgress =
-		!stateName.includes('idle') && stateName.includes('mapChunkBytesToBase64') && currentChunk === chunkIndex;
-	$: currentChunkColor = chunkMappingInProgress ? chunkColor : '--white1';
+	$: highlightChunk =
+		!stateName.includes('idle') && stateName.includes('createInputChunks') && $state.context.chunkIndex === chunkIndex;
+	$: currentChunkColor = highlightChunk ? chunkColor : '--white1';
+
+	const getBase64CharColor = (groupId: string): string =>
+		rotatingColors[getBase64CharIndexFromGroupId(groupId) % rotatingColors.length];
+	const highlightBitGroup = (base64CharIndex: number, groupId: string): boolean =>
+		!stateName.includes('idle') &&
+		stateName.includes('encodeOutputText') &&
+		base64CharIndex === getBase64CharIndexFromGroupId(groupId);
+	const getCurrentBitGroupColor = (base64CharIndex: number, groupId: string): string =>
+		highlightBitGroup(base64CharIndex, groupId) ? getBase64CharColor(groupId) : currentChunkColor;
 </script>
 
 <div
+	out:slide
 	class="input-chunk"
+	class:output-mapping={$state.matches('encodeOutputText')}
 	data-chunk-id={chunkNumber}
 	data-bin={chunk.binary}
 	data-hex={chunk.hex}
 	data-ascii={chunk.ascii}
 >
 	<div class="chunk-id" data-chunk-id={chunkNumber}>
-		<span class="letter-H" style="color: var({chunkColor});">H</span>
+		<span class="chunk-label" style="color: var({chunkColor});">In</span>
 		<span class="chunk-number" style="color: var({chunkColor});">{chunkNumber}</span>
 	</div>
-	{#each chunk.inputMap as map, byteNumber}
+	{#each chunk.inputMap as map}
 		<div
 			class="chunk-byte"
 			data-chunk-id={chunkNumber}
 			data-ascii={map.ascii}
-			data-byte-id="chunk-{chunkNumber}-byte-{byteNumber + 1}"
+			data-bit-group={map.groupId}
 			data-hex="{map.hex_word1}{map.hex_word2}"
 			data-bin="{map.bin_word1}{map.bin_word1}"
-			class:mapping={chunkMappingInProgress}
-			style="color: var({currentChunkColor});"
+			class:mapping={highlightChunk}
 		>
-			<div
-				class="chunk-byte-word-1"
-				data-chunk-id={chunkNumber}
-				data-byte-id="chunk-{chunkNumber}-byte-{byteNumber + 1}"
-				data-hex={map.hex_word1}
-				data-bin={map.bin_word1}
-			>
-				{#each map.bin_word1 as bit}
-					<code class="bit"><span>{bit}</span></code>
-				{/each}
-			</div>
-			<div
-				class="chunk-byte-word-2"
-				data-chunk-id={chunkNumber}
-				data-byte-id="chunk-{chunkNumber}-byte-{byteNumber + 1}"
-				data-hex={map.hex_word2}
-				data-bin={map.bin_word2}
-				style="color: var({currentChunkColor});"
-			>
-				{#each map.bin_word2 as bit}
-					<code class="bit"><span>{bit}</span></code>
-				{/each}
-			</div>
+			{#each map.bitGroups as bitGroup}
+				<div
+					class="base64-bit-group"
+					data-bit-group={bitGroup.groupId}
+					class:mapping={highlightBitGroup($state.context.base64CharIndex, bitGroup.groupId)}
+					style="color: var({getCurrentBitGroupColor($state.context.base64CharIndex, bitGroup.groupId)});"
+				>
+					{#each bitGroup.bits as bit}
+						<code class="bit"><span>{bit}</span></code>
+					{/each}
+				</div>
+			{/each}
 		</div>
 	{/each}
 	{#if chunk.isPadded}
@@ -75,31 +75,36 @@
 <style lang="postcss">
 	.input-chunk,
 	.chunk-byte,
-	.chunk-byte-word-1,
-	.chunk-byte-word-2 {
+	.base64-bit-group {
 		display: flex;
 		flex-flow: row nowrap;
 		justify-content: flex-start;
 		font-size: 11px;
 	}
+	.input-chunk.output-mapping {
+		margin: 0 0 0.25rem 0;
+	}
 	.chunk-id {
 		display: flex;
 		flex-flow: row nowrap;
 		justify-content: flex-end;
-		width: 18px;
+		width: 22px;
 	}
-	.letter-H,
+	.chunk-label,
 	.chunk-number {
 		font-size: 10px;
 		font-style: italic;
 	}
-	.letter-H {
+	.chunk-label {
 		margin: 0 1px 0 0;
 		align-self: center;
 	}
 	.chunk-number {
 		margin: 0 2px 0 0;
 		align-self: end;
+	}
+	.chunk-byte {
+		margin: 0 0.75rem 0 0;
 	}
 	.bit {
 		background-color: var(--dark-gray3);

@@ -19,3 +19,4 @@ export { BASE64_ENCODINGS, BUTTON_COLORS, NAV_ACTIONS, STRING_ENCODINGS } from '
 export type { AppMode, Base64Encoding, ButtonColor, Encoding, NavAction, StringEncoding } from './Literals';
 export type { OutputChunk } from './OutputChunk';
 export type { Result } from './Result';
+export type { SelectMenuOption } from './SelectMenuOption';

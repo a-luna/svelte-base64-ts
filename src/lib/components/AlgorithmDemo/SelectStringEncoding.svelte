@@ -1,0 +1,33 @@
+<script lang="ts">
+	import Select from '$lib/components/Select/Select.svelte';
+	import type { SelectMenuOption, StringEncoding } from '$lib/types';
+
+	export let width = '86px';
+	export let fontSize: string = '0.875rem';
+	export let value: StringEncoding = 'ASCII';
+	export let disabled = false;
+
+	const options: SelectMenuOption[] = [
+		{ label: 'ASCII', value: 'ASCII', optionNumber: 1, active: false },
+		{ label: 'hex', value: 'hex', optionNumber: 2, active: false },
+		{ label: 'bin', value: 'bin', optionNumber: 3, active: false },
+	];
+	const menuId = 'select-string-encoding';
+	const menuLabel = '';
+
+	function handleStringEncodingChanged(stringEncoding: StringEncoding) {
+		value = stringEncoding;
+	}
+</script>
+
+<Select
+	{menuLabel}
+	{options}
+	selectedValue={value}
+	{menuId}
+	{width}
+	{fontSize}
+	{disabled}
+	flexStyles={'flex: 0 0 auto;'}
+	on:changed={(e) => handleStringEncodingChanged(e.detail)}
+/>
