@@ -37,23 +37,24 @@
 		font-size: 1rem;
 		color: var(--pri-color);
 		background-color: var(--black3);
-		outline: 1px solid var(--pri-color);
-		border: none;
+		border: 1px solid var(--pri-color);
+		outline: none;
 		border-radius: 6px;
 		margin: auto 0;
 		padding: 0.375rem 0.5rem;
 		width: 100%;
 	}
 	input:focus {
-		outline: 1px solid var(--pri-color);
+		border: 1px solid var(--pri-color);
+		outline: none;
 	}
 	input.error {
-		outline: 1px solid var(--red4);
+		border: 1px solid var(--red4);
 		color: var(--red4);
 	}
 	input[disabled] {
 		color: var(--button-disabled-text-color);
 		background-color: var(--button-disabled-bg-color);
-		outline: 1px solid var(--button-disabled-border-color);
+		border: 1px solid var(--button-disabled-border-color);
 	}
 </style>
