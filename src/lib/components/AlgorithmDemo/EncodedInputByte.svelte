@@ -19,6 +19,12 @@
 		!stateName.includes('idle') && stateName.includes('createInputChunks') && currentChunk === chunkId;
 	$: currentChunkColor = chunkMappingInProgress ? chunkColor : '--white1';
 
+	$: byteIndex = byteNumber - 1;
+	$: byteColor = rotatingColors[byteIndex % rotatingColors.length];
+	$: currentByte = $state.context.byteIndex;
+	$: byteMappingInProgress = stateName.includes('encodeInputText') && currentByte === byteIndex;
+	$: currentByteColor = byteMappingInProgress ? byteColor : currentChunkColor;
+
 	const getBase64CharColor = (groupId: string): string =>
 		rotatingColors[getBase64CharIndexFromGroupId(groupId) % rotatingColors.length];
 	const highlightBitGroup = (base64CharIndex: number, groupId: string): boolean =>
@@ -26,18 +32,23 @@
 		stateName.includes('encodeOutputText') &&
 		base64CharIndex === getBase64CharIndexFromGroupId(groupId);
 	const getCurrentBitGroupColor = (base64CharIndex: number, groupId: string): string =>
-		highlightBitGroup(base64CharIndex, groupId) ? getBase64CharColor(groupId) : currentChunkColor;
+		highlightBitGroup(base64CharIndex, groupId) ? getBase64CharColor(groupId) : currentByteColor;
 </script>
 
 <div class="byte-id" data-byte-number={byteNumber}>
 	<span class="letter-H" style="color: var({chunkColor});">H</span>
 	<span class="byte-number" style="color: var({chunkColor});">{byteNumber}</span>
 </div>
-<div class="input-byte" data-chunk-id={chunkNumber} class:mapping={chunkMappingInProgress}>
-	{#if byte.ascii}
-		<span class="ascii" data-ascii={byte.ascii}>{@html byte.isWhiteSpace ? '&nbsp;' : byte.ascii}</span>
-	{/if}
-	<span class="hex" data-hex="{byte.hex_word1}{byte.hex_word2}">{byte.hex_word1}{byte.hex_word2}</span>
+{#if byte.ascii}
+	<span class="ascii" data-ascii={byte.ascii}>{@html byte.isWhiteSpace ? '&nbsp;' : byte.ascii}</span>
+{/if}
+<span class="hex" data-hex="{byte.hex_word1}{byte.hex_word2}">{byte.hex_word1}{byte.hex_word2}</span>
+<div
+	class="input-byte"
+	data-chunk-id={chunkNumber}
+	class:mapping={chunkMappingInProgress || byteMappingInProgress}
+	style="color: var({currentByteColor});"
+>
 	{#if byte.bitGroups && byte.bitGroups?.length}
 		{#each byte.bitGroups as bitGroup}
 			<div
@@ -80,7 +91,7 @@
 	}
 	.hex {
 		color: var(--green4);
-		width: 25px;
+		width: 20px;
 		justify-self: center;
 	}
 	.byte-id {

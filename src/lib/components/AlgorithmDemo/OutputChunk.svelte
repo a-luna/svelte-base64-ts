@@ -51,13 +51,22 @@
 			class:mapping={highlightBitGroup($state.context.base64CharIndex, map.groupId)}
 			style="color: var({getCurrentBitGroupColor($state.context.base64CharIndex, map.groupId)});"
 		>
-			{#each map.bitGroups as bitGroup}
-				<div class="hex-bit-group" data-bit-group={bitGroup.groupId}>
-					{#each bitGroup.bits as bit}
-						<code class="bit" class:pad-bit={map.isPad}><span>{bit}</span></code>
-					{/each}
-				</div>
-			{/each}
+			{#if !map.isPad}
+				{#each map.bitGroups as bitGroup}
+					<div class="hex-bit-group" data-bit-group={bitGroup.groupId}>
+						{#each bitGroup.bits as bit}
+							<code class="bit" class:pad-bit={map.isPad}><span>{bit}</span></code>
+						{/each}
+					</div>
+				{/each}
+			{:else}
+				<code class="bit pad-bit"><span>{@html '&nbsp;'}</span></code>
+				<code class="bit pad-bit"><span>{@html '&nbsp;'}</span></code>
+				<code class="bit pad-bit"><span>{@html '&nbsp;'}</span></code>
+				<code class="bit pad-bit"><span>{@html '&nbsp;'}</span></code>
+				<code class="bit pad-bit"><span>{@html '&nbsp;'}</span></code>
+				<code class="bit pad-bit"><span>{@html '&nbsp;'}</span></code>
+			{/if}
 		</div>
 	{/each}
 </div>
@@ -77,8 +86,8 @@
 	.chunk-id {
 		display: flex;
 		flex-flow: row nowrap;
-		justify-content: flex-end;
-		width: 22px;
+		justify-content: flex-start;
+		width: 28px;
 	}
 	.chunk-label,
 	.chunk-number {

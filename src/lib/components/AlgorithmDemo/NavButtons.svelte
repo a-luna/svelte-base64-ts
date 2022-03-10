@@ -26,8 +26,8 @@
 		type="button"
 		title="Reset"
 		class:idle={autoplay}
-		disabled={!$state.can('GO_TO_FIRST_STEP')}
-		on:click={() => navButtonEventDispatcher('navButtonEvent', { action: 'GO_TO_FIRST_STEP' })}
+		disabled={!$state.can('RESET')}
+		on:click={() => navButtonEventDispatcher('navButtonEvent', { action: 'RESET' })}
 		on:click={() => dispatch('reset')}><div class="icon reset-icon"><Reset /></div></button
 	>
 	<button

@@ -8,7 +8,7 @@
 	import { alert } from '$lib/stores/alert';
 	import { isBase64Encoding, isStringEncoding } from '$lib/typeguards';
 	import type { Base64ByteMap, Base64Encoding, HexByteMap, NavAction, StringEncoding } from '$lib/types';
-	import { encodingMachine } from '$lib/xstate/b64Encode';
+	import { EncodingContext, EncodingEvent, encodingMachine, EncodingTypeState } from '$lib/xstate/b64Encode';
 	import { useMachine } from '@xstate/svelte';
 	import { fade } from 'svelte/transition';
 	import InputForm from './InputForm/InputForm.svelte';
@@ -17,7 +17,7 @@
 	// TODO: Create MapHexByteToBase64 component
 	// TODO: Create state machine for b64Decode process
 
-	let inputText: string;
+	let inputText = '';
 	let inputTextEncoding: StringEncoding = 'ASCII';
 	let outputBase64Encoding: Base64Encoding = 'base64';
 	let highlightHexByte: number;
@@ -26,7 +26,7 @@
 	let inputByteMaps: { chunkId: number; byteNumber: number; byte: HexByteMap }[] = [];
 	let outputByteMaps: { chunkId: number; charNumber: number; byte: Base64ByteMap }[] = [];
 
-	const { state, send } = useMachine(encodingMachine);
+	const { state, send } = useMachine<EncodingContext, EncodingEvent, EncodingTypeState>(encodingMachine);
 
 	$: anyEncodingState =
 		$state.matches('encodeInputText') || $state.matches('createInputChunks') || $state.matches('encodeOutputText');
@@ -34,7 +34,9 @@
 	$: if ($state.matches('inputTextError')) $alert = $state.context.input.validationResult.error.message;
 	$: if (stateName.includes('encodeInputText') && stateName.includes('idle')) {
 		inputByteMaps = [];
+		outputByteMaps = [];
 		highlightHexByte = null;
+		highlightBase64 = null;
 	}
 	$: if (stateName.includes('encodeInputText') && stateName.includes('Byte') && $state.context.currentByte) {
 		const chunkId = ($state.context.byteIndex / 3) | 0;
@@ -55,6 +57,7 @@
 	$: if (stateName.includes('encodeOutputText') && stateName.includes('idle')) {
 		outputByteMaps = [];
 		highlightBase64 = null;
+		console.log({ chunks: $state.context.output.chunks });
 	}
 	$: if (stateName.includes('encodeOutputText') && stateName.includes('Base64') && $state.context.currentBase64Char) {
 		const chunkId = ($state.context.base64CharIndex / 4) | 0;
@@ -163,9 +166,11 @@
 		{/if}
 	</div>
 	<div class="binary-chunks data-mapping">
-		{#if $state.matches('createInputChunks') || $state.matches('encodeOutputText')}
+		{#if $state.context?.input?.chunks}
 			{#each $state.context.input.chunks as chunk, i}
-				<InputChunk {state} {chunk} chunkIndex={i} />
+				{#if $state.matches('createInputChunks') || $state.matches('encodeOutputText')}
+					<InputChunk {state} {chunk} chunkIndex={i} />
+				{/if}
 				{#if $state.matches('encodeOutputText')}
 					<OutputChunk {state} chunk={$state.context.output.chunks[i]} chunkIndex={i} />
 				{/if}
@@ -209,17 +214,15 @@
 
 <style lang="postcss">
 	.demo-steps {
-		flex: 1 0 auto;
+		flex: 1 1 auto;
 		align-items: flex-start;
 		justify-content: space-between;
 		display: flex;
 		gap: 1rem;
 		background-color: var(--black3);
-		border: 1px solid var(--gray1);
 		border-radius: 6px;
 		overflow: auto;
 		padding: 1rem;
-		max-height: calc(100vh - 33px - 150px - 4rem);
 	}
 	.binary-chunks {
 		display: flex;
@@ -229,6 +232,7 @@
 	.encoded-bytes {
 		display: flex;
 		flex-flow: column nowrap;
+		flex: 0;
 		justify-self: flex-start;
 		gap: 1.5rem;
 		width: 200px;
@@ -239,10 +243,12 @@
 		justify-content: flex-end;
 	}
 	.demo-references {
-		flex: 0 1 150px;
+		flex: 0 1 235px;
 		padding: 0.25rem;
 		overflow: auto;
 		height: 100%;
+		width: min-content;
+		margin: 0 auto;
 	}
 	.ascii-table,
 	.base64-table {
@@ -252,7 +258,8 @@
 	:global(main) {
 		width: calc(815px + 7rem);
 	}
-	:global(.highlight-hex-byte) {
+	:global(.highlight-hex-byte),
+	:global(.highlight-base64) {
 		text-shadow: var(--hl-text-shadow) 1px 0px 1px, var(--hl-text-shadow) 0px 1px 1px,
 			var(--hl-text-shadow) -1px 0px 1px, var(--hl-text-shadow) 0px -1px 1px;
 		transition: text-shadow 0.35s ease-in-out;

@@ -18,9 +18,10 @@
 		!stateName.includes('idle') && stateName.includes('createInputChunks') && currentChunk === chunkId;
 	$: currentChunkColor = chunkMappingInProgress ? chunkColor : '--white1';
 
-	const getBase64CharColor = (): string => rotatingColors[charNumber % rotatingColors.length];
+	$: charIndex = charNumber - 1;
+	const getBase64CharColor = (): string => rotatingColors[charIndex % rotatingColors.length];
 	const highlightBitGroup = (base64CharIndex: number): boolean =>
-		!stateName.includes('idle') && stateName.includes('encodeOutputText') && base64CharIndex === charNumber;
+		!stateName.includes('idle') && stateName.includes('encodeOutputText') && base64CharIndex === charIndex;
 	const getCurrentBitGroupColor = (base64CharIndex: number): string =>
 		highlightBitGroup(base64CharIndex) ? getBase64CharColor() : currentChunkColor;
 </script>
@@ -31,19 +32,28 @@
 </div>
 <div class="base64-char" data-chunk-id={chunkNumber} class:mapping={chunkMappingInProgress}>
 	<span class="base64" data-b64={byte.b64}>{byte.b64}</span>
-	<span class="dec" data-dec={byte.dec}>{byte.dec}</span>
-	{#each byte.bitGroups as bitGroup}
-		<div
-			class="hex-bit-group"
-			data-bit-group={bitGroup.groupId}
-			class:mapping={highlightBitGroup($state.context.base64CharIndex)}
-			style="color: var({getCurrentBitGroupColor($state.context.base64CharIndex)});"
-		>
-			{#each bitGroup.bits as bit}
-				<code class="bit"><span>{bit}</span></code>
-			{/each}
-		</div>
-	{/each}
+	<span class="dec" data-dec={byte.isPad ? 'null' : byte.dec}>{byte.isPad ? '' : byte.dec}</span>
+	{#if !byte.isPad}
+		{#each byte.bitGroups as bitGroup}
+			<div
+				class="hex-bit-group"
+				data-bit-group={bitGroup.groupId}
+				class:mapping={highlightBitGroup($state.context.base64CharIndex)}
+				style="color: var({getCurrentBitGroupColor($state.context.base64CharIndex)});"
+			>
+				{#each bitGroup.bits as bit}
+					<code class="bit"><span>{bit}</span></code>
+				{/each}
+			</div>
+		{/each}
+	{:else}
+		<code class="bit pad-bit"><span>{@html '&nbsp;'}</span></code>
+		<code class="bit pad-bit"><span>{@html '&nbsp;'}</span></code>
+		<code class="bit pad-bit"><span>{@html '&nbsp;'}</span></code>
+		<code class="bit pad-bit"><span>{@html '&nbsp;'}</span></code>
+		<code class="bit pad-bit"><span>{@html '&nbsp;'}</span></code>
+		<code class="bit pad-bit"><span>{@html '&nbsp;'}</span></code>
+	{/if}
 </div>
 
 <style lang="postcss">
@@ -65,7 +75,7 @@
 	}
 	.dec {
 		color: var(--indigo4);
-		width: 25px;
+		width: 20px;
 		justify-self: center;
 	}
 	.b64Char-id {
@@ -105,6 +115,10 @@
 		transition-property: color, background-color;
 		transition-timing-function: ease-in-out;
 		transition-duration: 0.35s;
+	}
+	.pad-bit {
+		color: var(--dark-gray2);
+		background-color: var(--black1);
 	}
 	span {
 		margin: auto;

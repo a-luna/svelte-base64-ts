@@ -47,7 +47,7 @@
 	.ascii-lookup-table {
 		display: flex;
 		flex-flow: row nowrap;
-		justify-content: flex-start;
+		justify-content: center;
 		border: 1px solid rgba(216, 216, 216, 0.45);
 		border-radius: 0.375rem;
 		margin: 0 auto;

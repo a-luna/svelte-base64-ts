@@ -11,6 +11,7 @@
 </script>
 
 <div
+	class="menu-item"
 	class:active
 	style="font-size: {fontSize}"
 	data-value={value ? value : optionNumber}
@@ -36,5 +37,15 @@
 
 	.active {
 		background-color: var(--selected-item-bg-color);
+	}
+
+	.menu-item:first-child {
+		border-top-right-radius: 4px;
+		border-top-left-radius: 4px;
+	}
+
+	.menu-item:last-child {
+		border-bottom-right-radius: 4px;
+		border-bottom-left-radius: 4px;
 	}
 </style>

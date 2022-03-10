@@ -87,8 +87,8 @@
 	.chunk-id {
 		display: flex;
 		flex-flow: row nowrap;
-		justify-content: flex-end;
-		width: 22px;
+		justify-content: flex-start;
+		width: 28px;
 	}
 	.chunk-label,
 	.chunk-number {
