@@ -83,14 +83,14 @@
 		font-size: 11px;
 	}
 	.ascii {
-		color: var(--green4);
+		color: var(--pri-color);
 		font-size: 12px;
 		font-weight: 700;
 		width: 15px;
 		justify-self: center;
 	}
 	.hex {
-		color: var(--green4);
+		color: var(--pri-color);
 		width: 20px;
 		justify-self: center;
 	}

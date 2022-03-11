@@ -100,9 +100,9 @@
 	--bg-color-red: var(--red4);
 	--bg-color-pink: var(--pink4);
 	--bg-color-orange: var(--orange2);
-	--bg-color-teal: var(--blue-green2);
+	--bg-color-teal: var(--teal4);
 	--bg-color-green: var(--green4);
-	--bg-color-blue: var(--teal4);
+	--bg-color-blue: var(--blue-green2);
 	--bg-color-gray: var(--gray1);
 	--bg-color-yellow: var(--yellow3);
 	--bg-color-indigo: var(--indigo4);
@@ -120,13 +120,16 @@
 	--button-disabled-bg-color: var(--gray2);
 	--button-disabled-text-color: var(--dark-gray3);
 
-	--page-bg-color: var(--black2);
+	--page-bg-color: var(--black1);
 	--hl-text-shadow: hsla(0, 0%, 100%, 0.6);
 	--radio-button-color: var(--pink4);
 	--fieldset-title-color: var(--white3);
 	--fieldset-border-color: var(--gray2);
 	--options-details-name-color: var(--gray2);
 	--options-details-value-color: var(--white2);
+	--default-border-color: hsla(0, 0%, 85%, 0.45);
+	--modal-dialog-bg-color: hsla(0, 0%, 20%, 0.9);
+	--modal-header-text-color: var(--white2);
 }
 
 *,
@@ -137,7 +140,7 @@
 
 html,
 body {
-	background-color: #444;
+	background-color: var(--gray4);
 	position: relative;
 	width: 100%;
 	height: 100%;
@@ -278,6 +281,147 @@ button {
 	overflow-x: auto;
 	overflow-y: hidden;
 	width: auto;
+	margin: auto;
+}
+
+.input-form button {
+	color: var(--nav-button-text-color);
+	background-color: var(--nav-button-bg-color);
+	border-top: 1px solid var(--nav-button-border-color);
+	border-bottom: 1px solid var(--nav-button-border-color);
+	border-right: none;
+	border-left: 0.5px solid var(--nav-button-border-color);
+	border-radius: 0;
+	padding: 8px 13px;
+	margin: 0;
+	height: 33px;
+	cursor: pointer;
+}
+
+.input-form button:hover {
+	color: var(--nav-button-hover-text-color);
+	background-color: var(--nav-button-hover-bg-color);
+}
+
+.input-form button:focus,
+.input-form button:active,
+.input-form button:active:focus {
+	color: var(--nav-button-active-text-color);
+	background-color: var(--nav-button-active-bg-color);
+	border-left: 0.5px solid var(--nav-button-active-border-color);
+	border-top: 1px solid var(--nav-button-active-border-color);
+	border-bottom: 1px solid var(--nav-button-active-border-color);
+}
+
+.input-form button:first-child {
+	border-top-left-radius: 6px;
+	border-bottom-left-radius: 6px;
+	border-left: 1px solid var(--nav-button-border-color);
+}
+
+.input-form button:first-child:focus,
+.input-form button:first-child:active,
+.input-form button:first-child:active:focus {
+	border-left: 1px solid var(--nav-button-active-border-color);
+}
+
+.input-form button:last-child {
+	border-top-right-radius: 6px;
+	border-bottom-right-radius: 6px;
+	border-right: 1px solid var(--nav-button-border-color);
+}
+
+.input-form button:last-child:focus,
+.input-form button:last-child:active,
+.input-form button:last-child:active:focus {
+	border-right: 1px solid var(--nav-button-active-border-color);
+}
+
+.input-form button:disabled,
+.input-form button:disabled:hover,
+.input-form button:disabled:focus,
+.input-form button:disabled:active,
+.input-form button:disabled:active:focus {
+	cursor: default;
+	color: var(--button-disabled-text-color);
+	background-color: var(--button-disabled-bg-color);
+	border-left: 0.5px solid var(--button-disabled-border-color);
+	border-top: 1px solid var(--button-disabled-border-color);
+	border-bottom: 1px solid var(--button-disabled-border-color);
+}
+
+.input-form button:disabled:first-child,
+.input-form button:disabled:first-child:focus,
+.input-form button:disabled:first-child:active,
+.input-form button:disabled:first-child:active:focus {
+	border-left: 1px solid var(--button-disabled-border-color);
+}
+
+.input-form button:disabled:last-child,
+.input-form button:disabled:last-child:focus,
+.input-form button:disabled:last-child:active,
+.input-form button:disabled:last-child:active:focus {
+	border-right: 1px solid var(--button-disabled-border-color);
+}
+
+.autoplay button,
+.autoplay button:hover,
+.autoplay button:focus,
+.autoplay button:active,
+.autoplay button:active:focus {
+	color: var(--nav-button-autoplay-text-color);
+	background-color: var(--nav-button-autoplay-bg-color);
+	border-left: 0.5px solid var(--nav-button-autoplay-border-color);
+	border-top: 1px solid var(--nav-button-autoplay-border-color);
+	border-bottom: 1px solid var(--nav-button-autoplay-border-color);
+}
+
+.autoplay button.idle,
+.autoplay button.idle:hover,
+.autoplay button.idle:focus,
+.autoplay button.idle:active,
+.autoplay button.idle:active:focus,
+.autoplay button:disabled,
+.autoplay button:disabled:hover,
+.autoplay button:disabled:focus,
+.autoplay button:disabled:active,
+.autoplay button:disabled:active:focus {
+	cursor: default;
+	color: var(--nav-button-autoplay-idle-text-color);
+	background-color: var(--nav-button-autoplay-idle-bg-color);
+	border-left: 0.5px solid var(--nav-button-autoplay-idle-border-color);
+	border-top: 1px solid var(--nav-button-autoplay-idle-border-color);
+	border-bottom: 1px solid var(--nav-button-autoplay-idle-border-color);
+}
+
+.autoplay button.idle:last-child,
+.autoplay button.idle:last-child:hover,
+.autoplay button.idle:last-child:focus,
+.autoplay button.idle:last-child:active,
+.autoplay button.idle:last-child:active:focus,
+.autoplay button:disabled:last-child,
+.autoplay button:disabled:last-child:hover,
+.autoplay button:disabled:last-child:focus,
+.autoplay button:disabled:last-child:active,
+.autoplay button:disabled:last-child:active:focus {
+	border-right: 1px solid var(--nav-button-autoplay-idle-border-color);
+}
+
+.autoplay button.idle:first-child,
+.autoplay button.idle:first-child:hover,
+.autoplay button.idle:first-child:focus,
+.autoplay button.idle:first-child:active,
+.autoplay button.idle:first-child:active:focus,
+.autoplay button:disabled:first-child,
+.autoplay button:disabled:first-child:hover,
+.autoplay button:disabled:first-child:focus,
+.autoplay button:disabled:first-child:active,
+.autoplay button:disabled:first-child:active:focus {
+	border-left: 1px solid var(--nav-button-autoplay-idle-border-color);
+}
+
+.input-form .icon {
+	width: 11px;
 	margin: auto;
 }
 

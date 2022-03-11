@@ -17,7 +17,7 @@
 			groupId,
 			groupName,
 			selectionId: id,
-			value
+			value,
 		});
 	}
 </script>
@@ -93,7 +93,7 @@
 	input[type='radio'] + label::before {
 		content: '';
 		background: rgb(37, 37, 37);
-		border: 0.1em solid rgba(216, 216, 216, 0.45);
+		border: 0.1em solid var(--default-border-color);
 		border-radius: 100%;
 		background-color: rgb(37, 37, 37, 80%);
 		display: block;

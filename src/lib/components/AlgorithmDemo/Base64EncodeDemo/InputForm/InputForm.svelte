@@ -1,5 +1,7 @@
 <script lang="ts">
+	import HelpButton from '$lib/components/AlgorithmDemo/Buttons/HelpButton.svelte';
 	import NavButtons from '$lib/components/AlgorithmDemo/NavButtons.svelte';
+	import NavButtonsLegend from '$lib/components/AlgorithmDemo/NavButtonsLegend.svelte';
 	import SelectBase64Encoding from '$lib/components/AlgorithmDemo/SelectBase64Encoding.svelte';
 	import SelectStringEncoding from '$lib/components/AlgorithmDemo/SelectStringEncoding.svelte';
 	import InputTextBox from '$lib/components/InputTextBox.svelte';
@@ -12,23 +14,39 @@
 	export let inputText: string;
 	export let inputTextEncoding: StringEncoding = 'ASCII';
 	export let outputBase64Encoding: Base64Encoding = 'base64';
+	let navButtonLegendModal: NavButtonsLegend;
 
 	$: inputTextBoxStyles = 'flex: 1;';
 	$: controlsDisabled = !$state.matches('inactive') && !$state.matches('inputTextError');
 </script>
 
 <div class="input-form">
-	<SelectStringEncoding bind:value={inputTextEncoding} disabled={controlsDisabled} />
-	<InputTextBox bind:inputText disabled={controlsDisabled} style={inputTextBoxStyles} on:submit />
-	<NavButtons {state} on:reset={() => (inputText = '')} on:navButtonEvent />
-	<SelectBase64Encoding bind:value={outputBase64Encoding} disabled={controlsDisabled} />
+	<div class="input-form-left">
+		<HelpButton on:click={() => navButtonLegendModal.toggleModel()} />
+		<SelectStringEncoding bind:value={inputTextEncoding} disabled={controlsDisabled} />
+		<InputTextBox bind:inputText disabled={controlsDisabled} style={inputTextBoxStyles} on:submit />
+	</div>
+	<div class="input-form-right">
+		<NavButtons {state} on:reset={() => (inputText = '')} on:navButtonEvent />
+		<SelectBase64Encoding bind:value={outputBase64Encoding} disabled={controlsDisabled} />
+	</div>
 </div>
+<NavButtonsLegend bind:this={navButtonLegendModal} />
 
 <style lang="postcss">
 	.input-form {
 		display: flex;
+		flex-flow: row wrap;
 		align-items: center;
-		gap: 1rem;
+		gap: 0.75rem;
 		width: 100%;
+	}
+
+	.input-form-left,
+	.input-form-right {
+		display: flex;
+		flex: 0 0 49%;
+		justify-content: space-between;
+		gap: 0.75rem;
 	}
 </style>

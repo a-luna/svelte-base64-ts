@@ -167,6 +167,8 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 					START_AUTO_PLAY: { target: 'validateInputText', actions: ['validate', 'startAutoPlay'] },
 					VALIDATE_INPUT: { target: 'validateInputText', actions: 'validate' },
                     RESET: { target: 'inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
+                    GO_TO_FIRST_STEP: { target: 'inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
+                    GO_TO_PREV_STEP: { target: 'inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
 				},
 			},
 			encodeInputText: {
@@ -195,24 +197,7 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 								{ target: 'encodingComplete', cond: 'noBytesRemaining' },
 							],
 						},
-						on: {
-							START_AUTO_PLAY: {
-								target: 'autoPlayEncodeByte',
-								actions: 'startAutoPlay',
-								cond: 'autoPlayDisabled',
-							},
-							STOP_AUTO_PLAY: { actions: 'stopAutoPlay', cond: 'autoPlayEnabled' },
-							GO_TO_FIRST_STEP: { target: 'idle', cond: 'autoPlayDisabled' },
-							GO_TO_PREV_STEP: [
-								{ target: 'encodeByte', actions: 'mapPreviousByte', cond: 'hasPreviousByte' },
-								{ target: 'idle', cond: 'allBytesRemaining' },
-							],
-							GO_TO_NEXT_STEP: [
-								{ target: 'encodeByte', actions: 'mapNextByte', cond: 'bytesRemaining' },
-								{ target: 'encodingComplete', cond: 'noBytesRemaining' },
-							],
-							GO_TO_LAST_STEP: { target: 'encodingComplete', cond: 'autoPlayDisabled' },
-						},
+						on: { STOP_AUTO_PLAY: { actions: 'stopAutoPlay', cond: 'autoPlayEnabled' } },
 					},
 					encodeByte: {
 						entry: ['getCurrentByte'],
@@ -222,12 +207,11 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 								actions: 'startAutoPlay',
 								cond: 'autoPlayDisabled',
 							},
-							STOP_AUTO_PLAY: { actions: 'stopAutoPlay', cond: 'autoPlayEnabled' },
                             RESET: { target: '#inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
-							GO_TO_FIRST_STEP: { target: 'idle', cond: 'autoPlayDisabled' },
+							GO_TO_FIRST_STEP: { target: '#inactive', cond: 'autoPlayDisabled' },
 							GO_TO_PREV_STEP: [
 								{ target: 'encodeByte', actions: 'mapPreviousByte', cond: 'hasPreviousByte' },
-								{ target: 'idle', cond: 'allBytesRemaining' },
+								{ target: '#inactive', cond: 'allBytesRemaining' },
 							],
 							GO_TO_NEXT_STEP: [
 								{ target: 'encodeByte', actions: 'mapNextByte', cond: 'bytesRemaining' },

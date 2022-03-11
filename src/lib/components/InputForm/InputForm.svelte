@@ -1,4 +1,5 @@
 <script lang="ts">
+	import FormTitle from '$lib/components/FormTitle.svelte';
 	import InputBase64EncodingRadioButtons from '$lib/components/InputForm/InputBase64EncodingRadioButtons.svelte';
 	import InputStringEncodingRadioButtons from '$lib/components/InputForm/InputStringEncodingRadioButtons.svelte';
 	import OutputBase64EncodingRadioButtons from '$lib/components/InputForm/OutputBase64EncodingRadioButtons.svelte';
@@ -54,9 +55,7 @@
 </script>
 
 <div class="input-form" class:error={!$app.inputStringIsValid}>
-	<span class="form-title">
-		{$app.formTitle}
-	</span>
+	<FormTitle title={$app.formTitle} />
 	<PushableButton size={'xs'} color={$app.switchModeButtonColor} on:click={() => toggleMode()}
 		>Switch Mode</PushableButton
 	>
@@ -87,19 +86,6 @@
 		grid-auto-flow: row;
 		align-items: end;
 		grid-gap: 1rem 0.5rem;
-	}
-	.form-title {
-		grid-column: 1 / span 2;
-		color: var(--pri-color);
-		font-size: 1.8rem;
-		font-weight: 400;
-		text-align: center;
-		letter-spacing: 1.5px;
-		margin: 0;
-		line-height: 1;
-		text-shadow: 2px 2px var(--sec-color), 1.75px 1.75px var(--sec-color), 1.5px 1.5px var(--sec-color),
-			1.25px 1.25px var(--sec-color), 1px 1px var(--sec-color), 0.75px 0.75px var(--sec-color),
-			0.5px 0.5px var(--sec-color), 0.25px 0.25px var(--sec-color);
 	}
 	.input-encoding-options,
 	.output-encoding-options {

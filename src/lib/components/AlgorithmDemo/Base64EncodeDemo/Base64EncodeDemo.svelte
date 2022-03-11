@@ -1,17 +1,20 @@
 <script lang="ts">
+	import AuthorName from '$lib/components/AlgorithmDemo/AuthorName.svelte';
+	import InputForm from '$lib/components/AlgorithmDemo/Base64EncodeDemo/InputForm/InputForm.svelte';
 	import EncodedInputByte from '$lib/components/AlgorithmDemo/EncodedInputByte.svelte';
 	import EncodedOutputByte from '$lib/components/AlgorithmDemo/EncodedOutputByte.svelte';
 	import InputChunk from '$lib/components/AlgorithmDemo/InputChunk.svelte';
 	import OutputChunk from '$lib/components/AlgorithmDemo/OutputChunk.svelte';
+	import FormTitle from '$lib/components/FormTitle.svelte';
 	import AsciiLookupTable from '$lib/components/LookupTables/AsciiLookupTable.svelte';
 	import Base64LookupTable from '$lib/components/LookupTables/Base64LookupTable.svelte';
 	import { alert } from '$lib/stores/alert';
 	import { isBase64Encoding, isStringEncoding } from '$lib/typeguards';
 	import type { Base64ByteMap, Base64Encoding, HexByteMap, NavAction, StringEncoding } from '$lib/types';
-	import { EncodingContext, EncodingEvent, encodingMachine, EncodingTypeState } from '$lib/xstate/b64Encode';
+	import type { EncodingContext, EncodingEvent, EncodingTypeState } from '$lib/xstate/b64Encode';
+	import { encodingMachine } from '$lib/xstate/b64Encode';
 	import { useMachine } from '@xstate/svelte';
 	import { fade } from 'svelte/transition';
-	import InputForm from './InputForm/InputForm.svelte';
 
 	// TODO: Create smart text snippets that explain process of converting inputText -> binary -> 24-bit chunks
 	// TODO: Create MapHexByteToBase64 component
@@ -57,7 +60,7 @@
 	$: if (stateName.includes('encodeOutputText') && stateName.includes('idle')) {
 		outputByteMaps = [];
 		highlightBase64 = null;
-		console.log({ chunks: $state.context.output.chunks });
+		console.log({ output: $state.context.output });
 	}
 	$: if (stateName.includes('encodeOutputText') && stateName.includes('Base64') && $state.context.currentBase64Char) {
 		const chunkId = ($state.context.base64CharIndex / 4) | 0;
@@ -135,6 +138,10 @@
 
 <svelte:window on:keydown={(e) => handleKeyPress(e.code)} />
 
+<div class="form-top-row">
+	<FormTitle title={'Base64 Algorithm Demo'} fontSize={'1.6rem'} letterSpacing={'2.7px'} />
+	<AuthorName />
+</div>
 <InputForm
 	{state}
 	bind:inputText
@@ -213,16 +220,22 @@
 </div>
 
 <style lang="postcss">
+	.form-top-row {
+		display: flex;
+		justify-content: space-between;
+		gap: 0.5rem;
+	}
 	.demo-steps {
 		flex: 1 1 auto;
 		align-items: flex-start;
 		justify-content: space-between;
 		display: flex;
 		gap: 1rem;
-		background-color: var(--black3);
+		background-color: var(--black2);
+		border: 1px solid var(--default-border-color);
 		border-radius: 6px;
 		overflow: auto;
-		padding: 1rem;
+		padding: 1rem 0.5rem;
 	}
 	.binary-chunks {
 		display: flex;
@@ -256,7 +269,7 @@
 		margin: 0 auto;
 	}
 	:global(main) {
-		width: calc(815px + 7rem);
+		max-width: 869px;
 	}
 	:global(.highlight-hex-byte),
 	:global(.highlight-base64) {

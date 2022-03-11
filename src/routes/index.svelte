@@ -18,10 +18,10 @@
 		display: flex;
 		flex-flow: column nowrap;
 		justify-content: space-between;
-		gap: 1.5rem;
+		gap: 1rem;
 		position: relative;
 		background-color: var(--page-bg-color);
-		padding: 1.5rem;
+		padding: 1rem 1.5rem;
 		margin: 0 auto;
 		box-sizing: border-box;
 		height: 100vh;

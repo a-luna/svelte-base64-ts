@@ -22,6 +22,7 @@
 	export let buttonHeight = '33px';
 	export let buttonPadding = '9px 11px 9px 14px';
 	export let dropdownShown: boolean = false;
+	export let tooltip = '';
 	let selectedOption: SelectMenuOption;
 	const dispatch = createEventDispatcher();
 
@@ -58,6 +59,7 @@
 <div
 	class="select-menu-wrapper"
 	style="width: {width ? width : 'auto'}; margin: {margin ? margin : '0'}; {flexStyles}"
+	title={tooltip}
 	data-testid={menuId}
 	use:clickOutside={{ enabled: dropdownShown, cb: () => (dropdownShown = !dropdownShown) }}
 >
@@ -116,6 +118,7 @@
 		border-width: 0;
 		box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 		margin: 0;
+		cursor: pointer;
 	}
 
 	button:focus {

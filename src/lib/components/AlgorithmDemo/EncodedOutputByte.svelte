@@ -67,14 +67,14 @@
 		font-size: 11px;
 	}
 	.base64 {
-		color: var(--indigo4);
+		color: var(--sec-color);
 		font-size: 12px;
 		font-weight: 700;
 		width: 15px;
 		justify-self: center;
 	}
 	.dec {
-		color: var(--indigo4);
+		color: var(--sec-color);
 		width: 20px;
 		justify-self: center;
 	}

@@ -27,6 +27,7 @@
 	{width}
 	{fontSize}
 	{disabled}
+	tooltip={'Select Base64 (Output) Encoding'}
 	flexStyles={'flex: 0 0 auto;'}
 	on:changed={(e) => handleStringEncodingChanged(e.detail)}
 />

@@ -28,6 +28,7 @@
 	{width}
 	{fontSize}
 	{disabled}
+	tooltip={'Select String (Input) Encoding'}
 	flexStyles={'flex: 0 0 auto;'}
 	on:changed={(e) => handleStringEncodingChanged(e.detail)}
 />

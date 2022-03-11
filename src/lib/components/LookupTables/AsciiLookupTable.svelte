@@ -48,7 +48,7 @@
 		display: flex;
 		flex-flow: row nowrap;
 		justify-content: center;
-		border: 1px solid rgba(216, 216, 216, 0.45);
+		border: 1px solid var(--default-border-color);
 		border-radius: 0.375rem;
 		margin: 0 auto;
 		overflow-x: auto;
@@ -56,7 +56,7 @@
 	}
 
 	.ascii-lookup-chunk {
-		border-right: 1px solid rgba(216, 216, 216, 0.45);
+		border-right: 1px solid var(--default-border-color);
 		padding: 0 0.3125rem;
 		margin: 0.375rem 0;
 	}
@@ -72,7 +72,7 @@
 	}
 
 	.ascii-lookup code {
-		color: var(--sec-color);
+		color: var(--pri-color);
 	}
 
 	.ascii-lookup code {

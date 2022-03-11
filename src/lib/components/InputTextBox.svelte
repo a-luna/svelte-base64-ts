@@ -36,7 +36,7 @@
 	input {
 		font-size: 1rem;
 		color: var(--pri-color);
-		background-color: var(--black3);
+		background-color: var(--black2);
 		border: 1px solid var(--pri-color);
 		outline: none;
 		border-radius: 6px;
