@@ -31,9 +31,9 @@
 	<span class="letter-B" style="color: var({chunkColor});">B</span>
 	<span class="b64Char-number" style="color: var({chunkColor});">{charNumber}</span>
 </div>
+<span class="base64" data-b64={b64.b64}>{b64.b64}</span>
+<span class="dec" data-dec={b64.isPad ? 'null' : b64.dec}>{b64.isPad ? '' : b64.dec}</span>
 <div class="base64-char" data-chunk-id={chunkNumber} class:mapping={chunkMappingInProgress}>
-	<span class="base64" data-b64={b64.b64}>{b64.b64}</span>
-	<span class="dec" data-dec={b64.isPad ? 'null' : b64.dec}>{b64.isPad ? '' : b64.dec}</span>
 	{#if !b64.isPad}
 		{#each b64.bitGroups as bitGroup}
 			<div
@@ -48,12 +48,14 @@
 			</div>
 		{/each}
 	{:else}
-		<code class="bit pad-bit"><span>{@html '&nbsp;'}</span></code>
-		<code class="bit pad-bit"><span>{@html '&nbsp;'}</span></code>
-		<code class="bit pad-bit"><span>{@html '&nbsp;'}</span></code>
-		<code class="bit pad-bit"><span>{@html '&nbsp;'}</span></code>
-		<code class="bit pad-bit"><span>{@html '&nbsp;'}</span></code>
-		<code class="bit pad-bit"><span>{@html '&nbsp;'}</span></code>
+		<div class="hex-bit-group pad-char" class:mapping={highlightBitGroup($state.context.base64CharIndex)}>
+			<code class="bit pad-bit"><span>{@html '&nbsp;'}</span></code>
+			<code class="bit pad-bit"><span>{@html '&nbsp;'}</span></code>
+			<code class="bit pad-bit"><span>{@html '&nbsp;'}</span></code>
+			<code class="bit pad-bit"><span>{@html '&nbsp;'}</span></code>
+			<code class="bit pad-bit"><span>{@html '&nbsp;'}</span></code>
+			<code class="bit pad-bit"><span>{@html '&nbsp;'}</span></code>
+		</div>
 	{/if}
 </div>
 
@@ -67,17 +69,17 @@
 		justify-content: flex-start;
 		font-size: 11px;
 	}
-	.base64 {
+	.base64,
+	.dec {
+		font-family: menlo, monospace;
 		color: var(--sec-color);
-		font-size: 12px;
-		font-weight: 700;
-		width: 15px;
 		justify-self: center;
 	}
+	.base64 {
+		width: 15px;
+	}
 	.dec {
-		color: var(--sec-color);
 		width: 20px;
-		justify-self: center;
 	}
 	.b64Char-id {
 		display: flex;
@@ -99,27 +101,25 @@
 		margin: 0 2px 0 0;
 		align-self: end;
 	}
-	.base64-char {
-		margin: 0 0.5rem 0 0;
-	}
 	.bit {
-		background-color: var(--gray2);
+		background-color: var(--gray3);
 		line-height: 1;
 		text-align: center;
 		padding: 1px 0;
 		border: 0.5px solid var(--black2);
 		width: 13px;
+		font-weight: 500;
 	}
 	.mapping .bit {
 		font-weight: 500;
-		background-color: var(--gray4);
+		background-color: var(--dark-gray2);
 		transition-property: color, background-color;
 		transition-timing-function: ease-in-out;
 		transition-duration: 0.35s;
 	}
 	.pad-bit {
 		color: var(--dark-gray2);
-		background-color: var(--black1);
+		background-color: var(--gray3);
 	}
 	span {
 		margin: auto;

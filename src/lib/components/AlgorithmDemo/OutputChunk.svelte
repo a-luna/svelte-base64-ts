@@ -106,16 +106,17 @@
 		margin: 0 0.5rem 0 0;
 	}
 	.bit {
-		background-color: var(--gray2);
+		background-color: var(--gray3);
 		line-height: 1;
 		text-align: center;
 		padding: 1px 0;
 		border: 0.5px solid var(--black2);
 		width: 13px;
+		font-weight: 500;
 	}
 	.mapping .bit {
 		font-weight: 500;
-		background-color: var(--gray4);
+		background-color: var(--dark-gray2);
 		transition-property: color, background-color;
 		transition-timing-function: ease-in-out;
 		transition-duration: 0.35s;
@@ -128,6 +129,6 @@
 	}
 	.pad-bit {
 		color: var(--dark-gray2);
-		background-color: var(--black1);
+		background-color: var(--gray3);
 	}
 </style>

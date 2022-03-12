@@ -82,17 +82,17 @@
 		justify-content: flex-start;
 		font-size: 11px;
 	}
-	.ascii {
+	.ascii,
+	.hex {
+		font-family: menlo, monospace;
 		color: var(--pri-color);
-		font-size: 12px;
-		font-weight: 700;
-		width: 15px;
 		justify-self: center;
 	}
+	.ascii {
+		width: 15px;
+	}
 	.hex {
-		color: var(--pri-color);
 		width: 20px;
-		justify-self: center;
 	}
 	.byte-id {
 		display: flex;
@@ -118,7 +118,7 @@
 		margin: 0 0.5rem 0 0;
 	}
 	.bit {
-		background-color: var(--dark-gray3);
+		background-color: var(--dark-gray4);
 		line-height: 1;
 		text-align: center;
 		padding: 1px 0;
@@ -127,7 +127,7 @@
 	}
 	.mapping .bit {
 		font-weight: 500;
-		background-color: var(--black1);
+		background-color: var(--dark-gray2);
 		transition-property: color, background-color;
 		transition-timing-function: ease-in-out;
 		transition-duration: 0.35s;

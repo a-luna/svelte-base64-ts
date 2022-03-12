@@ -25,6 +25,6 @@
 
 <style lang="postcss">
 	.algo-nav-buttons button .icon.play-icon {
-		width: 9px;
+		width: 10px;
 	}
 </style>

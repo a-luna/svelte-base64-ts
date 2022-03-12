@@ -27,6 +27,7 @@
 	let highlightHexByte: number;
 	let highlightBase64: string;
 	let action: NavAction;
+	let pageWidth: number;
 
 	const { state, send } = useMachine<EncodingContext, EncodingEvent, EncodingTypeState>(encodingMachine);
 
@@ -38,6 +39,8 @@
 		highlightHexByte = null;
 		highlightBase64 = null;
 	}
+	$: tableChunkSize = pageWidth < 830 ? 32 : 16;
+	$: tableSectionHeight = pageWidth < 830 ? 'auto' : '260px';
 
 	function submitForm() {
 		if (isStringEncoding(inputTextEncoding) && isBase64Encoding(outputBase64Encoding)) {
@@ -100,10 +103,10 @@
 	}
 </script>
 
-<svelte:window on:keydown={(e) => handleKeyPress(e.code)} />
+<svelte:window on:keydown={(e) => handleKeyPress(e.code)} bind:innerWidth={pageWidth} />
 
 <div class="form-top-row">
-	<FormTitle title={'Base64 Algorithm Demo'} fontSize={'1.6rem'} letterSpacing={'2.7px'} />
+	<FormTitle title={'Base64 Algorithm Demo'} fontSize={'1.8rem'} letterSpacing={'2.7px'} />
 	<AuthorName />
 </div>
 <InputForm
@@ -170,15 +173,15 @@
 		{/if}
 	</div>
 </div>
-<div class="demo-references">
+<div class="demo-references" style="flex: 1 0 {tableSectionHeight}">
 	{#if (($state.matches('encodeInputText') && !stateName.includes('idle')) || $state.matches('createInputChunks')) && $state.context.input.ascii}
 		<div transition:fade class="ascii-table">
-			<AsciiLookupTable asciiTableChunkSize={14} {highlightHexByte} fontSize={'0.65rem'} />
+			<AsciiLookupTable asciiTableChunkSize={tableChunkSize} {highlightHexByte} fontSize={'0.65rem'} />
 		</div>
 	{/if}
 	{#if $state.matches('encodeOutputText')}
 		<div transition:fade class="base64-table">
-			<Base64LookupTable base64TableChunkSize={13} {highlightBase64} fontSize={'0.65rem'} />
+			<Base64LookupTable base64TableChunkSize={tableChunkSize} {highlightBase64} fontSize={'0.65rem'} />
 		</div>
 	{/if}
 </div>
@@ -187,7 +190,9 @@
 	.form-top-row {
 		display: flex;
 		justify-content: space-between;
+		align-items: center;
 		gap: 1rem;
+		height: 33px;
 	}
 	.demo-steps {
 		display: flex;
@@ -197,7 +202,6 @@
 		justify-content: flex-start;
 		gap: 0.5rem;
 		background-color: var(--black2);
-		border: 1px solid var(--default-border-color);
 		border-radius: 6px;
 		overflow: auto;
 		padding: 1rem 0.5rem;
@@ -222,10 +226,8 @@
 		gap: 0.25rem;
 	}
 	.demo-references {
-		flex: 0 1 235px;
 		padding: 0.25rem;
 		overflow: auto;
-		height: 100%;
 		width: min-content;
 		margin: 0 auto;
 	}

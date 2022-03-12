@@ -33,14 +33,12 @@ export const BIN_TO_HEX = {
 
 export const rotatingColors = [
 	'--red4',
-	'--green2',
-	'--blue3',
+	'--green3',
 	'--orange3',
 	'--teal4',
 	'--orange-yellow3',
 	'--purple3',
-	'--green3',
-	'--indigo3',
+	'--green4',
 	'--yellow3',
 	'--pink4',
 	'--yellow-green3',

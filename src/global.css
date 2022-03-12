@@ -72,7 +72,7 @@
 	--blue1: hsl(218, 100%, 25%);
 	--blue2: hsl(218, 100%, 35%);
 	--blue3: hsl(218, 100%, 45%);
-	--blue4: hsl(218, 100%, 55%);
+	--blue4: hsl(218, 100%, 65%);
 
 	--blue-gray0: hsl(221, 39%, 11%);
 	--blue-gray1: hsl(215, 28%, 17%);
@@ -82,7 +82,7 @@
 	--indigo1: hsl(251, 74%, 30%);
 	--indigo2: hsl(251, 74%, 40%);
 	--indigo3: hsl(251, 74%, 50%);
-	--indigo4: hsl(261, 100%, 60%);
+	--indigo4: hsl(261, 100%, 65%);
 
 	--purple1: hsl(290, 100%, 35%);
 	--purple2: hsl(290, 100%, 45%);
@@ -312,6 +312,7 @@ button {
 .input-form button:focus,
 .input-form button:active,
 .input-form button:active:focus {
+	outline: 0;
 	color: var(--nav-button-active-text-color);
 	background-color: var(--nav-button-active-bg-color);
 	border-left: 0.5px solid var(--nav-button-active-border-color);

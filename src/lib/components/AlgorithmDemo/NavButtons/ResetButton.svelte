@@ -27,6 +27,6 @@
 
 <style lang="postcss">
 	.algo-nav-buttons button .icon.reset-icon {
-		width: 13px;
+		width: 12px;
 	}
 </style>
