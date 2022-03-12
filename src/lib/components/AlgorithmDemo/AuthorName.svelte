@@ -28,6 +28,6 @@
 		color: var(--nav-button-active-bg-color);
 	}
 	.author-github {
-		align-self: flex-end;
+		margin: 4px 0 0 0;
 	}
 </style>

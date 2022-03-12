@@ -164,6 +164,10 @@ main.encode {
 	--pri-color: var(--teal4);
 	--sec-color: var(--pink4);
 
+	/* Form Title */
+	--form-title-text-color: hsl(171 100% 63% / 0.7);
+	--form-title-text-shadow-color: hsla(301 93% 71% / 0.25);
+
 	/* Algorithm Demo Nav Buttons (Manual Mode) */
 	--nav-button-text-color: var(--black2);
 	--nav-button-bg-color: hsla(171 100% 63% / 0.45);
@@ -204,6 +208,10 @@ main.encode {
 main.decode {
 	--pri-color: var(--green4);
 	--sec-color: var(--indigo4);
+
+	/* Form Title */
+	--form-title-text-color: hsl(113 100% 72% / 0.7);
+	--form-title-text-shadow-color: hsla(261 100% 77% / 0.25);
 
 	/* Algorithm Demo Nav Buttons (Manual Mode) */
 	--nav-button-text-color: var(--black2);
