@@ -18,13 +18,24 @@
 
 	$: inputTextBoxStyles = 'flex: 1;';
 	$: controlsDisabled = !$state.matches('inactive') && !$state.matches('inputTextError');
+
+	function getPlaceholder(encoding: StringEncoding): string {
+		const stringEncoding = encoding === 'ASCII' ? 'text value' : encoding === 'hex' ? 'hex string' : 'binary string';
+		return `enter ${stringEncoding} to encode...`;
+	}
 </script>
 
 <div class="input-form">
 	<div class="input-form-left">
 		<HelpButton {state} on:click={() => navButtonLegendModal.toggleModel()} />
 		<SelectStringEncoding bind:value={inputTextEncoding} disabled={controlsDisabled} />
-		<InputTextBox bind:inputText disabled={controlsDisabled} style={inputTextBoxStyles} on:submit />
+		<InputTextBox
+			bind:inputText
+			placeholder={getPlaceholder(inputTextEncoding)}
+			disabled={controlsDisabled}
+			style={inputTextBoxStyles}
+			on:submit
+		/>
 	</div>
 	<div class="input-form-right">
 		<NavButtons {state} on:reset={() => (inputText = '')} on:navButtonEvent />

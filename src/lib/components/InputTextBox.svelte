@@ -5,6 +5,7 @@
 
 	export let style: string;
 	export let inputText: string;
+	export let placeholder = '';
 	export let disabled: boolean = false;
 	let inputTextElement: HTMLInputElement;
 	const dispatch = createEventDispatcher();
@@ -23,6 +24,7 @@
 <input
 	type="text"
 	spellcheck="false"
+	{placeholder}
 	class:error={!$app.inputStringIsValid}
 	{style}
 	{disabled}
@@ -43,6 +45,8 @@
 		margin: auto 0;
 		padding: 0.375rem 0.5rem;
 		width: 100%;
+		font-size: 0.8rem;
+		line-height: 19px;
 	}
 	input:focus {
 		border: 1px solid var(--pri-color);
