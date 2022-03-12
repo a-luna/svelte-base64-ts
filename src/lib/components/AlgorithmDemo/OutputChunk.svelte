@@ -16,7 +16,7 @@
 	$: stateName = $state.toStrings().join(' ');
 	$: highlightChunk =
 		!stateName.includes('idle') && stateName.includes('createInputChunks') && $state.context.chunkIndex === chunkIndex;
-	$: currentChunkColor = highlightChunk ? chunkColor : '--white1';
+	$: currentChunkColor = highlightChunk ? chunkColor : '--black1';
 
 	const getBase64CharColor = (groupId: string): string =>
 		rotatingColors[getBase64CharIndexFromGroupId(groupId) % rotatingColors.length];
@@ -106,16 +106,16 @@
 		margin: 0 0.5rem 0 0;
 	}
 	.bit {
-		background-color: var(--dark-gray3);
+		background-color: var(--gray2);
 		line-height: 1;
 		text-align: center;
-		padding: 2px 0;
+		padding: 1px 0;
 		border: 0.5px solid var(--black2);
-		width: 14px;
+		width: 13px;
 	}
 	.mapping .bit {
 		font-weight: 500;
-		background-color: var(--black1);
+		background-color: var(--gray4);
 		transition-property: color, background-color;
 		transition-timing-function: ease-in-out;
 		transition-duration: 0.35s;

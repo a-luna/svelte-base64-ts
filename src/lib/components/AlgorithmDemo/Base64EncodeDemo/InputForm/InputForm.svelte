@@ -22,7 +22,7 @@
 
 <div class="input-form">
 	<div class="input-form-left">
-		<HelpButton on:click={() => navButtonLegendModal.toggleModel()} />
+		<HelpButton {state} on:click={() => navButtonLegendModal.toggleModel()} />
 		<SelectStringEncoding bind:value={inputTextEncoding} disabled={controlsDisabled} />
 		<InputTextBox bind:inputText disabled={controlsDisabled} style={inputTextBoxStyles} on:submit />
 	</div>
@@ -45,7 +45,7 @@
 	.input-form-left,
 	.input-form-right {
 		display: flex;
-		flex: 0 0 49%;
+		flex: 0 0 48%;
 		justify-content: space-between;
 		gap: 0.75rem;
 	}

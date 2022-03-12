@@ -16,7 +16,6 @@
 <button
 	type="button"
 	title="Reset"
-	class:idle={autoplay}
 	disabled={!$state.can('RESET')}
 	on:click={() => navButtonEventDispatcher('navButtonEvent', { action: 'RESET' })}
 	on:click={() => dispatch('reset')}

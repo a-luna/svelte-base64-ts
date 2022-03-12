@@ -1,13 +1,13 @@
 import type {
-	Base64ByteMap,
-	DecoderInput,
-	DecoderInputChunk,
-	DecoderOutput,
-	EncoderInput,
-	EncoderInputChunk,
-	EncoderOutput,
-	HexByteMap,
-	OutputChunk,
+    Base64ByteMap,
+    DecoderInput,
+    DecoderInputChunk,
+    DecoderOutput,
+    EncoderInput,
+    EncoderInputChunk,
+    EncoderOutput,
+    HexByteMap,
+    OutputChunk
 } from './types';
 
 export const B64_ALPHABET_COMMON = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -33,18 +33,18 @@ export const BIN_TO_HEX = {
 
 export const rotatingColors = [
 	'--red4',
-	'--blue4',
+	'--green2',
+	'--blue3',
 	'--orange3',
 	'--teal4',
 	'--orange-yellow3',
 	'--purple3',
 	'--green3',
-	'--indigo4',
+	'--indigo3',
 	'--yellow3',
 	'--pink4',
-	'--dark-teal2',
 	'--yellow-green3',
-	'--white3',
+	'--blue-green4',
 ];
 
 export const defaultBase64ByteMap: Base64ByteMap = {
@@ -70,7 +70,7 @@ export const defaultDecoderInputChunk: DecoderInputChunk = {
 	inputMap: [defaultBase64ByteMap],
 };
 
-export const defaultInputMap: HexByteMap = {
+export const defaultHexByteMap: HexByteMap = {
 	byte: 0,
 	bin_word1: '',
 	bin_word2: '',
@@ -96,7 +96,7 @@ export const defaultEncoderInputChunk: EncoderInputChunk = {
 	binary: '',
 	isPadded: false,
 	padLength: 0,
-	inputMap: [defaultInputMap],
+	inputMap: [defaultHexByteMap],
 };
 
 export const defaultOutputChunk: OutputChunk = {
@@ -107,7 +107,7 @@ export const defaultOutputChunk: OutputChunk = {
 	hexBytes: [],
 	bytes: [],
 	isASCII: true,
-	hexMap: [defaultInputMap],
+	hexMap: [defaultHexByteMap],
 	base64Map: [defaultBase64ByteMap],
 };
 

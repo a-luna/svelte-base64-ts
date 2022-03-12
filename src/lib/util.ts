@@ -1,8 +1,8 @@
 import type { StringEncoding } from './types';
 import { validateAsciiBytes } from './validation';
 
-export const HEX_BIT_GROUP_REGEX = /hex-chunk-(?<chunkNumber>\d+)-byte-(?<byteNumber>1|2|3)/;
-export const B64_BIT_GROUP_REGEX = /base64-chunk-(?<chunkNumber>\d+)-digit-(?<digitNumber>1|2|3|4)/;
+export const HEX_BIT_GROUP_REGEX = /hex-chunk-(?<chunk>\d+)-byte-(?<byte>1|2|3)/;
+export const B64_BIT_GROUP_REGEX = /base64-chunk-(?<chunk>\d+)-digit-(?<b64Char>1|2|3|4)/;
 
 export const divmod = (x: number, y: number): [number, number] => [(x / y) | 0, x % y];
 
@@ -81,11 +81,37 @@ export const getRandomHexString = (length: number): string =>
 		.map((n) => Number(n).toString(16))
 		.join('');
 
-export function getBase64CharIndexFromGroupId(groupId: string): number {
-	const match = B64_BIT_GROUP_REGEX.exec(groupId);
-	if (match) {
-		const { chunkNumber, digitNumber } = match.groups;
-		return (parseInt(chunkNumber) - 1) * 4 + (parseInt(digitNumber) - 1);
-	}
-	return 0;
+export function parseGroupId(groupId: string): {chunkNumber: number, byteNumber: number, b64CharNumber: number} {
+    let match = HEX_BIT_GROUP_REGEX.exec(groupId);
+    if (match) {
+		const { chunk, byte } = match.groups;
+        const chunkNumber = parseInt(chunk) - 1;
+        const byteNumber = chunkNumber * 3 + (parseInt(byte) - 1);
+		return { chunkNumber, byteNumber, b64CharNumber: null };
+    }
+    match = B64_BIT_GROUP_REGEX.exec(groupId);
+    if (match) {
+        const { chunk, b64Char } = match.groups;
+        const chunkNumber = parseInt(chunk) - 1;
+        const b64CharNumber = chunkNumber * 4 + (parseInt(b64Char) - 1);
+        return { chunkNumber, byteNumber: null, b64CharNumber };
+    }
 }
+
+export function getChunkIndexFromGroupId(groupId: string): number {
+	const { chunkNumber } = parseGroupId(groupId);
+	return chunkNumber ?? 0;
+}
+
+export function getByteIndexFromGroupId(groupId: string): number {
+	const { byteNumber } = parseGroupId(groupId);
+	return byteNumber ?? 0;
+}
+
+export function getBase64CharIndexFromGroupId(groupId: string): number {
+	const { b64CharNumber } = parseGroupId(groupId);
+	return b64CharNumber ?? 0;
+}
+
+export const getChunkIndexFromByteIndex = (byteIndex: number): number => (byteIndex / 3) | 0;
+export const getChunkIndexFromBase64CharIndex = (charIndex: number): number => (charIndex / 4) | 0;

@@ -110,9 +110,9 @@
 		background-color: var(--dark-gray3);
 		line-height: 1;
 		text-align: center;
-		padding: 2px 0;
+		padding: 1px 0;
 		border: 0.5px solid var(--black2);
-		width: 14px;
+		width: 13px;
 	}
 	.mapping .bit {
 		font-weight: 500;

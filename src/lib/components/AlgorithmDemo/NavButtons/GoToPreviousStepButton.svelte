@@ -15,7 +15,6 @@
 <button
 	type="button"
 	title="Go To Previous Step"
-	class:idle={autoplay}
 	disabled={autoplay || !$state.can('GO_TO_PREV_STEP')}
 	on:click={() => navButtonEventDispatcher('navButtonEvent', { action: 'GO_TO_PREV_STEP' })}
 >

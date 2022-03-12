@@ -10,7 +10,8 @@
 	import Base64LookupTable from '$lib/components/LookupTables/Base64LookupTable.svelte';
 	import { alert } from '$lib/stores/alert';
 	import { isBase64Encoding, isStringEncoding } from '$lib/typeguards';
-	import type { Base64ByteMap, Base64Encoding, HexByteMap, NavAction, StringEncoding } from '$lib/types';
+	import type { Base64Encoding, NavAction, StringEncoding } from '$lib/types';
+	import { getChunkIndexFromBase64CharIndex, getChunkIndexFromByteIndex } from '$lib/util';
 	import type { EncodingContext, EncodingEvent, EncodingTypeState } from '$lib/xstate/b64Encode';
 	import { encodingMachine } from '$lib/xstate/b64Encode';
 	import { useMachine } from '@xstate/svelte';
@@ -26,8 +27,6 @@
 	let highlightHexByte: number;
 	let highlightBase64: string;
 	let action: NavAction;
-	let inputByteMaps: { chunkId: number; byteNumber: number; byte: HexByteMap }[] = [];
-	let outputByteMaps: { chunkId: number; charNumber: number; byte: Base64ByteMap }[] = [];
 
 	const { state, send } = useMachine<EncodingContext, EncodingEvent, EncodingTypeState>(encodingMachine);
 
@@ -35,44 +34,9 @@
 		$state.matches('encodeInputText') || $state.matches('createInputChunks') || $state.matches('encodeOutputText');
 	$: stateName = $state.toStrings().join(' ');
 	$: if ($state.matches('inputTextError')) $alert = $state.context.input.validationResult.error.message;
-	$: if (stateName.includes('encodeInputText') && stateName.includes('idle')) {
-		inputByteMaps = [];
-		outputByteMaps = [];
+	$: if (stateName.includes('idle')) {
 		highlightHexByte = null;
 		highlightBase64 = null;
-	}
-	$: if (stateName.includes('encodeInputText') && stateName.includes('Byte') && $state.context.currentByte) {
-		const chunkId = ($state.context.byteIndex / 3) | 0;
-		const byteNumber = $state.context.byteIndex + 1;
-		const byteMap = { chunkId, byteNumber, byte: $state.context.currentByte };
-		highlightHexByte = byteMap.byte.byte;
-		if (!inputByteMaps.find((map) => map.byteNumber === byteNumber)) {
-			inputByteMaps = [...inputByteMaps, byteMap];
-		} else if (action === 'GO_TO_PREV_STEP') {
-			const removeByteMap = inputByteMaps[inputByteMaps.length - 1];
-			inputByteMaps = [...inputByteMaps.filter((map) => map.byteNumber !== removeByteMap.byteNumber)];
-		}
-	}
-	$: if (stateName.includes('createInputChunks') && stateName.includes('idle')) {
-		highlightHexByte = null;
-		highlightBase64 = null;
-	}
-	$: if (stateName.includes('encodeOutputText') && stateName.includes('idle')) {
-		outputByteMaps = [];
-		highlightBase64 = null;
-		console.log({ output: $state.context.output });
-	}
-	$: if (stateName.includes('encodeOutputText') && stateName.includes('Base64') && $state.context.currentBase64Char) {
-		const chunkId = ($state.context.base64CharIndex / 4) | 0;
-		const charNumber = $state.context.base64CharIndex + 1;
-		const charMap = { chunkId, charNumber, byte: $state.context.currentBase64Char };
-		highlightBase64 = charMap.byte.b64;
-		if (!outputByteMaps.find((map) => map.charNumber === charNumber)) {
-			outputByteMaps = [...outputByteMaps, charMap];
-		} else if (action === 'GO_TO_PREV_STEP') {
-			const removeCharMap = outputByteMaps[outputByteMaps.length - 1];
-			outputByteMaps = [...outputByteMaps.filter((map) => map.charNumber !== removeCharMap.charNumber)];
-		}
 	}
 
 	function submitForm() {
@@ -154,19 +118,19 @@
 	<div class="encoded-bytes">
 		{#if anyEncodingState}
 			<div class="binary-chunks">
-				{#each inputByteMaps as { chunkId, byteNumber, byte }}
+				{#each $state.context.byteMaps as byte, byteIndex}
 					<div
 						transition:fade={{ duration: 200 }}
 						class="encoded-byte"
-						data-chunk-id={chunkId + 1}
-						data-byte-number={byteNumber}
+						data-chunk-id={getChunkIndexFromByteIndex(byteIndex) + 1}
+						data-byte-number={byteIndex + 1}
 						data-bin="{byte.bin_word1}{byte.bin_word2}"
 						data-hex="{byte.hex_word1}{byte.hex_word2}"
 						data-ascii={byte.ascii}
 						on:mouseenter={() => (highlightHexByte = byte.byte)}
 						on:mouseleave={() => (highlightHexByte = null)}
 					>
-						<EncodedInputByte {state} {chunkId} {byteNumber} {byte} />
+						<EncodedInputByte {state} {byteIndex} {byte} />
 					</div>
 				{/each}
 			</div>
@@ -185,21 +149,21 @@
 		{/if}
 	</div>
 	<div class="encoded-bytes">
-		{#if anyEncodingState}
+		{#if $state.matches('encodeOutputText')}
 			<div class="binary-chunks">
-				{#each outputByteMaps as { chunkId, charNumber, byte }}
+				{#each $state.context.base64Maps as b64, charIndex}
 					<div
 						transition:fade={{ duration: 200 }}
 						class="base64-char"
-						data-chunk-id={chunkId + 1}
-						data-b64char-number={charNumber}
-						data-b64={byte.b64}
-						data-bin={byte.bin}
-						data-dec={byte.dec}
-						on:mouseenter={() => (highlightBase64 = byte.b64)}
+						data-chunk-id={getChunkIndexFromBase64CharIndex(charIndex) + 1}
+						data-b64char-number={charIndex + 1}
+						data-b64={b64.b64}
+						data-bin={b64.bin}
+						data-dec={b64.dec}
+						on:mouseenter={() => (highlightBase64 = b64.b64)}
 						on:mouseleave={() => (highlightBase64 = null)}
 					>
-						<EncodedOutputByte {state} {chunkId} {charNumber} {byte} />
+						<EncodedOutputByte {state} {charIndex} {b64} />
 					</div>
 				{/each}
 			</div>
@@ -207,12 +171,12 @@
 	</div>
 </div>
 <div class="demo-references">
-	{#if (($state.matches('encodeInputText') && !stateName.includes('idle')) || $state.matches('createInputChunks')) && inputByteMaps && $state.context.input.ascii}
+	{#if (($state.matches('encodeInputText') && !stateName.includes('idle')) || $state.matches('createInputChunks')) && $state.context.input.ascii}
 		<div transition:fade class="ascii-table">
 			<AsciiLookupTable asciiTableChunkSize={14} {highlightHexByte} fontSize={'0.65rem'} />
 		</div>
 	{/if}
-	{#if $state.matches('encodeOutputText') && outputByteMaps}
+	{#if $state.matches('encodeOutputText')}
 		<div transition:fade class="base64-table">
 			<Base64LookupTable base64TableChunkSize={13} {highlightBase64} fontSize={'0.65rem'} />
 		</div>
@@ -223,14 +187,15 @@
 	.form-top-row {
 		display: flex;
 		justify-content: space-between;
-		gap: 0.5rem;
+		gap: 1rem;
 	}
 	.demo-steps {
-		flex: 1 1 auto;
-		align-items: flex-start;
-		justify-content: space-between;
 		display: flex;
-		gap: 1rem;
+		flex: 1 1 auto;
+		flex-flow: row wrap;
+		align-items: flex-start;
+		justify-content: flex-start;
+		gap: 0.5rem;
 		background-color: var(--black2);
 		border: 1px solid var(--default-border-color);
 		border-radius: 6px;
@@ -241,19 +206,20 @@
 		display: flex;
 		flex-flow: column nowrap;
 		transition: transform 0.75s ease-in-out;
+		flex: 0 1 auto;
 	}
 	.encoded-bytes {
 		display: flex;
 		flex-flow: column nowrap;
-		flex: 0;
+		flex: 0 1 auto;
 		justify-self: flex-start;
 		gap: 1.5rem;
-		width: 200px;
 	}
 	.encoded-byte,
 	.base64-char {
 		display: flex;
 		justify-content: flex-end;
+		gap: 0.25rem;
 	}
 	.demo-references {
 		flex: 0 1 235px;
@@ -269,7 +235,7 @@
 		margin: 0 auto;
 	}
 	:global(main) {
-		max-width: 869px;
+		max-width: 832px;
 	}
 	:global(.highlight-hex-byte),
 	:global(.highlight-base64) {

@@ -4,7 +4,7 @@ import {
     defaultBase64ByteMap,
     defaultEncoderInput,
     defaultEncoderOutput,
-    defaultInputMap,
+    defaultHexByteMap,
     defaultOutputChunk
 } from '$lib/constants';
 import { validateEncoderInput } from '$lib/dataPrep';
@@ -134,9 +134,9 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 		initial: 'inactive',
 		context: {
 			autoplay: false,
-			byteMaps: [defaultInputMap],
+			byteMaps: [defaultHexByteMap],
 			byteIndex: 0,
-			currentByte: defaultInputMap,
+			currentByte: defaultHexByteMap,
 			remainingBytes: 0,
 			chunkIndex: 0,
 			currentChunk: defaultOutputChunk,
@@ -433,9 +433,9 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 		actions: {
 			resetContext: assign({
 				autoplay: (_: EncodingContext) => false,
-				byteMaps: (_: EncodingContext) => [defaultInputMap],
+				byteMaps: (_: EncodingContext) => [defaultHexByteMap],
 				byteIndex: (_: EncodingContext) => 0,
-				currentByte: (_: EncodingContext) => defaultInputMap,
+				currentByte: (_: EncodingContext) => defaultHexByteMap,
 				remainingBytes: (_: EncodingContext) => 0,
 				chunkIndex: (_: EncodingContext) => 0,
 				currentChunk: (_: EncodingContext) => defaultOutputChunk,
@@ -476,7 +476,7 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 			}),
 			resetRemainingBytes: assign({
 				byteIndex: (_: EncodingContext) => 0,
-				currentByte: (_: EncodingContext) => defaultInputMap,
+				currentByte: (_: EncodingContext) => defaultHexByteMap,
 				remainingBytes: (context: EncodingContext) => context.byteMaps.length - 1,
 			}),
 			mapNextByte: assign({

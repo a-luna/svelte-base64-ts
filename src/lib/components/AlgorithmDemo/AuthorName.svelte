@@ -4,7 +4,6 @@
 
 <div class="author-name-wrapper">
 	<span class="author-text">Created by <a href="https://github.com/a-luna" class="author-name">@a-luna</a></span>
-	<span class="author-text">|</span>
 	<a href="https://github.com/a-luna/svelte-base64-ts" class="author-github"><Github /></a>
 </div>
 
@@ -14,12 +13,12 @@
 		justify-content: flex-end;
 		align-items: center;
 		gap: 0.5rem;
-		font-size: 0.8rem;
 		font-family: menlo, monospace;
-		line-height: 1;
 	}
 	.author-text {
 		color: var(--nav-button-bg-color);
+		border-right: 1px solid var(--nav-button-bg-color);
+		padding: 0 0.5rem 0 0;
 	}
 	a {
 		text-decoration: none;
@@ -27,5 +26,8 @@
 	.author-name,
 	.author-github {
 		color: var(--nav-button-active-bg-color);
+	}
+	.author-github {
+		align-self: flex-end;
 	}
 </style>

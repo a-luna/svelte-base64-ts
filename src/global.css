@@ -1,8 +1,3 @@
-/* Write your global styles here, in PostCSS syntax */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 :root {
 	/* Color Pallette */
 	--rich-black1: hsl(226, 27%, 5%);
@@ -64,6 +59,7 @@
 	--blue-green1: hsl(165, 100%, 35%);
 	--blue-green2: hsl(165, 100%, 45%);
 	--blue-green3: hsl(165, 100%, 55%);
+	--blue-green4: hsl(165, 100%, 75%);
 
 	--dark-teal1: hsl(179, 100%, 15%);
 	--dark-teal2: hsl(179, 100%, 25%);
@@ -128,8 +124,10 @@
 	--options-details-name-color: var(--gray2);
 	--options-details-value-color: var(--white2);
 	--default-border-color: hsla(0, 0%, 85%, 0.45);
-	--modal-dialog-bg-color: hsla(0, 0%, 20%, 0.9);
-	--modal-header-text-color: var(--white2);
+	--modal-outer-bg-color: hsla(0, 0%, 0%, 0.45);
+	--modal-dialog-bg-color: hsla(0, 0%, 13%, 0.9);
+	--modal-body-bg-color: hsla(0, 0%, 19%, 0.9);
+	--modal-header-text-color: var(--white1);
 }
 
 *,
@@ -157,7 +155,7 @@ body {
 	font-size: 0.875rem;
 	font-weight: 400;
 	line-height: normal;
-	color: #d8d8d8;
+	color: var(--white1);
 	margin: 0;
 	box-sizing: border-box;
 }
@@ -180,9 +178,9 @@ main.encode {
 	--nav-button-autoplay-text-color: var(--black4);
 	--nav-button-autoplay-bg-color: hsla(301 93% 71% / 0.85);
 	--nav-button-autoplay-border-color: hsla(301 93% 71% / 0.85);
-	--nav-button-autoplay-idle-text-color: var(--dark-gray4);
-	--nav-button-autoplay-idle-bg-color: hsla(301 93% 88% / 0.25);
-	--nav-button-autoplay-idle-border-color: var(--nav-button-autoplay-border-color);
+	--nav-button-autoplay-disabled-text-color: var(--dark-gray4);
+	--nav-button-autoplay-disabled-bg-color: hsla(301 93% 88% / 0.25);
+	--nav-button-autoplay-disabled-border-color: var(--nav-button-autoplay-border-color);
 	--nav-button-stop-autoplay-text-color: var(--black2);
 	--nav-button-stop-autoplay-bg-color: hsla(301 93% 71% / 0.45);
 	--nav-button-stop-autoplay-border-color: var(--nav-button-autoplay-border-color);
@@ -221,9 +219,9 @@ main.decode {
 	--nav-button-autoplay-text-color: var(--black4);
 	--nav-button-autoplay-bg-color: hsla(261 100% 60% / 0.85);
 	--nav-button-autoplay-border-color: hsla(261 100% 60% / 0.85);
-	--nav-button-autoplay-idle-text-color: var(--dark-gray4);
-	--nav-button-autoplay-idle-bg-color: hsla(261 100% 77% / 0.25);
-	--nav-button-autoplay-idle-border-color: var(--nav-button-autoplay-border-color);
+	--nav-button-autoplay-disabled-text-color: var(--dark-gray4);
+	--nav-button-autoplay-disabled-bg-color: hsla(261 100% 77% / 0.25);
+	--nav-button-autoplay-disabled-border-color: var(--nav-button-autoplay-border-color);
 	--nav-button-stop-autoplay-text-color: var(--black2);
 	--nav-button-stop-autoplay-bg-color: hsla(261 100% 60% / 0.45);
 	--nav-button-stop-autoplay-border-color: var(--nav-button-autoplay-border-color);
@@ -376,48 +374,33 @@ button {
 	border-bottom: 1px solid var(--nav-button-autoplay-border-color);
 }
 
-.autoplay button.idle,
-.autoplay button.idle:hover,
-.autoplay button.idle:focus,
-.autoplay button.idle:active,
-.autoplay button.idle:active:focus,
 .autoplay button:disabled,
 .autoplay button:disabled:hover,
 .autoplay button:disabled:focus,
 .autoplay button:disabled:active,
 .autoplay button:disabled:active:focus {
 	cursor: default;
-	color: var(--nav-button-autoplay-idle-text-color);
-	background-color: var(--nav-button-autoplay-idle-bg-color);
-	border-left: 0.5px solid var(--nav-button-autoplay-idle-border-color);
-	border-top: 1px solid var(--nav-button-autoplay-idle-border-color);
-	border-bottom: 1px solid var(--nav-button-autoplay-idle-border-color);
+	color: var(--nav-button-autoplay-disabled-text-color);
+	background-color: var(--nav-button-autoplay-disabled-bg-color);
+	border-left: 0.5px solid var(--nav-button-autoplay-disabled-border-color);
+	border-top: 1px solid var(--nav-button-autoplay-disabled-border-color);
+	border-bottom: 1px solid var(--nav-button-autoplay-disabled-border-color);
 }
 
-.autoplay button.idle:last-child,
-.autoplay button.idle:last-child:hover,
-.autoplay button.idle:last-child:focus,
-.autoplay button.idle:last-child:active,
-.autoplay button.idle:last-child:active:focus,
 .autoplay button:disabled:last-child,
 .autoplay button:disabled:last-child:hover,
 .autoplay button:disabled:last-child:focus,
 .autoplay button:disabled:last-child:active,
 .autoplay button:disabled:last-child:active:focus {
-	border-right: 1px solid var(--nav-button-autoplay-idle-border-color);
+	border-right: 1px solid var(--nav-button-autoplay-disabled-border-color);
 }
 
-.autoplay button.idle:first-child,
-.autoplay button.idle:first-child:hover,
-.autoplay button.idle:first-child:focus,
-.autoplay button.idle:first-child:active,
-.autoplay button.idle:first-child:active:focus,
 .autoplay button:disabled:first-child,
 .autoplay button:disabled:first-child:hover,
 .autoplay button:disabled:first-child:focus,
 .autoplay button:disabled:first-child:active,
 .autoplay button:disabled:first-child:active:focus {
-	border-left: 1px solid var(--nav-button-autoplay-idle-border-color);
+	border-left: 1px solid var(--nav-button-autoplay-disabled-border-color);
 }
 
 .input-form .icon {

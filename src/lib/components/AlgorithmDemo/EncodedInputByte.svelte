@@ -1,16 +1,16 @@
 <script lang="ts">
 	import { rotatingColors } from '$lib/constants';
 	import type { HexByteMap } from '$lib/types';
-	import { getBase64CharIndexFromGroupId } from '$lib/util';
+	import { getBase64CharIndexFromGroupId, getChunkIndexFromByteIndex } from '$lib/util';
 	import type { EncodingContext, EncodingEvent, EncodingTypeState } from '$lib/xstate/b64Encode';
 	import type { Readable } from 'svelte/store';
 	import type { State, TypegenDisabled } from 'xstate';
 
-	export let chunkId: number;
-	export let byteNumber: number;
 	export let byte: HexByteMap;
+	export let byteIndex: number;
 	export let state: Readable<State<EncodingContext, EncodingEvent, any, EncodingTypeState, TypegenDisabled>>;
 
+	$: chunkId = getChunkIndexFromByteIndex(byteIndex);
 	$: chunkNumber = chunkId + 1;
 	$: chunkColor = rotatingColors[chunkId % rotatingColors.length];
 	$: currentChunk = $state.context.chunkIndex;
@@ -19,7 +19,7 @@
 		!stateName.includes('idle') && stateName.includes('createInputChunks') && currentChunk === chunkId;
 	$: currentChunkColor = chunkMappingInProgress ? chunkColor : '--white1';
 
-	$: byteIndex = byteNumber - 1;
+	$: byteNumber = byteIndex + 1;
 	$: byteColor = rotatingColors[byteIndex % rotatingColors.length];
 	$: currentByte = $state.context.byteIndex;
 	$: byteMappingInProgress = stateName.includes('encodeInputText') && currentByte === byteIndex;
@@ -98,7 +98,7 @@
 		display: flex;
 		flex-flow: row nowrap;
 		justify-content: flex-end;
-		width: 2d1px;
+		width: 21px;
 		margin: 0 5px 0 0;
 	}
 	.letter-H,
@@ -121,9 +121,9 @@
 		background-color: var(--dark-gray3);
 		line-height: 1;
 		text-align: center;
-		padding: 2px 0;
+		padding: 1px 0;
 		border: 0.5px solid var(--black2);
-		width: 14px;
+		width: 13px;
 	}
 	.mapping .bit {
 		font-weight: 500;

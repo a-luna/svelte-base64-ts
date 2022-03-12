@@ -17,7 +17,6 @@
 <button
 	type="button"
 	title="Go To Next Step"
-	class:idle={autoplay}
 	disabled={autoplay || disableNextStep}
 	on:click={() => navButtonEventDispatcher('navButtonEvent', { action: 'GO_TO_NEXT_STEP' })}
 >

@@ -1,24 +1,25 @@
 <script lang="ts">
 	import { rotatingColors } from '$lib/constants';
 	import type { Base64ByteMap } from '$lib/types';
+	import { getChunkIndexFromBase64CharIndex } from '$lib/util';
 	import type { EncodingContext, EncodingEvent, EncodingTypeState } from '$lib/xstate/b64Encode';
 	import type { Readable } from 'svelte/store';
 	import type { State, TypegenDisabled } from 'xstate';
 
-	export let chunkId: number;
-	export let charNumber: number;
-	export let byte: Base64ByteMap;
+	export let charIndex: number;
+	export let b64: Base64ByteMap;
 	export let state: Readable<State<EncodingContext, EncodingEvent, any, EncodingTypeState, TypegenDisabled>>;
 
+	$: chunkId = getChunkIndexFromBase64CharIndex(charIndex);
 	$: chunkNumber = chunkId + 1;
 	$: chunkColor = rotatingColors[chunkId % rotatingColors.length];
 	$: currentChunk = $state.context.chunkIndex;
 	$: stateName = $state.toStrings().join(' ');
 	$: chunkMappingInProgress =
 		!stateName.includes('idle') && stateName.includes('createInputChunks') && currentChunk === chunkId;
-	$: currentChunkColor = chunkMappingInProgress ? chunkColor : '--white1';
+	$: currentChunkColor = chunkMappingInProgress ? chunkColor : '--black1';
 
-	$: charIndex = charNumber - 1;
+	$: charNumber = charIndex + 1;
 	const getBase64CharColor = (): string => rotatingColors[charIndex % rotatingColors.length];
 	const highlightBitGroup = (base64CharIndex: number): boolean =>
 		!stateName.includes('idle') && stateName.includes('encodeOutputText') && base64CharIndex === charIndex;
@@ -31,10 +32,10 @@
 	<span class="b64Char-number" style="color: var({chunkColor});">{charNumber}</span>
 </div>
 <div class="base64-char" data-chunk-id={chunkNumber} class:mapping={chunkMappingInProgress}>
-	<span class="base64" data-b64={byte.b64}>{byte.b64}</span>
-	<span class="dec" data-dec={byte.isPad ? 'null' : byte.dec}>{byte.isPad ? '' : byte.dec}</span>
-	{#if !byte.isPad}
-		{#each byte.bitGroups as bitGroup}
+	<span class="base64" data-b64={b64.b64}>{b64.b64}</span>
+	<span class="dec" data-dec={b64.isPad ? 'null' : b64.dec}>{b64.isPad ? '' : b64.dec}</span>
+	{#if !b64.isPad}
+		{#each b64.bitGroups as bitGroup}
 			<div
 				class="hex-bit-group"
 				data-bit-group={bitGroup.groupId}
@@ -82,7 +83,7 @@
 		display: flex;
 		flex-flow: row nowrap;
 		justify-content: flex-end;
-		width: 18px;
+		width: 21px;
 		margin: 0 5px 0 0;
 	}
 	.letter-B,
@@ -102,16 +103,16 @@
 		margin: 0 0.5rem 0 0;
 	}
 	.bit {
-		background-color: var(--dark-gray3);
+		background-color: var(--gray2);
 		line-height: 1;
 		text-align: center;
-		padding: 2px 0;
+		padding: 1px 0;
 		border: 0.5px solid var(--black2);
-		width: 14px;
+		width: 13px;
 	}
 	.mapping .bit {
 		font-weight: 500;
-		background-color: var(--black1);
+		background-color: var(--gray4);
 		transition-property: color, background-color;
 		transition-timing-function: ease-in-out;
 		transition-duration: 0.35s;
