@@ -9,6 +9,7 @@
 	import StringInputEncoding3 from '$lib/components/AlgorithmDemo/HelpModal/Sections/StringInputEncoding3.svelte';
 	import WhatIsBase64 from '$lib/components/AlgorithmDemo/HelpModal/Sections/WhatIsBase64.svelte';
 	import WhatIsntBase64 from '$lib/components/AlgorithmDemo/HelpModal/Sections/WhatIsntBase64.svelte';
+	import WhyBase64 from '$lib/components/AlgorithmDemo/HelpModal/Sections/WhyBase64.svelte';
 	import ChevronLeft from '$lib/components/Icons/ChevronLeft.svelte';
 	import ChevronRight from '$lib/components/Icons/ChevronRight.svelte';
 	import Modal from '$lib/components/Modal.svelte';
@@ -19,6 +20,7 @@
 	let closed: boolean;
 	const helpSections = [
 		['What Is Base64?', WhatIsBase64],
+		['Why Base64?', WhyBase64],
 		["What Isn't Base64?", WhatIsntBase64],
 		['Base64 Standard Alphabet', Base64StandardAlphabet],
 		['Base64 Url-Safe Alphabet', Base64UrlAlphabet],
@@ -54,7 +56,7 @@
 
 <svelte:window on:keydown={(e) => handleKeyPress(e.code)} />
 
-<Modal bind:this={modal} bind:closed title={'Base64 Encoding Docs & FAQs'}>
+<Modal bind:this={modal} bind:closed title={'Base64 Encoding Help Docs'}>
 	<div class="help-docs">
 		<div class="help-docs-nav">
 			<h3><span>Contents</span></h3>
@@ -72,22 +74,24 @@
 				{#if index === 0}
 					<WhatIsBase64 />
 				{:else if index === 1}
-					<WhatIsntBase64 />
+					<WhyBase64 />
 				{:else if index === 2}
-					<Base64StandardAlphabet />
+					<WhatIsntBase64 />
 				{:else if index === 3}
-					<Base64UrlAlphabet />
+					<Base64StandardAlphabet />
 				{:else if index === 4}
-					<StringInputEncoding1 />
+					<Base64UrlAlphabet />
 				{:else if index === 5}
-					<StringInputEncoding2 />
+					<StringInputEncoding1 />
 				{:else if index === 6}
-					<StringInputEncoding3 />
+					<StringInputEncoding2 />
 				{:else if index === 7}
-					<Base64OutputEncoding />
+					<StringInputEncoding3 />
 				{:else if index === 8}
-					<NavButtons />
+					<Base64OutputEncoding />
 				{:else if index === 9}
+					<NavButtons />
+				{:else if index === 10}
 					<KeyboardShortcuts />
 				{/if}
 			</div>

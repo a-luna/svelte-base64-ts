@@ -292,8 +292,14 @@ button {
 	flex-flow: row nowrap;
 	gap: 0.5rem;
 	padding: 0;
+	color: var(--light-gray3);
 	border: 1px solid var(--help-module-bg-color);
 	border-radius: 6px;
+}
+
+.help-docs .b64 {
+	color: var(--white4);
+	font-weight: 700;
 }
 
 .help-docs-wrapper {

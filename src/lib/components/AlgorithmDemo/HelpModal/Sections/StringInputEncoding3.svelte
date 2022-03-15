@@ -7,7 +7,7 @@
 	<div class="string-encoding">
 		<SelectStringEncoding value={'bin'} disabled={false} dropdownShown={true} />
 	</div>
-	<div class="input-encoding-description">
+	<div class="encoding-description">
 		{#each stringInputEncoding3 as paragraph}
 			<p>{@html paragraph}</p>
 		{/each}
@@ -21,22 +21,22 @@
 
 <style lang="postcss">
 	.settings-help,
-	.input-encoding-description {
+	.encoding-description {
 		display: flex;
 		flex-flow: row nowrap;
 		gap: 1rem;
 	}
-	.input-encoding-description {
+	.encoding-description {
 		flex: 1;
 		flex-flow: column nowrap;
 		gap: 0.5rem;
 	}
-	.input-encoding-description ul {
+	.encoding-description ul {
 		list-style: none;
 		margin: 0;
 		padding: 0;
 	}
-	.input-encoding-description li {
+	.encoding-description li {
 		margin: 0 0 0.25rem 0;
 	}
 	.format {

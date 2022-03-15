@@ -4,11 +4,11 @@
 </script>
 
 <div class="settings-help help-module">
-	<div class="input-encoding-wrapper">
+	<div class="encoding-wrapper">
 		<div class="string-encoding">
 			<SelectStringEncoding disabled={false} dropdownShown={true} />
 		</div>
-		<div class="input-encoding-description">
+		<div class="encoding-description">
 			{#each stringInputEncoding1 as paragraph}
 				<p>{@html paragraph}</p>
 			{/each}
@@ -18,17 +18,17 @@
 
 <style lang="postcss">
 	.settings-help,
-	.input-encoding-description {
+	.encoding-description {
 		display: flex;
 		flex-flow: column nowrap;
 		gap: 0.5rem;
 	}
-	.input-encoding-wrapper {
+	.encoding-wrapper {
 		display: flex;
 		flex-flow: row nowrap;
 		gap: 1rem;
 	}
-	.input-encoding-description {
+	.encoding-description {
 		flex: 1;
 	}
 	.string-encoding {
