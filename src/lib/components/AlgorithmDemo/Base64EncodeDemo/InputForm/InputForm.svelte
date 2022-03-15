@@ -1,7 +1,7 @@
 <script lang="ts">
 	import HelpButton from '$lib/components/AlgorithmDemo/Buttons/HelpButton.svelte';
-	import NavButtons from '$lib/components/AlgorithmDemo/NavButtons.svelte';
-	import NavButtonsLegend from '$lib/components/AlgorithmDemo/NavButtonsLegend.svelte';
+	import NavButtons from '$lib/components/AlgorithmDemo/Buttons/NavButtons.svelte';
+	import HelpModal from '$lib/components/AlgorithmDemo/HelpModal/HelpModal.svelte';
 	import SelectBase64Encoding from '$lib/components/AlgorithmDemo/SelectBase64Encoding.svelte';
 	import SelectStringEncoding from '$lib/components/AlgorithmDemo/SelectStringEncoding.svelte';
 	import InputTextBox from '$lib/components/InputTextBox.svelte';
@@ -14,25 +14,27 @@
 	export let inputText: string;
 	export let inputTextEncoding: StringEncoding = 'ASCII';
 	export let outputBase64Encoding: Base64Encoding = 'base64';
-	let navButtonLegendModal: NavButtonsLegend;
+	let helpModal: HelpModal;
 
 	$: inputTextBoxStyles = 'flex: 1;';
 	$: controlsDisabled = !$state.matches('inactive') && !$state.matches('inputTextError');
+	$: error = inputText === $state.context.input.inputText && !$state.context.input.validationResult.success;
 
 	function getPlaceholder(encoding: StringEncoding): string {
-		const stringEncoding = encoding === 'ASCII' ? 'text value' : encoding === 'hex' ? 'hex string' : 'binary string';
-		return `enter ${stringEncoding} to encode...`;
+		const stringEncoding = encoding === 'ASCII' ? 'string' : encoding === 'hex' ? 'hex string' : 'binary string';
+		return `enter ${stringEncoding} to encode`;
 	}
 </script>
 
 <div class="input-form">
 	<div class="input-form-left">
-		<HelpButton {state} on:click={() => navButtonLegendModal.toggleModel()} />
+		<HelpButton {state} on:click={() => helpModal.toggleModel()} />
 		<SelectStringEncoding bind:value={inputTextEncoding} disabled={controlsDisabled} />
 		<InputTextBox
 			bind:inputText
 			placeholder={getPlaceholder(inputTextEncoding)}
 			disabled={controlsDisabled}
+			{error}
 			style={inputTextBoxStyles}
 			on:submit
 		/>
@@ -42,7 +44,7 @@
 		<SelectBase64Encoding bind:value={outputBase64Encoding} disabled={controlsDisabled} />
 	</div>
 </div>
-<NavButtonsLegend bind:this={navButtonLegendModal} />
+<HelpModal bind:this={helpModal} />
 
 <style lang="postcss">
 	.input-form {

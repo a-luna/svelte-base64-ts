@@ -17,7 +17,7 @@
 	$: stateName = $state.toStrings().join(' ');
 	$: chunkMappingInProgress =
 		!stateName.includes('idle') && stateName.includes('createInputChunks') && currentChunk === chunkId;
-	$: currentChunkColor = chunkMappingInProgress ? chunkColor : '--white1';
+	$: currentChunkColor = chunkMappingInProgress ? chunkColor : '--light-gray3';
 
 	$: byteNumber = byteIndex + 1;
 	$: byteColor = rotatingColors[byteIndex % rotatingColors.length];

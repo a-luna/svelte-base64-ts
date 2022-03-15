@@ -1,5 +1,5 @@
-import type { StringEncoding } from './types';
-import { validateAsciiBytes } from './validation';
+import type { StringEncoding } from '$lib/types';
+import { validateAsciiBytes } from '$lib/validation';
 
 export const HEX_BIT_GROUP_REGEX = /hex-chunk-(?<chunk>\d+)-byte-(?<byte>1|2|3)/;
 export const B64_BIT_GROUP_REGEX = /base64-chunk-(?<chunk>\d+)-digit-(?<b64Char>1|2|3|4)/;

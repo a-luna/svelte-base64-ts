@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { app } from '$lib/stores/app';
 	import { focusInput } from '$lib/util';
 	import { createEventDispatcher } from 'svelte';
 
@@ -7,6 +6,7 @@
 	export let inputText: string;
 	export let placeholder = '';
 	export let disabled: boolean = false;
+	export let error = false;
 	let inputTextElement: HTMLInputElement;
 	const dispatch = createEventDispatcher();
 
@@ -25,7 +25,7 @@
 	type="text"
 	spellcheck="false"
 	{placeholder}
-	class:error={!$app.inputStringIsValid}
+	class:error
 	{style}
 	{disabled}
 	bind:this={inputTextElement}

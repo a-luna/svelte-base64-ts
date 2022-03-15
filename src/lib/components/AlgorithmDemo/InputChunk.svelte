@@ -16,7 +16,8 @@
 	$: stateName = $state.toStrings().join(' ');
 	$: highlightChunk =
 		!stateName.includes('idle') && stateName.includes('createInputChunks') && $state.context.chunkIndex === chunkIndex;
-	$: currentChunkColor = highlightChunk ? chunkColor : '--white1';
+	$: currentChunkColor = highlightChunk ? chunkColor : '--light-gray3';
+	$: finalBase64GroupId = chunk.inputMap.slice(-1)[0].bitGroups.slice(-1)[0].groupId;
 
 	const getBase64CharColor = (groupId: string): string =>
 		rotatingColors[getBase64CharIndexFromGroupId(groupId) % rotatingColors.length];
@@ -24,8 +25,14 @@
 		!stateName.includes('idle') &&
 		stateName.includes('encodeOutputText') &&
 		base64CharIndex === getBase64CharIndexFromGroupId(groupId);
-	const getCurrentBitGroupColor = (base64CharIndex: number, groupId: string): string =>
-		highlightBitGroup(base64CharIndex, groupId) ? getBase64CharColor(groupId) : currentChunkColor;
+	const getCurrentBitGroupColor = (base64CharIndex: number, groupId: string, padding = false): string =>
+		highlightBitGroup(base64CharIndex, groupId)
+			? getBase64CharColor(groupId)
+			: highlightChunk && !padding
+			? chunkColor
+			: highlightChunk && padding
+			? '--white1'
+			: '--light-gray3';
 </script>
 
 <div
@@ -36,6 +43,7 @@
 	data-bin={chunk.binary}
 	data-hex={chunk.hex}
 	data-ascii={chunk.ascii}
+	class:mapping={highlightChunk}
 >
 	<div class="chunk-id" data-chunk-id={chunkNumber}>
 		<span class="chunk-label" style="color: var({chunkColor});">In</span>
@@ -49,7 +57,6 @@
 			data-bit-group={map.groupId}
 			data-hex="{map.hex_word1}{map.hex_word2}"
 			data-bin="{map.bin_word1}{map.bin_word1}"
-			class:mapping={highlightChunk}
 		>
 			{#each map.bitGroups as bitGroup}
 				<div
@@ -66,9 +73,16 @@
 		</div>
 	{/each}
 	{#if chunk.isPadded}
-		{#each Array.from({ length: chunk.padLength }, () => 0) as padBit}
-			<code class="bit pad-bit"><span>{padBit}</span></code>
-		{/each}
+		<div
+			class="base64-bit-group"
+			data-bit-group={finalBase64GroupId}
+			class:mapping={highlightBitGroup($state.context.base64CharIndex, finalBase64GroupId)}
+			style="color: var({getCurrentBitGroupColor($state.context.base64CharIndex, finalBase64GroupId, true)});"
+		>
+			{#each Array.from({ length: chunk.padLength }, () => 0) as padBit}
+				<code class="bit pad-bit"><span>{padBit}</span></code>
+			{/each}
+		</div>
 	{/if}
 </div>
 
@@ -128,7 +142,6 @@
 		white-space: pre;
 	}
 	.pad-bit {
-		color: var(--dark-gray2);
 		background-color: var(--black1);
 	}
 </style>

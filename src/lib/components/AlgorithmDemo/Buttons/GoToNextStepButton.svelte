@@ -1,25 +1,29 @@
 <script lang="ts">
-	import PreviousStep from '$lib/components/Icons/PreviousStep.svelte';
+	import NextStep from '$lib/components/Icons/NextStep.svelte';
 	import type { NavAction } from '$lib/types';
 	import type { EncodingContext, EncodingEvent, EncodingTypeState } from '$lib/xstate/b64Encode';
 	import { createEventDispatcher } from 'svelte';
 	import type { Readable } from 'svelte/store';
 	import type { State, TypegenDisabled } from 'xstate';
 
-	export let state: Readable<State<EncodingContext, EncodingEvent, any, EncodingTypeState, TypegenDisabled>>;
+	export let state: Readable<State<EncodingContext, EncodingEvent, any, EncodingTypeState, TypegenDisabled>> = null;
 	const navButtonEventDispatcher = createEventDispatcher<{ navButtonEvent: { action: NavAction } }>();
 
-	$: autoplay = $state.context.autoplay;
+	$: autoplay = state ? $state.context.autoplay : false;
+	$: disableNextStep =
+		autoplay && state
+			? autoplay || (!$state.matches('inactive') && !$state.matches('inputTextError') && !$state.can('GO_TO_NEXT_STEP'))
+			: false;
 </script>
 
 <button
 	type="button"
-	title="Go To Previous Step"
-	disabled={autoplay || !$state.can('GO_TO_PREV_STEP')}
-	on:click={() => navButtonEventDispatcher('navButtonEvent', { action: 'GO_TO_PREV_STEP' })}
+	title="Go To Next Step"
+	disabled={autoplay || disableNextStep}
+	on:click={() => navButtonEventDispatcher('navButtonEvent', { action: 'GO_TO_NEXT_STEP' })}
 >
 	<div class="icon step-icon">
-		<PreviousStep />
+		<NextStep />
 	</div>
 </button>
 

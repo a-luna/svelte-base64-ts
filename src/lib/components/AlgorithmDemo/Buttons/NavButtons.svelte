@@ -1,21 +1,19 @@
 <script lang="ts">
-	import GoToFirstStepButton from '$lib/components/AlgorithmDemo/NavButtons/GoToFirstStepButton.svelte';
-	import GoToNextStepButton from '$lib/components/AlgorithmDemo/NavButtons/GoToNextStepButton.svelte';
-	import GoToPreviousStepButton from '$lib/components/AlgorithmDemo/NavButtons/GoToPreviousStepButton.svelte';
-	import ResetButton from '$lib/components/AlgorithmDemo/NavButtons/ResetButton.svelte';
-	import StartAutoPlayButton from '$lib/components/AlgorithmDemo/NavButtons/StartAutoPlayButton.svelte';
-	import StopAutoPlayButton from '$lib/components/AlgorithmDemo/NavButtons/StopAutoPlayButton.svelte';
+	import GoToFirstStepButton from '$lib/components/AlgorithmDemo/Buttons/GoToFirstStepButton.svelte';
+	import GoToLastStepButton from '$lib/components/AlgorithmDemo/Buttons/GoToLastStepButton.svelte';
+	import GoToNextStepButton from '$lib/components/AlgorithmDemo/Buttons/GoToNextStepButton.svelte';
+	import GoToPreviousStepButton from '$lib/components/AlgorithmDemo/Buttons/GoToPreviousStepButton.svelte';
+	import ResetButton from '$lib/components/AlgorithmDemo/Buttons/ResetButton.svelte';
+	import StartAutoPlayButton from '$lib/components/AlgorithmDemo/Buttons/StartAutoPlayButton.svelte';
+	import StopAutoPlayButton from '$lib/components/AlgorithmDemo/Buttons/StopAutoPlayButton.svelte';
 	import type { EncodingContext, EncodingEvent, EncodingTypeState } from '$lib/xstate/b64Encode';
 	import type { Readable } from 'svelte/store';
 	import type { State, TypegenDisabled } from 'xstate';
-	import GoToLastStepButton from './NavButtons/GoToLastStepButton.svelte';
 
 	export let state: Readable<State<EncodingContext, EncodingEvent, any, EncodingTypeState, TypegenDisabled>>;
-
-	$: autoplay = $state.context.autoplay;
 </script>
 
-<div class="algo-nav-buttons" class:autoplay>
+<div class="algo-nav-buttons" class:autoplay={$state.context.autoplay}>
 	<ResetButton {state} on:navButtonEvent on:reset />
 	<StartAutoPlayButton {state} on:navButtonEvent />
 	<StopAutoPlayButton {state} on:navButtonEvent />

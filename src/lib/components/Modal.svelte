@@ -10,7 +10,6 @@
 	$: modelLabel = `${modalId}-label`;
 
 	function handleKeyPress(key: string) {
-		console.log({ key });
 		if (key === 'Escape') {
 			closed = true;
 		}
@@ -73,8 +72,7 @@
 	.modal-dialog {
 		position: relative;
 		width: auto;
-		pointer-events: none;
-		max-width: 70%;
+		max-width: 80%;
 		margin: 2rem auto;
 		padding: 1rem;
 		background-clip: padding-box;
@@ -123,26 +121,25 @@
 		align-self: flex-start;
 		border-radius: 0;
 		border-style: none;
-		opacity: 1;
+		opacity: 0.75;
 		padding: 0;
 		margin: 0;
 	}
 
 	.btn-close:hover {
-		opacity: 0.75;
+		opacity: 1;
 	}
 
 	.btn-close:focus,
 	.btn-close:active,
 	.btn-close:active:focus {
+		opacity: 1;
 		outline: 0;
 		box-shadow: none;
 	}
 
 	.modal-body {
 		position: relative;
-		padding: 1rem;
-		background-color: var(--modal-body-bg-color);
 		border-radius: 6px;
 	}
 
@@ -157,33 +154,5 @@
 		border-top-width: 1px;
 		border-color: #e5e7eb;
 		padding: 0;
-	}
-
-	.modal-button {
-		cursor: pointer;
-		padding: 0.5rem 1rem;
-		transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
-		transition-duration: 150ms;
-		transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-		color: var(--black2);
-		background-color: var(--nav-button-active-bg-color);
-		font-size: 0.9rem;
-		font-weight: 500;
-		line-height: 1;
-		text-transform: uppercase;
-		border-radius: 0.25rem;
-		box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-		border: none;
-		margin: 0;
-	}
-
-	.modal-button:hover {
-		background-color: var(--nav-button-bg-color);
-	}
-
-	.modal-button:focus,
-	.modal-button:active,
-	.modal-button:active:focus {
-		background-color: var(--nav-button-active-bg-color);
 	}
 </style>

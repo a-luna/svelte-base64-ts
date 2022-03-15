@@ -74,7 +74,13 @@
 			<div class="placeholder" />
 		{/if}
 	</div>
-	<InputTextBox bind:inputText bind:this={inputTextBox} style={inputTextBoxGridStyles} on:submit={() => submitForm()} />
+	<InputTextBox
+		bind:inputText
+		bind:this={inputTextBox}
+		error={!$app.inputStringIsValid}
+		style={inputTextBoxGridStyles}
+		on:submit={() => submitForm()}
+	/>
 	<PushableButton size={'xs'} color={$app.buttonColor} on:click={() => submitForm()}>{$app.buttonLabel}</PushableButton>
 </div>
 

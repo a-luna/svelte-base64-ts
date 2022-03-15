@@ -1,8 +1,8 @@
 <script lang="ts">
 	import AsciiLookupTable from '$lib/components/LookupTables/AsciiLookupTable.svelte';
+	import Base64LookupTable from '$lib/components/LookupTables/Base64LookupTable.svelte';
 	import { app } from '$lib/stores/app';
 	import { state } from '$lib/stores/state';
-	import Base64LookupTable from './Base64LookupTable.svelte';
 
 	export let asciiTableChunkSize: number;
 	export let base64TableChunkSize: number;
@@ -10,14 +10,13 @@
 
 <div class="lookup-tables">
 	{#if $app.isAscii}
-		<AsciiLookupTable {asciiTableChunkSize} highlightHexByte={$state.highlightHexByte} />
+		<AsciiLookupTable {asciiTableChunkSize} highlightHexByte={$state.highlightHexByte} fontSize={'0.8rem'} />
 	{/if}
-	<Base64LookupTable {base64TableChunkSize} highlightBase64={$state.highlightBase64} />
+	<Base64LookupTable {base64TableChunkSize} highlightBase64={$state.highlightBase64} fontSize={'0.8rem'} />
 </div>
 
 <style lang="postcss">
 	.lookup-tables {
-		font-size: 0.8rem;
 		display: flex;
 		flex-flow: row wrap;
 		justify-content: space-around;

@@ -32,15 +32,21 @@
 	const { state, send } = useMachine<EncodingContext, EncodingEvent, EncodingTypeState>(encodingMachine);
 
 	$: anyEncodingState =
-		$state.matches('encodeInputText') || $state.matches('createInputChunks') || $state.matches('encodeOutputText');
+		$state.matches('encodeInputText') ||
+		$state.matches('createInputChunks') ||
+		$state.matches('encodeOutputText') ||
+		$state.matches('finished');
 	$: stateName = $state.toStrings().join(' ');
-	$: if ($state.matches('inputTextError')) $alert = $state.context.input.validationResult.error.message;
+	$: if ($state.matches('inputTextError')) {
+		$alert = $state.context.input.validationResult.error.message;
+	}
 	$: if (stateName.includes('idle')) {
 		highlightHexByte = null;
 		highlightBase64 = null;
 	}
 	$: tableChunkSize = pageWidth < 830 ? 32 : 16;
 	$: tableSectionHeight = pageWidth < 830 ? 'auto' : '260px';
+	$: if ($state.context) console.log({ state: $state.value, context: $state.context });
 
 	function submitForm() {
 		if (isStringEncoding(inputTextEncoding) && isBase64Encoding(outputBase64Encoding)) {
@@ -142,17 +148,17 @@
 	<div class="binary-chunks data-mapping">
 		{#if $state.context?.input?.chunks}
 			{#each $state.context.input.chunks as chunk, i}
-				{#if $state.matches('createInputChunks') || $state.matches('encodeOutputText')}
+				{#if $state.matches('createInputChunks') || $state.matches('encodeOutputText') || $state.matches('finished')}
 					<InputChunk {state} {chunk} chunkIndex={i} />
 				{/if}
-				{#if $state.matches('encodeOutputText')}
+				{#if $state.matches('encodeOutputText') || $state.matches('finished')}
 					<OutputChunk {state} chunk={$state.context.output.chunks[i]} chunkIndex={i} />
 				{/if}
 			{/each}
 		{/if}
 	</div>
 	<div class="encoded-bytes">
-		{#if $state.matches('encodeOutputText')}
+		{#if $state.matches('encodeOutputText') || $state.matches('finished')}
 			<div class="binary-chunks">
 				{#each $state.context.base64Maps as b64, charIndex}
 					<div
@@ -235,9 +241,6 @@
 	.base64-table {
 		flex: 0 1 auto;
 		margin: 0 auto;
-	}
-	:global(main) {
-		max-width: 832px;
 	}
 	:global(.highlight-hex-byte),
 	:global(.highlight-base64) {

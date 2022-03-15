@@ -6,16 +6,17 @@
 	import type { Readable } from 'svelte/store';
 	import type { State, TypegenDisabled } from 'xstate';
 
-	export let state: Readable<State<EncodingContext, EncodingEvent, any, EncodingTypeState, TypegenDisabled>>;
+	export let state: Readable<State<EncodingContext, EncodingEvent, any, EncodingTypeState, TypegenDisabled>> = null;
 	const navButtonEventDispatcher = createEventDispatcher<{ navButtonEvent: { action: NavAction } }>();
 
-	$: autoplay = $state.context.autoplay;
+	$: autoplay = state ? $state.context.autoplay : false;
+	$: disabled = state ? !$state.can('GO_TO_LAST_STEP') : false;
 </script>
 
 <button
 	type="button"
 	title="Go To Last Step"
-	disabled={autoplay || !$state.can('GO_TO_LAST_STEP')}
+	disabled={autoplay || disabled}
 	on:click={() => navButtonEventDispatcher('navButtonEvent', { action: 'GO_TO_LAST_STEP' })}
 >
 	<div class="icon last-icon">

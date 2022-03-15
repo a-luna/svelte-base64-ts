@@ -1,13 +1,13 @@
 <svelte:options accessors />
 
 <script lang="ts">
+	import Option from '$lib/components/Select/Option.svelte';
 	import type { SelectMenuOption } from '$lib/types';
 	import { clickOutside, getRandomHexString } from '$lib/util';
 	import { createEventDispatcher } from 'svelte';
 	import FaCaretDown from 'svelte-icons/fa/FaCaretDown.svelte';
 	import { cubicIn, cubicOut } from 'svelte/easing';
 	import { scale } from 'svelte/transition';
-	import Option from './Option.svelte';
 
 	export let menuLabel: string = 'Options';
 	export let options: SelectMenuOption[] = [];
@@ -73,7 +73,7 @@
 			data-testid="{menuId}-open-list-button"
 			aria-expanded={dropdownShown}
 			aria-haspopup="true"
-			style="font-size: {fontSize}; height: {buttonHeight}; padding: {buttonPadding}"
+			style="font-size: {fontSize}; font-weight: 500; height: {buttonHeight}; padding: {buttonPadding}"
 			on:click={() => handleButtonClicked()}
 		>
 			<span class="selected-value">
@@ -107,7 +107,6 @@
 
 <style lang="postcss">
 	button {
-		font-weight: 500;
 		display: inline-flex;
 		display: inline-flex;
 		justify-content: space-between;

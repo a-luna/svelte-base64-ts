@@ -6,6 +6,7 @@
 	export let fontSize: string = '0.875rem';
 	export let value: Base64Encoding = 'base64';
 	export let disabled = false;
+	export let dropdownShown = false;
 
 	const options: SelectMenuOption[] = [
 		{ label: 'base64', value: 'base64', optionNumber: 1, active: false },
@@ -27,6 +28,7 @@
 	{width}
 	{fontSize}
 	{disabled}
+	{dropdownShown}
 	tooltip={'Select Base64 (Output) Encoding'}
 	flexStyles={'flex: 0 0 auto;'}
 	on:changed={(e) => handleStringEncodingChanged(e.detail)}

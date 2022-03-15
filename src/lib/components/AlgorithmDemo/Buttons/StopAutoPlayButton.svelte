@@ -6,10 +6,10 @@
 	import type { Readable } from 'svelte/store';
 	import type { State, TypegenDisabled } from 'xstate';
 
-	export let state: Readable<State<EncodingContext, EncodingEvent, any, EncodingTypeState, TypegenDisabled>>;
+	export let state: Readable<State<EncodingContext, EncodingEvent, any, EncodingTypeState, TypegenDisabled>> = null;
 	const navButtonEventDispatcher = createEventDispatcher<{ navButtonEvent: { action: NavAction } }>();
 
-	$: autoplay = $state.context.autoplay;
+	$: autoplay = state ? $state.context.autoplay : true;
 </script>
 
 <button
