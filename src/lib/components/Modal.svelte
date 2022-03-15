@@ -72,7 +72,7 @@
 	.modal-dialog {
 		position: relative;
 		width: auto;
-		max-width: 600px;
+		max-width: 650px;
 		margin: 2rem auto;
 		padding: 1rem;
 		background-clip: padding-box;
@@ -104,9 +104,10 @@
 	}
 
 	.modal-header h5 {
-		color: var(--modal-header-text-color);
+		color: var(--nav-button-active-bg-color);
 		font-size: 1.25rem;
-		font-weight: 500;
+		font-weight: 700;
+		letter-spacing: 0.4px;
 		line-height: 1;
 		margin: 0;
 	}

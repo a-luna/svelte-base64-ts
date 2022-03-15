@@ -2,7 +2,6 @@
 </script>
 
 <div class="keyboard-help help-module">
-	<h2><span>Keyboard Shortcuts</span></h2>
 	<div class="keyboard-shortcuts">
 		<div class="help-row"><kbd>Space</kbd><span>Start/Stop auto-play</span></div>
 		<div class="help-row"><kbd>Right Arrow</kbd><span>Go to previous step</span></div>
@@ -16,6 +15,10 @@
 		display: flex;
 		flex-flow: column nowrap;
 		gap: 0.5rem;
+	}
+	.keyboard-help {
+		margin: 0 auto;
+		padding: 0.5rem 0;
 	}
 	.help-row {
 		display: flex;

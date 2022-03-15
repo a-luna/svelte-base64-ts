@@ -1,7 +1,7 @@
 <script lang="ts">
 	import HelpButton from '$lib/components/AlgorithmDemo/Buttons/HelpButton.svelte';
 	import NavButtons from '$lib/components/AlgorithmDemo/Buttons/NavButtons.svelte';
-	import HelpModal from '$lib/components/AlgorithmDemo/HelpModal/HelpModal.svelte';
+	import EncoderHelpModal from '$lib/components/AlgorithmDemo/HelpModal/EncoderHelpModal.svelte';
 	import SelectBase64Encoding from '$lib/components/AlgorithmDemo/SelectBase64Encoding.svelte';
 	import SelectStringEncoding from '$lib/components/AlgorithmDemo/SelectStringEncoding.svelte';
 	import InputTextBox from '$lib/components/InputTextBox.svelte';
@@ -14,7 +14,7 @@
 	export let inputText: string;
 	export let inputTextEncoding: StringEncoding = 'ASCII';
 	export let outputBase64Encoding: Base64Encoding = 'base64';
-	let helpModal: HelpModal;
+	let helpModal: EncoderHelpModal;
 
 	$: inputTextBoxStyles = 'flex: 1;';
 	$: controlsDisabled = !$state.matches('inactive') && !$state.matches('inputTextError');
@@ -29,7 +29,7 @@
 
 <div class="input-form">
 	<div class="input-form-left">
-		<HelpButton {state} on:click={() => helpModal.toggleModel()} />
+		<HelpButton {state} on:click={() => helpModal.toggleModal()} />
 		<SelectStringEncoding bind:value={inputTextEncoding} disabled={controlsDisabled} />
 		<InputTextBox
 			bind:inputText
@@ -45,7 +45,7 @@
 		<SelectBase64Encoding bind:value={outputBase64Encoding} disabled={controlsDisabled} />
 	</div>
 </div>
-<HelpModal bind:this={helpModal} />
+<EncoderHelpModal bind:this={helpModal} />
 
 <style lang="postcss">
 	.input-form {

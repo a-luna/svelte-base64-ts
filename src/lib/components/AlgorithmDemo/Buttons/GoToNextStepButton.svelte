@@ -10,16 +10,13 @@
 	const navButtonEventDispatcher = createEventDispatcher<{ navButtonEvent: { action: NavAction } }>();
 
 	$: autoplay = state ? $state.context.autoplay : false;
-	$: disableNextStep =
-		autoplay && state
-			? autoplay || (!$state.matches('inactive') && !$state.matches('inputTextError') && !$state.can('GO_TO_NEXT_STEP'))
-			: false;
+	$: disabled = state ? !$state.can('GO_TO_NEXT_STEP') : false;
 </script>
 
 <button
 	type="button"
 	title="Go To Next Step"
-	disabled={autoplay || disableNextStep}
+	disabled={autoplay || disabled}
 	on:click={() => navButtonEventDispatcher('navButtonEvent', { action: 'GO_TO_NEXT_STEP' })}
 >
 	<div class="icon step-icon">

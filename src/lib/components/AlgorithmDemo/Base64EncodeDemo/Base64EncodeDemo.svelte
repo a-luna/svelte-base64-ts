@@ -9,6 +9,7 @@
 	import AsciiLookupTable from '$lib/components/LookupTables/AsciiLookupTable.svelte';
 	import Base64LookupTable from '$lib/components/LookupTables/Base64LookupTable.svelte';
 	import { alert } from '$lib/stores/alert';
+	import { demoState } from '$lib/stores/demoState';
 	import { isBase64Encoding, isStringEncoding } from '$lib/typeguards';
 	import type { Base64Encoding, NavAction, StringEncoding } from '$lib/types';
 	import { getChunkIndexFromBase64CharIndex, getChunkIndexFromByteIndex } from '$lib/util';
@@ -100,26 +101,28 @@
 	}
 
 	function handleKeyPress(key: string) {
-		const savePreviousAction = action;
-		action = null;
-		if (key === 'ArrowRight' && $state.can('GO_TO_NEXT_STEP')) {
-			action = 'GO_TO_NEXT_STEP';
-		}
-		if (key === 'ArrowLeft' && $state.can('GO_TO_PREV_STEP')) {
-			action = 'GO_TO_PREV_STEP';
-		}
-		if (key === 'Space') {
-			if ($state.context.autoplay && $state.can('STOP_AUTO_PLAY')) {
-				action = 'STOP_AUTO_PLAY';
+		if (!$demoState.modalOpen) {
+			const savePreviousAction = action;
+			action = null;
+			if (key === 'ArrowRight' && $state.can('GO_TO_NEXT_STEP')) {
+				action = 'GO_TO_NEXT_STEP';
 			}
-			if (!$state.context.autoplay) {
-				action = 'START_AUTO_PLAY';
+			if (key === 'ArrowLeft' && $state.can('GO_TO_PREV_STEP')) {
+				action = 'GO_TO_PREV_STEP';
 			}
-		}
-		if (action) {
-			send(action);
-		} else {
-			action = savePreviousAction;
+			if (key === 'Space') {
+				if ($state.context.autoplay && $state.can('STOP_AUTO_PLAY')) {
+					action = 'STOP_AUTO_PLAY';
+				}
+				if (!$state.context.autoplay) {
+					action = 'START_AUTO_PLAY';
+				}
+			}
+			if (action) {
+				send(action);
+			} else {
+				action = savePreviousAction;
+			}
 		}
 	}
 </script>

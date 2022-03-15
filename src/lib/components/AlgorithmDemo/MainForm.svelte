@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Base64EncodeDemo from '$lib/components/AlgorithmDemo/Base64EncodeDemo/Base64EncodeDemo.svelte';
-	import { appMode } from '$lib/stores/appMode';
+	import { demoState } from '$lib/stores/demoState';
 	let pageWidth: number;
 
 	$: height = pageWidth < 830 ? 'auto' : '100vh';
@@ -9,9 +9,9 @@
 <svelte:window bind:innerWidth={pageWidth} />
 
 <div class="base64-algo-demo" style="height: {height};">
-	{#if $appMode === 'encode'}
+	{#if $demoState.mode === 'encode'}
 		<Base64EncodeDemo />
-		<!-- {:else if $appMode === 'decode'} -->
+		<!-- {:else if $demoState === 'decode'} -->
 	{/if}
 </div>
 

@@ -9,8 +9,7 @@
 </script>
 
 <div class="nav-buttons-help help-module">
-	<h2><span>Navigational Buttons</span></h2>
-	<div class="nav-buttons">
+	<div class="nav-buttons-wrapper">
 		<div class="nav-button-column">
 			<div class="help-row"><ResetButton /><span>Reset form</span></div>
 			<div class="help-row"><StartAutoPlayButton /><span>Start auto-play</span></div>
@@ -42,10 +41,11 @@
 		height: 33px;
 	}
 
-	.nav-buttons {
+	.nav-buttons-wrapper {
 		display: flex;
 		flex-flow: row nowrap;
+		justify-content: center;
 		gap: 1.5rem;
-		height: 188px;
+		padding: 0.5rem 0;
 	}
 </style>
