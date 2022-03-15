@@ -7,21 +7,21 @@ import type {
 	EncoderInput,
 	HexByteMap,
 	Result,
-	StringEncoding
+	StringEncoding,
 } from '$lib/types';
 import {
 	asciiStringFromByteArray,
 	byteArrayToBinaryStringArray,
 	divmod,
 	hexStringFromByteArray,
-	stringToByteArray
+	stringToByteArray,
 } from '$lib/util';
 import { validateBase64Encoding, validateTextEncoding } from '$lib/validation';
 
 export function validateEncoderInput(
 	inputText: string,
 	inputEncoding: StringEncoding,
-	outputEncoding: Base64Encoding
+	outputEncoding: Base64Encoding,
 ): EncoderInput {
 	const validationResult = validateTextEncoding(inputText, inputEncoding);
 	if (!validationResult.success) {
@@ -37,7 +37,7 @@ function createEncoderInput(
 	inputText: string,
 	inputEncoding: StringEncoding,
 	outputEncoding: Base64Encoding,
-	validationResult: Result<string>
+	validationResult: Result<string>,
 ): EncoderInput {
 	const encoderInput = getEncodingParameters(inputText, inputEncoding, outputEncoding, validationResult);
 	const { bytes: inputBytes, totalChunks, lastChunkPadded, padLength } = encoderInput;
@@ -58,7 +58,7 @@ function createEncoderInput(
 			binary,
 			isPadded,
 			padLength: isPadded ? padLength : 0,
-			inputMap: createEncoderInputChunk(bytes, inputEncoding, ascii, byteStrings)
+			inputMap: createEncoderInputChunk(bytes, inputEncoding, ascii, byteStrings),
 		};
 	});
 	return { ...encoderInput, chunks: inputChunks };
@@ -68,7 +68,7 @@ function getEncodingParameters(
 	inputText: string,
 	inputEncoding: StringEncoding,
 	outputEncoding: Base64Encoding,
-	validationResult: Result<string>
+	validationResult: Result<string>,
 ): EncoderInput {
 	const bytes = stringToByteArray(inputText, inputEncoding);
 	const ascii = inputEncoding === 'ASCII' ? inputText : '';
@@ -91,7 +91,7 @@ function getEncodingParameters(
 		binary,
 		totalChunks,
 		lastChunkPadded,
-		padLength
+		padLength,
 	};
 }
 
@@ -106,7 +106,7 @@ export function createEncoderInputChunk(
 	inputBytes: number[],
 	encoding: StringEncoding,
 	ascii: string,
-	byteStrings: string[]
+	byteStrings: string[],
 ): HexByteMap[] {
 	return Array.from({ length: inputBytes.length }, (_, i) => {
 		const word1 = byteStrings[i].substring(0, 4);
@@ -118,7 +118,7 @@ export function createEncoderInputChunk(
 			hex_word1: BIN_TO_HEX[word1],
 			hex_word2: BIN_TO_HEX[word2],
 			ascii: encoding === 'ASCII' ? (/^\s+$/.test(ascii[i]) ? 'ws' : ascii[i]) : '',
-			isWhiteSpace: /^\s+$/.test(ascii[i])
+			isWhiteSpace: /^\s+$/.test(ascii[i]),
 		};
 	});
 }
@@ -145,7 +145,7 @@ function createDecoderInput(inputText: string, encoding: Base64Encoding, validat
 			encoding,
 			isPadded,
 			padLength: isPadded ? padLength : 0,
-			inputMap
+			inputMap,
 		};
 	});
 	const binary = inputChunks.map((chunk) => chunk.binary).join('');
@@ -155,7 +155,7 @@ function createDecoderInput(inputText: string, encoding: Base64Encoding, validat
 function getDecodingParameters(
 	inputText: string,
 	inputEncoding: Base64Encoding,
-	validationResult: Result
+	validationResult: Result,
 ): DecoderInput {
 	const base64 = inputText.replace(/[=]/g, '');
 	const [chunkCount, lastChunkLength] = divmod(base64.length, 4);
@@ -169,7 +169,7 @@ function getDecodingParameters(
 		base64,
 		totalChunks,
 		lastChunkPadded,
-		padLength
+		padLength,
 	};
 }
 
@@ -177,7 +177,7 @@ function createDecoderInputChunk(
 	base64: string,
 	encoding: Base64Encoding,
 	isPadded: boolean,
-	padLength: number
+	padLength: number,
 ): Base64ByteMap[] {
 	const base64lookup = getBase64LookupMap(encoding);
 	const base64Map = base64.split('').map((b64) => {
@@ -187,7 +187,7 @@ function createDecoderInputChunk(
 			bin,
 			dec,
 			b64,
-			isPad: false
+			isPad: false,
 		};
 	});
 	if (isPadded) {
@@ -196,8 +196,8 @@ function createDecoderInputChunk(
 				bin: '',
 				dec: null,
 				b64: '=',
-				isPad: true
-			})
+				isPad: true,
+			}),
 		);
 	}
 	return base64Map;

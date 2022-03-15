@@ -81,21 +81,21 @@ export const getRandomHexString = (length: number): string =>
 		.map((n) => Number(n).toString(16))
 		.join('');
 
-export function parseGroupId(groupId: string): {chunkNumber: number, byteNumber: number, b64CharNumber: number} {
-    let match = HEX_BIT_GROUP_REGEX.exec(groupId);
-    if (match) {
+export function parseGroupId(groupId: string): { chunkNumber: number; byteNumber: number; b64CharNumber: number } {
+	let match = HEX_BIT_GROUP_REGEX.exec(groupId);
+	if (match) {
 		const { chunk, byte } = match.groups;
-        const chunkNumber = parseInt(chunk) - 1;
-        const byteNumber = chunkNumber * 3 + (parseInt(byte) - 1);
+		const chunkNumber = parseInt(chunk) - 1;
+		const byteNumber = chunkNumber * 3 + (parseInt(byte) - 1);
 		return { chunkNumber, byteNumber, b64CharNumber: null };
-    }
-    match = B64_BIT_GROUP_REGEX.exec(groupId);
-    if (match) {
-        const { chunk, b64Char } = match.groups;
-        const chunkNumber = parseInt(chunk) - 1;
-        const b64CharNumber = chunkNumber * 4 + (parseInt(b64Char) - 1);
-        return { chunkNumber, byteNumber: null, b64CharNumber };
-    }
+	}
+	match = B64_BIT_GROUP_REGEX.exec(groupId);
+	if (match) {
+		const { chunk, b64Char } = match.groups;
+		const chunkNumber = parseInt(chunk) - 1;
+		const b64CharNumber = chunkNumber * 4 + (parseInt(b64Char) - 1);
+		return { chunkNumber, byteNumber: null, b64CharNumber };
+	}
 }
 
 export function getChunkIndexFromGroupId(groupId: string): number {

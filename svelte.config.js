@@ -5,19 +5,19 @@ import preprocess from 'svelte-preprocess';
 const config = {
 	preprocess: [
 		preprocess({
-			postcss: true
-		})
+			postcss: true,
+		}),
 	],
 
 	kit: {
-    prerender: {
-      default: true,
-    },
+		prerender: {
+			default: true,
+		},
 		adapter: adapter(),
 
 		vite: {
 			ssr: {
-				noExternal: []
+				noExternal: [],
 			},
 			optimizeDeps: {},
 			test: {
@@ -25,11 +25,11 @@ const config = {
 				environment: 'jsdom',
 				moduleNameMapper: {
 					'^\\$lib(.*)$': '<rootDir>/src/lib$1',
-					'^\\$app(.*)$': ['<rootDir>/.svelte-kit/dev/runtime/app$1', '<rootDir>/.svelte-kit/build/runtime/app$1']
-				}
-			}
-		}
-	}
+					'^\\$app(.*)$': ['<rootDir>/.svelte-kit/dev/runtime/app$1', '<rootDir>/.svelte-kit/build/runtime/app$1'],
+				},
+			},
+		},
+	},
 };
 
 export default config;

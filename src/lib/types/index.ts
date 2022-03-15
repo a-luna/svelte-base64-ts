@@ -20,4 +20,3 @@ export type { AppMode, Base64Encoding, ButtonColor, Encoding, NavAction, StringE
 export type { OutputChunk } from './OutputChunk';
 export type { Result } from './Result';
 export type { SelectMenuOption } from './SelectMenuOption';
-

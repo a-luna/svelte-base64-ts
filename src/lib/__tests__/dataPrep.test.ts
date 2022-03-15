@@ -10,7 +10,7 @@ describe('validateEncoderInputChunks', () => {
 			outputEncoding: 'base64',
 			validationResult: {
 				success: true,
-				value: 'dog'
+				value: 'dog',
 			},
 			bytes: [100, 111, 103],
 			hex: '64 6F 67',
@@ -38,7 +38,7 @@ describe('validateEncoderInputChunks', () => {
 							hex_word1: '6',
 							hex_word2: '4',
 							ascii: 'd',
-							isWhiteSpace: false
+							isWhiteSpace: false,
 						},
 						{
 							byte: 111,
@@ -47,7 +47,7 @@ describe('validateEncoderInputChunks', () => {
 							hex_word1: '6',
 							hex_word2: 'F',
 							ascii: 'o',
-							isWhiteSpace: false
+							isWhiteSpace: false,
 						},
 						{
 							byte: 103,
@@ -56,11 +56,11 @@ describe('validateEncoderInputChunks', () => {
 							hex_word1: '6',
 							hex_word2: '7',
 							ascii: 'g',
-							isWhiteSpace: false
-						}
-					]
-				}
-			]
+							isWhiteSpace: false,
+						},
+					],
+				},
+			],
 		});
 	});
 
@@ -71,7 +71,7 @@ describe('validateEncoderInputChunks', () => {
 			outputEncoding: 'base64',
 			validationResult: {
 				success: true,
-				value: 'do'
+				value: 'do',
 			},
 			bytes: [100, 111],
 			hex: '64 6F',
@@ -99,7 +99,7 @@ describe('validateEncoderInputChunks', () => {
 							hex_word1: '6',
 							hex_word2: '4',
 							ascii: 'd',
-							isWhiteSpace: false
+							isWhiteSpace: false,
 						},
 						{
 							byte: 111,
@@ -108,11 +108,11 @@ describe('validateEncoderInputChunks', () => {
 							hex_word1: '6',
 							hex_word2: 'F',
 							ascii: 'o',
-							isWhiteSpace: false
-						}
-					]
-				}
-			]
+							isWhiteSpace: false,
+						},
+					],
+				},
+			],
 		});
 	});
 
@@ -123,7 +123,7 @@ describe('validateEncoderInputChunks', () => {
 			outputEncoding: 'base64',
 			validationResult: {
 				success: true,
-				value: ' do'
+				value: ' do',
 			},
 			bytes: [32, 100, 111],
 			hex: '20 64 6F',
@@ -151,7 +151,7 @@ describe('validateEncoderInputChunks', () => {
 							hex_word1: '2',
 							hex_word2: '0',
 							ascii: 'ws',
-							isWhiteSpace: true
+							isWhiteSpace: true,
 						},
 						{
 							byte: 100,
@@ -160,7 +160,7 @@ describe('validateEncoderInputChunks', () => {
 							hex_word1: '6',
 							hex_word2: '4',
 							ascii: 'd',
-							isWhiteSpace: false
+							isWhiteSpace: false,
 						},
 						{
 							byte: 111,
@@ -169,11 +169,11 @@ describe('validateEncoderInputChunks', () => {
 							hex_word1: '6',
 							hex_word2: 'F',
 							ascii: 'o',
-							isWhiteSpace: false
-						}
-					]
-				}
-			]
+							isWhiteSpace: false,
+						},
+					],
+				},
+			],
 		});
 	});
 
@@ -184,7 +184,7 @@ describe('validateEncoderInputChunks', () => {
 			outputEncoding: 'base64',
 			validationResult: {
 				success: true,
-				value: ' d'
+				value: ' d',
 			},
 			bytes: [32, 100],
 			hex: '20 64',
@@ -212,7 +212,7 @@ describe('validateEncoderInputChunks', () => {
 							hex_word1: '2',
 							hex_word2: '0',
 							ascii: 'ws',
-							isWhiteSpace: true
+							isWhiteSpace: true,
 						},
 						{
 							byte: 100,
@@ -221,11 +221,11 @@ describe('validateEncoderInputChunks', () => {
 							hex_word1: '6',
 							hex_word2: '4',
 							ascii: 'd',
-							isWhiteSpace: false
-						}
-					]
-				}
-			]
+							isWhiteSpace: false,
+						},
+					],
+				},
+			],
 		});
 	});
 
@@ -236,7 +236,7 @@ describe('validateEncoderInputChunks', () => {
 			outputEncoding: 'base64',
 			validationResult: {
 				success: true,
-				value: '5f3c0a'
+				value: '5f3c0a',
 			},
 			bytes: [95, 60, 10],
 			hex: '5F 3C 0A',
@@ -264,7 +264,7 @@ describe('validateEncoderInputChunks', () => {
 							hex_word1: '5',
 							hex_word2: 'F',
 							ascii: '',
-							isWhiteSpace: false
+							isWhiteSpace: false,
 						},
 						{
 							byte: 60,
@@ -273,7 +273,7 @@ describe('validateEncoderInputChunks', () => {
 							hex_word1: '3',
 							hex_word2: 'C',
 							ascii: '',
-							isWhiteSpace: false
+							isWhiteSpace: false,
 						},
 						{
 							byte: 10,
@@ -282,11 +282,11 @@ describe('validateEncoderInputChunks', () => {
 							hex_word1: '0',
 							hex_word2: 'A',
 							ascii: '',
-							isWhiteSpace: false
-						}
-					]
-				}
-			]
+							isWhiteSpace: false,
+						},
+					],
+				},
+			],
 		});
 	});
 });
@@ -297,7 +297,7 @@ describe('validateDecoderInputChunks', () => {
 			inputText: 'ZG9n',
 			inputEncoding: 'base64',
 			validationResult: {
-				success: true
+				success: true,
 			},
 			base64: 'ZG9n',
 			totalChunks: 1,
@@ -316,29 +316,29 @@ describe('validateDecoderInputChunks', () => {
 							bin: '011001',
 							dec: 25,
 							b64: 'Z',
-							isPad: false
+							isPad: false,
 						},
 						{
 							bin: '000110',
 							dec: 6,
 							b64: 'G',
-							isPad: false
+							isPad: false,
 						},
 						{
 							bin: '111101',
 							dec: 61,
 							b64: '9',
-							isPad: false
+							isPad: false,
 						},
 						{
 							bin: '100111',
 							dec: 39,
 							b64: 'n',
-							isPad: false
-						}
-					]
-				}
-			]
+							isPad: false,
+						},
+					],
+				},
+			],
 		});
 	});
 
@@ -347,7 +347,7 @@ describe('validateDecoderInputChunks', () => {
 			inputText: 'ZG8=',
 			inputEncoding: 'base64',
 			validationResult: {
-				success: true
+				success: true,
 			},
 			base64: 'ZG8',
 			totalChunks: 1,
@@ -366,29 +366,29 @@ describe('validateDecoderInputChunks', () => {
 							bin: '011001',
 							dec: 25,
 							b64: 'Z',
-							isPad: false
+							isPad: false,
 						},
 						{
 							bin: '000110',
 							dec: 6,
 							b64: 'G',
-							isPad: false
+							isPad: false,
 						},
 						{
 							bin: '111100',
 							dec: 60,
 							b64: '8',
-							isPad: false
+							isPad: false,
 						},
 						{
 							bin: '',
 							dec: null,
 							b64: '=',
-							isPad: true
-						}
-					]
-				}
-			]
+							isPad: true,
+						},
+					],
+				},
+			],
 		});
 	});
 });

@@ -72,7 +72,7 @@
 	.modal-dialog {
 		position: relative;
 		width: auto;
-		max-width: 80%;
+		max-width: 600px;
 		margin: 2rem auto;
 		padding: 1rem;
 		background-clip: padding-box;

@@ -16,19 +16,19 @@
 				label: 'ASCII',
 				id: 'inputEncoding1',
 				value: 'ASCII',
-				checked: $state.encoderInput.inputEncoding === 'ASCII'
+				checked: $state.encoderInput.inputEncoding === 'ASCII',
 			},
 			{
 				label: 'Hex',
 				id: 'inputEncoding2',
 				value: 'hex',
-				checked: $state.encoderInput.inputEncoding === 'hex'
-			}
-		]
+				checked: $state.encoderInput.inputEncoding === 'hex',
+			},
+		],
 	};
 
 	function handleRadioButtonSelectionChanged(
-		e: CustomEvent<{ groupId: string; groupName: string; selectionId: string; value: string }>
+		e: CustomEvent<{ groupId: string; groupName: string; selectionId: string; value: string }>,
 	) {
 		const { value } = e.detail;
 		if (isEncoding(value) && isStringEncoding(value)) {

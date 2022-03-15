@@ -25,12 +25,12 @@ export function getChunkedBase64Map(args: {
 	const base64Map: Base64CharacterMap[] = base64Alphabet.map((b64, index) => ({
 		b64,
 		bin: `${'0'.repeat(6 - index.toString(2).length)}${index.toString(2)}`,
-		dec: index
+		dec: index,
 	}));
 	base64Map.push({
 		b64: '=',
 		bin: '------',
-		dec: '--'
+		dec: '--',
 	});
 	return chunkify<Base64CharacterMap>({ inputList: base64Map, chunkSize });
 }
@@ -56,7 +56,7 @@ export function getChunkedAsciiMap(args: { chunkSize: number }): AsciiCharacterM
 			binWord1: bin.substring(0, 4),
 			binWord2: bin.substring(4, 8),
 			bin,
-			dec: i
+			dec: i,
 		});
 	}
 	return chunkify<AsciiCharacterMap>({ inputList: asciiMap, chunkSize });

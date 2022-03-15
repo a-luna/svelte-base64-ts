@@ -1,14 +1,26 @@
 <script lang="ts">
+	import Base64StandardAlphabet from '$lib/components/AlgorithmDemo/HelpModal/Sections/Base64StandardAlphabet.svelte';
+	import Base64UrlAlphabet from '$lib/components/AlgorithmDemo/HelpModal/Sections/Base64UrlAlphabet.svelte';
 	import KeyboardHelpSection from '$lib/components/AlgorithmDemo/HelpModal/Sections/KeyboardHelpSection.svelte';
 	import NavButtonsHelpSection from '$lib/components/AlgorithmDemo/HelpModal/Sections/NavButtonsHelpSection.svelte';
 	import SettingsHelpSection from '$lib/components/AlgorithmDemo/HelpModal/Sections/SettingsHelpSection.svelte';
+	import WhatIsBase64Section from '$lib/components/AlgorithmDemo/HelpModal/Sections/WhatIsBase64Section.svelte';
+	import WhatIsntBase64 from '$lib/components/AlgorithmDemo/HelpModal/Sections/WhatIsntBase64.svelte';
 	import ChevronLeft from '$lib/components/Icons/ChevronLeft.svelte';
 	import ChevronRight from '$lib/components/Icons/ChevronRight.svelte';
 	import Modal from '$lib/components/Modal.svelte';
 
 	let index = 0;
 	let modal: Modal;
-	const sections = [SettingsHelpSection, NavButtonsHelpSection, KeyboardHelpSection];
+	const sections = [
+		WhatIsBase64Section,
+		WhatIsntBase64,
+		Base64StandardAlphabet,
+		Base64UrlAlphabet,
+		SettingsHelpSection,
+		NavButtonsHelpSection,
+		KeyboardHelpSection,
+	];
 
 	export const toggleModel = () => modal.toggleModal();
 	const next = () => (index = (index + 1) % sections.length);

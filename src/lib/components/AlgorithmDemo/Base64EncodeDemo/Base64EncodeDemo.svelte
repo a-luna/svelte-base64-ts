@@ -46,27 +46,42 @@
 	}
 	$: tableChunkSize = pageWidth < 830 ? 32 : 16;
 	$: tableSectionHeight = pageWidth < 830 ? 'auto' : '260px';
-	$: if ($state.context) console.log({ state: $state.value, context: $state.context });
+	$: updateInputText(inputText, inputTextEncoding, outputBase64Encoding);
 
-	function submitForm() {
+	function updateInputText(input: string, stringEncoding: StringEncoding, base64Encoding: Base64Encoding) {
+		send({
+			type: 'UPDATE_INPUT_TEXT',
+			inputText: input,
+			inputEncoding: stringEncoding,
+			outputEncoding: base64Encoding,
+		});
+	}
+
+	function submitForm(input: string) {
 		if (isStringEncoding(inputTextEncoding) && isBase64Encoding(outputBase64Encoding)) {
 			send({
 				type: 'VALIDATE_INPUT',
-				inputText: inputText,
+				inputText: input,
 				inputEncoding: inputTextEncoding,
 				outputEncoding: outputBase64Encoding,
 			});
 		}
 	}
 
-	const validateTransitions: { state: string; action: NavAction; event: 'VALIDATE_INPUT' | 'START_AUTO_PLAY' }[] = [
+	const validateTransitions: {
+		state: string;
+		action: NavAction;
+		event: 'VALIDATE_INPUT' | 'START_AUTO_PLAY' | 'GO_TO_LAST_STEP';
+	}[] = [
 		{ state: 'inactive', action: 'GO_TO_NEXT_STEP', event: 'VALIDATE_INPUT' },
+		{ state: 'inactive', action: 'GO_TO_LAST_STEP', event: 'GO_TO_LAST_STEP' },
 		{ state: 'inactive', action: 'START_AUTO_PLAY', event: 'START_AUTO_PLAY' },
 		{ state: 'inputTextError', action: 'GO_TO_NEXT_STEP', event: 'VALIDATE_INPUT' },
+		{ state: 'inputTextError', action: 'GO_TO_LAST_STEP', event: 'GO_TO_LAST_STEP' },
 		{ state: 'inputTextError', action: 'START_AUTO_PLAY', event: 'START_AUTO_PLAY' },
 	];
 
-	const getValidationEventType = (action: NavAction): 'VALIDATE_INPUT' | 'START_AUTO_PLAY' =>
+	const getValidationEventType = (action: NavAction): 'VALIDATE_INPUT' | 'START_AUTO_PLAY' | 'GO_TO_LAST_STEP' =>
 		validateTransitions.find((t) => t.state === $state.value && t.action === action)?.event;
 
 	function handleNavButtonEvent(e: CustomEvent<{ action: NavAction }>) {
@@ -121,7 +136,7 @@
 	bind:inputTextEncoding
 	bind:outputBase64Encoding
 	on:navButtonEvent={handleNavButtonEvent}
-	on:submit={() => submitForm()}
+	on:submit={() => submitForm(inputText)}
 />
 <div class="demo-steps">
 	<div class="encoded-bytes">

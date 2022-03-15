@@ -1,21 +1,21 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { b64Encode } from '$lib/base64';
 import {
-    defaultBase64ByteMap,
-    defaultEncoderInput,
-    defaultEncoderOutput,
-    defaultHexByteMap,
-    defaultOutputChunk
+	defaultBase64ByteMap,
+	defaultEncoderInput,
+	defaultEncoderOutput,
+	defaultHexByteMap,
+	defaultOutputChunk,
 } from '$lib/constants';
 import { validateEncoderInput } from '$lib/dataPrep';
 import type {
-    Base64ByteMap,
-    Base64Encoding,
-    EncoderInput,
-    EncoderOutput,
-    HexByteMap,
-    OutputChunk,
-    StringEncoding
+	Base64ByteMap,
+	Base64Encoding,
+	EncoderInput,
+	EncoderOutput,
+	HexByteMap,
+	OutputChunk,
+	StringEncoding,
 } from '$lib/types';
 import { assign, createMachine } from 'xstate';
 
@@ -37,12 +37,13 @@ export interface EncodingContext {
 }
 
 export type EncodingEvent =
-    | { type: 'RESET' }
+	| { type: 'RESET' }
+	| { type: 'UPDATE_INPUT_TEXT'; inputText: string; inputEncoding: StringEncoding; outputEncoding: Base64Encoding }
 	| { type: 'VALIDATE_INPUT'; inputText: string; inputEncoding: StringEncoding; outputEncoding: Base64Encoding }
 	| { type: 'GO_TO_FIRST_STEP' }
 	| { type: 'GO_TO_PREV_STEP' }
 	| { type: 'GO_TO_NEXT_STEP' }
-	| { type: 'GO_TO_LAST_STEP' }
+	| { type: 'GO_TO_LAST_STEP'; inputText: string; inputEncoding: StringEncoding; outputEncoding: Base64Encoding }
 	| { type: 'START_AUTO_PLAY'; inputText: string; inputEncoding: StringEncoding; outputEncoding: Base64Encoding }
 	| { type: 'STOP_AUTO_PLAY' };
 
@@ -155,20 +156,40 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 				on: {
 					START_AUTO_PLAY: { target: 'validateInputText', actions: ['resetContext', 'validate', 'startAutoPlay'] },
 					VALIDATE_INPUT: { target: 'validateInputText', actions: ['resetContext', 'validate'] },
-                    RESET: { target: 'inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
+					UPDATE_INPUT_TEXT: { target: 'inactive', actions: ['resetContext', 'validate'] },
+					GO_TO_LAST_STEP: { target: 'skipDemoSteps', actions: ['resetContext', 'validate'] },
+					RESET: { target: 'inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
 				},
 			},
 			validateInputText: {
-				always: [{ target: 'inputTextError', cond: 'inputTextIsInvalid' }, { target: 'encodeInputText', actions: ['encode', 'generateBase64Maps', 'generateByteMaps'] }],
+				always: [
+					{ target: 'inputTextError', cond: 'inputTextIsInvalid' },
+					{ target: 'encodeInputText', actions: ['encode', 'generateBase64Maps', 'generateByteMaps'] },
+				],
+			},
+			skipDemoSteps: {
+				always: [
+					{ target: 'inputTextError', cond: 'inputTextIsInvalid' },
+					{ target: 'finished', actions: ['encode', 'generateBase64Maps', 'generateByteMaps'] },
+				],
 			},
 			inputTextError: {
 				entry: ['stopAutoPlay'],
 				on: {
-					START_AUTO_PLAY: { target: 'validateInputText', actions: ['validate', 'startAutoPlay'] },
 					VALIDATE_INPUT: { target: 'validateInputText', actions: 'validate' },
-                    RESET: { target: 'inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
-                    GO_TO_FIRST_STEP: { target: 'inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
-                    GO_TO_PREV_STEP: { target: 'inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
+					UPDATE_INPUT_TEXT: { target: 'inactive', actions: 'validate' },
+					RESET: { target: 'inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
+					GO_TO_FIRST_STEP: { target: 'inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
+					GO_TO_PREV_STEP: { target: 'inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
+					GO_TO_LAST_STEP: [
+						{ actions: ['resetContext', 'validate'] },
+						{
+							target: 'finished',
+							actions: ['encode', 'generateBase64Maps', 'generateByteMaps'],
+							cond: 'inputTextIsValid',
+						},
+						{ target: 'inputTextError' },
+					],
 				},
 			},
 			encodeInputText: {
@@ -186,7 +207,7 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 								actions: 'startAutoPlay',
 								cond: 'autoPlayDisabled',
 							},
-                            RESET: { target: '#inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
+							RESET: { target: '#inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
 							GO_TO_FIRST_STEP: { target: '#inactive', cond: 'autoPlayDisabled' },
 							GO_TO_PREV_STEP: { target: '#inactive', cond: 'autoPlayDisabled' },
 							GO_TO_NEXT_STEP: { target: 'encodeByte', actions: 'mapNextByte', cond: 'bytesRemaining' },
@@ -215,7 +236,7 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 								actions: 'startAutoPlay',
 								cond: 'autoPlayDisabled',
 							},
-                            RESET: { target: '#inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
+							RESET: { target: '#inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
 							GO_TO_FIRST_STEP: { target: '#inactive', cond: 'autoPlayDisabled' },
 							GO_TO_PREV_STEP: [
 								{ target: 'encodeByte', actions: 'mapPreviousByte', cond: 'hasPreviousByte' },
@@ -250,9 +271,13 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 								cond: 'autoPlayDisabled',
 							},
 							STOP_AUTO_PLAY: { actions: 'stopAutoPlay', cond: 'autoPlayEnabled' },
-                            RESET: { target: '#inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
+							RESET: { target: '#inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
 							GO_TO_FIRST_STEP: { target: '#inactive', cond: 'autoPlayDisabled' },
-							GO_TO_PREV_STEP: { target: '#encodeInputText.encodeByte', actions: 'resetNoBytesRemaining', cond: 'autoPlayDisabled' },
+							GO_TO_PREV_STEP: {
+								target: '#encodeInputText.encodeByte',
+								actions: 'resetNoBytesRemaining',
+								cond: 'autoPlayDisabled',
+							},
 							GO_TO_NEXT_STEP: { target: 'createInputChunk', cond: 'autoPlayDisabled' },
 							GO_TO_LAST_STEP: { target: '#finished', cond: 'autoPlayDisabled' },
 						},
@@ -285,7 +310,7 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 								cond: 'autoPlayDisabled',
 							},
 							STOP_AUTO_PLAY: { actions: 'stopAutoPlay', cond: 'autoPlayEnabled' },
-                            RESET: { target: '#inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
+							RESET: { target: '#inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
 							GO_TO_FIRST_STEP: { target: 'idle', cond: 'autoPlayDisabled' },
 							GO_TO_PREV_STEP: [
 								{ target: 'createInputChunk', actions: 'mapPreviousChunk', cond: 'hasPreviousChunk' },
@@ -311,7 +336,7 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 								cond: 'autoPlayDisabled',
 							},
 							STOP_AUTO_PLAY: { actions: 'stopAutoPlay', cond: 'autoPlayEnabled' },
-                            RESET: { target: '#inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
+							RESET: { target: '#inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
 							GO_TO_FIRST_STEP: { target: 'idle', cond: 'autoPlayDisabled' },
 							GO_TO_PREV_STEP: [
 								{ target: 'createInputChunk', actions: 'mapPreviousChunk', cond: 'hasPreviousChunk' },
@@ -342,12 +367,20 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 								cond: 'autoPlayDisabled',
 							},
 							STOP_AUTO_PLAY: { actions: 'stopAutoPlay', cond: 'autoPlayEnabled' },
-                            RESET: { target: '#inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
+							RESET: { target: '#inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
 							GO_TO_FIRST_STEP: { target: '#inactive', cond: 'autoPlayDisabled' },
 							GO_TO_PREV_STEP: [
-                                { target: '#createInputChunks.createLastPaddedChunk', actions: 'resetNoChunksRemaining', cond: 'currentChunkIsPadded' },
-                                { target: '#createInputChunks.createInputChunk', actions: 'resetNoChunksRemaining', cond: 'autoPlayDisabled' }
-                            ],
+								{
+									target: '#createInputChunks.createLastPaddedChunk',
+									actions: 'resetNoChunksRemaining',
+									cond: 'currentChunkIsPadded',
+								},
+								{
+									target: '#createInputChunks.createInputChunk',
+									actions: 'resetNoChunksRemaining',
+									cond: 'autoPlayDisabled',
+								},
+							],
 							GO_TO_NEXT_STEP: { target: 'encodeBase64', cond: 'autoPlayDisabled' },
 							GO_TO_LAST_STEP: { target: '#finished', cond: 'autoPlayDisabled' },
 						},
@@ -375,7 +408,7 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 								cond: 'autoPlayDisabled',
 							},
 							STOP_AUTO_PLAY: { actions: 'stopAutoPlay', cond: 'autoPlayEnabled' },
-                            RESET: { target: '#inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
+							RESET: { target: '#inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
 							GO_TO_FIRST_STEP: { target: '#inactive', cond: 'autoPlayDisabled' },
 							GO_TO_PREV_STEP: [
 								{ target: 'encodeBase64', actions: 'mapPreviousBase64Char', cond: 'hasPreviousBase64Char' },
@@ -395,13 +428,17 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 				onDone: 'finished',
 			},
 			finished: {
-                id: 'finished',
+				id: 'finished',
 				entry: ['stopAutoPlay'],
 				on: {
 					START_AUTO_PLAY: { target: 'validateInputText', actions: 'startAutoPlay', cond: 'autoPlayDisabled' },
-                    RESET: { target: 'inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
+					RESET: { target: 'inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
 					GO_TO_FIRST_STEP: { target: 'inactive', cond: 'autoPlayDisabled' },
-					GO_TO_PREV_STEP: { target: 'encodeOutputText.encodeBase64', actions: 'resetNoBase64CharsRemaining', cond: 'autoPlayDisabled' },
+					GO_TO_PREV_STEP: {
+						target: 'encodeOutputText.encodeBase64',
+						actions: 'resetNoBase64CharsRemaining',
+						cond: 'autoPlayDisabled',
+					},
 				},
 			},
 		},
@@ -424,13 +461,18 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 				input: (context: EncodingContext) => context.input,
 				output: (_: EncodingContext) => defaultEncoderOutput,
 			}),
-            resetInput: assign({ input: (_: EncodingContext) => defaultEncoderInput }),
-            resetOutput: assign({ output: (_: EncodingContext) => defaultEncoderOutput }),
+			resetInput: assign({ input: (_: EncodingContext) => defaultEncoderInput }),
+			resetOutput: assign({ output: (_: EncodingContext) => defaultEncoderOutput }),
 			startAutoPlay: assign({ autoplay: (_) => true }),
 			stopAutoPlay: assign({ autoplay: (_) => false }),
 			validate: assign({
 				input: (_: EncodingContext, event: EncodingEvent) => {
-					if (event.type === 'VALIDATE_INPUT' || event.type === 'START_AUTO_PLAY') {
+					if (
+						event.type === 'VALIDATE_INPUT' ||
+						event.type === 'UPDATE_INPUT_TEXT' ||
+						event.type === 'START_AUTO_PLAY' ||
+						event.type === 'GO_TO_LAST_STEP'
+					) {
 						return validateEncoderInput(event.inputText, event.inputEncoding, event.outputEncoding);
 					}
 				},
@@ -456,7 +498,7 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 				currentByte: (_: EncodingContext) => defaultHexByteMap,
 				remainingBytes: (context: EncodingContext) => context.byteMaps.length - 1,
 			}),
-            resetNoBytesRemaining: assign({
+			resetNoBytesRemaining: assign({
 				byteIndex: (context: EncodingContext) => context.byteMaps.length - 1,
 				remainingBytes: (_: EncodingContext) => 0,
 			}),
@@ -476,7 +518,7 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 				currentChunk: (_: EncodingContext) => defaultOutputChunk,
 				remainingChunks: (context: EncodingContext) => context.input.totalChunks - 1,
 			}),
-            resetNoChunksRemaining: assign({
+			resetNoChunksRemaining: assign({
 				chunkIndex: (context: EncodingContext) => context.input.totalChunks - 1,
 				remainingChunks: (_: EncodingContext) => 0,
 			}),
@@ -500,9 +542,9 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 				currentBase64Char: (_: EncodingContext) => defaultBase64ByteMap,
 				remainingBase64Chars: (context: EncodingContext) => context.base64Maps.length - 1,
 			}),
-            resetNoBase64CharsRemaining: assign({
-				base64CharIndex: (context: EncodingContext) => context.base64Maps.length - 2,
-				remainingBase64Chars: (_: EncodingContext) => 1,
+			resetNoBase64CharsRemaining: assign({
+				base64CharIndex: (context: EncodingContext) => context.base64Maps.length - 1,
+				remainingBase64Chars: (_: EncodingContext) => 0,
 			}),
 			mapNextBase64Char: assign({
 				base64CharIndex: (context: EncodingContext) => context.base64CharIndex + 1,
@@ -517,6 +559,7 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 			autoPlayEnabled: (context: EncodingContext) => context.autoplay,
 			autoPlayDisabled: (context: EncodingContext) => !context.autoplay,
 			inputTextIsInvalid: (context: EncodingContext) => !context.input.validationResult.success,
+			inputTextIsValid: (context: EncodingContext) => context.input.validationResult.success,
 			bytesRemaining: (context: EncodingContext) => context.remainingBytes > 0,
 			noBytesRemaining: (context: EncodingContext) => context.remainingBytes === 0,
 			allBytesRemaining: (context: EncodingContext) => context.remainingBytes + 1 === context.byteMaps.length,
@@ -529,7 +572,7 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 				context.remainingChunks === 1 && context.input.lastChunkPadded,
 			noChunksRemaining: (context: EncodingContext) => context.remainingChunks === 0,
 			allChunksRemaining: (context: EncodingContext) => context.remainingChunks + 1 === context.input.totalChunks,
-            currentChunkIsPadded: (context: EncodingContext) => context.currentChunk.bytes.length !== 3,
+			currentChunkIsPadded: (context: EncodingContext) => context.currentChunk.bytes.length !== 3,
 			hasPreviousChunk: (context: EncodingContext) => context.chunkIndex > 0,
 			base64CharsRemaining: (context: EncodingContext) => context.remainingBase64Chars > 0,
 			noBase64CharsRemaining: (context: EncodingContext) => context.remainingBase64Chars === 0,

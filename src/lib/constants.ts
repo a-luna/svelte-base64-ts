@@ -1,13 +1,13 @@
 import type {
-    Base64ByteMap,
-    DecoderInput,
-    DecoderInputChunk,
-    DecoderOutput,
-    EncoderInput,
-    EncoderInputChunk,
-    EncoderOutput,
-    HexByteMap,
-    OutputChunk
+	Base64ByteMap,
+	DecoderInput,
+	DecoderInputChunk,
+	DecoderOutput,
+	EncoderInput,
+	EncoderInputChunk,
+	EncoderOutput,
+	HexByteMap,
+	OutputChunk,
 } from '$lib/types';
 
 export const B64_ALPHABET_COMMON = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';

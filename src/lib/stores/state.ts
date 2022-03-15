@@ -15,7 +15,7 @@ function createAppStateStore(mode: AppMode): AppState {
 		decoderInput: defaultDecoderInput,
 		decoderOutput: defaultDecoderOutput,
 		encoderInput: defaultEncoderInput,
-		encoderOutput: defaultEncoderOutput
+		encoderOutput: defaultEncoderOutput,
 	});
 
 	const { set, subscribe, update } = writable<AppSettings>(getDefaultAppSettings(mode, false));
@@ -63,7 +63,7 @@ function createAppStateStore(mode: AppMode): AppState {
 		encoder.validateInput(
 			settings.encoderInput.inputText,
 			settings.encoderInput.inputEncoding,
-			settings.encoderInput.outputEncoding
+			settings.encoderInput.outputEncoding,
 		);
 	const validateDecoderInput = (settings: AppSettings): DecoderInput =>
 		decoder.validateInput(settings.decoderInput.inputText, settings.decoderInput.inputEncoding);
@@ -101,7 +101,7 @@ function createAppStateStore(mode: AppMode): AppState {
 		changeOutputEncoding: (encoding: Base64Encoding) => update((settings) => changeOutputEncoding(encoding, settings)),
 		validateInput: () => update((settings) => validateInput(settings)),
 		execute: () => update((settings) => execute(settings)),
-		reset: () => update((settings) => reset(settings.mode, settings))
+		reset: () => update((settings) => reset(settings.mode, settings)),
 	};
 }
 

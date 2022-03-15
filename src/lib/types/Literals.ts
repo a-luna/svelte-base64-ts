@@ -9,12 +9,12 @@ export const BUTTON_COLORS = ['red', 'pink', 'orange', 'teal', 'green', 'blue', 
 export type ButtonColor = typeof BUTTON_COLORS[number];
 
 export const NAV_ACTIONS = [
-    'RESET',
+	'RESET',
 	'GO_TO_FIRST_STEP',
 	'GO_TO_PREV_STEP',
 	'GO_TO_NEXT_STEP',
 	'GO_TO_LAST_STEP',
 	'START_AUTO_PLAY',
-	'STOP_AUTO_PLAY'
+	'STOP_AUTO_PLAY',
 ] as const;
 export type NavAction = typeof NAV_ACTIONS[number];

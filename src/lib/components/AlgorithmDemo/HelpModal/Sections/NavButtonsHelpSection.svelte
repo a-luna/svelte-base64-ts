@@ -17,7 +17,7 @@
 			<div class="help-row"><StopAutoPlayButton /><span>Stop auto-play</span></div>
 		</div>
 		<div class="nav-button-column">
-			<div class="help-row"><GoToFirstStepButton /><span>Go to previous step</span></div>
+			<div class="help-row"><GoToFirstStepButton /><span>Go to first step</span></div>
 			<div class="help-row"><GoToPreviousStepButton /><span>Go to previous step</span></div>
 			<div class="help-row"><GoToNextStepButton /><span>Go to next step</span></div>
 			<div class="help-row"><GoToLastStepButton /><span>Go to last step</span></div>

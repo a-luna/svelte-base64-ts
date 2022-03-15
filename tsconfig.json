@@ -25,7 +25,7 @@
 		"checkJs": true,
 		"paths": {
 			"$lib": ["src/lib"],
-            "$lib/*": ["src/lib/*"]
+			"$lib/*": ["src/lib/*"]
 		},
 		"types": ["node", "svelte"]
 	},

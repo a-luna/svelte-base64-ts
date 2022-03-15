@@ -18,7 +18,8 @@
 
 	$: inputTextBoxStyles = 'flex: 1;';
 	$: controlsDisabled = !$state.matches('inactive') && !$state.matches('inputTextError');
-	$: error = inputText === $state.context.input.inputText && !$state.context.input.validationResult.success;
+	$: error =
+		inputText && inputText === $state.context.input.inputText && !$state.context.input.validationResult.success;
 
 	function getPlaceholder(encoding: StringEncoding): string {
 		const stringEncoding = encoding === 'ASCII' ? 'string' : encoding === 'hex' ? 'hex string' : 'binary string';

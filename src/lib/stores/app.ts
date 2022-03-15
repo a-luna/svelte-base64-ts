@@ -75,7 +75,7 @@ function createAppStore(state: AppState): Readable<AppStore> {
 			inputStringIsValid: inputStringIsValid(),
 			buttonColor: getButtonColor(),
 			buttonLabel: encoderMode() ? 'Encode' : 'Decode',
-			b64AlphabetDetail: getBase64Encoding() == 'base64' ? 'Standard' : 'URL and Filename safe'
+			b64AlphabetDetail: getBase64Encoding() == 'base64' ? 'Standard' : 'URL and Filename safe',
 		};
 	});
 }

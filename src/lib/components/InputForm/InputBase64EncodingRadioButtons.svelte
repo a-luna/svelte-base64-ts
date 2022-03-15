@@ -16,19 +16,19 @@
 				label: 'base64',
 				id: 'base64EncodingIn1',
 				value: 'base64',
-				checked: $state.decoderInput.inputEncoding === 'base64'
+				checked: $state.decoderInput.inputEncoding === 'base64',
 			},
 			{
 				label: 'base64url',
 				id: 'base64EncodingIn2',
 				value: 'base64url',
-				checked: $state.decoderInput.inputEncoding === 'base64url'
-			}
-		]
+				checked: $state.decoderInput.inputEncoding === 'base64url',
+			},
+		],
 	};
 
 	function handleRadioButtonSelectionChanged(
-		e: CustomEvent<{ groupId: string; groupName: string; selectionId: string; value: string }>
+		e: CustomEvent<{ groupId: string; groupName: string; selectionId: string; value: string }>,
 	) {
 		const { value } = e.detail;
 		if (isEncoding(value) && isBase64Encoding(value)) {
