@@ -291,7 +291,7 @@ button {
 	display: flex;
 	flex-flow: row nowrap;
 	padding: 0;
-	font-size: 0.85rem;
+	font-size: 0.8rem;
 	color: var(--light-gray3);
 	border: 1px solid var(--help-module-bg-color);
 	border-radius: 6px;
@@ -365,6 +365,7 @@ button {
 	align-items: center;
 	padding: 0.5rem 1rem 1rem 1rem;
 	color: var(--nav-button-active-bg-color);
+	gap: 1rem;
 }
 
 .help-docs .nav {

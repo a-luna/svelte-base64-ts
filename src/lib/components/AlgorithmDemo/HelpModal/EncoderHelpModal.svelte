@@ -106,3 +106,9 @@
 		</div>
 	</div>
 </Modal>
+
+<style lang="postcss">
+	.placeholder {
+		width: 46px;
+	}
+</style>

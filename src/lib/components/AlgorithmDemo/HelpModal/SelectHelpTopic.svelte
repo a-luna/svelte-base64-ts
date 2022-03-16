@@ -8,6 +8,9 @@
 	export let value: number;
 	export let disabled = false;
 	export let dropdownShown = false;
+	export let flexStyles = 'flex: 1;';
+	export let buttonHeight = '25px';
+	export let buttonPadding = '6px 8px 6px 11px';
 	let options: SelectMenuOption[];
 
 	$: options = sectionNames.map((name, i) => ({
@@ -32,9 +35,11 @@
 	{menuId}
 	{width}
 	{fontSize}
+	{flexStyles}
+	{buttonHeight}
+	{buttonPadding}
 	{disabled}
 	{dropdownShown}
 	tooltip={'Select Help Topic'}
-	flexStyles={'flex: 0 0 auto;'}
 	on:changed={(e) => handleHelpSectionChanged(e.detail)}
 />
