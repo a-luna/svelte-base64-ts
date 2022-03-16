@@ -290,8 +290,8 @@ button {
 .help-docs {
 	display: flex;
 	flex-flow: row nowrap;
-	gap: 0.5rem;
 	padding: 0;
+	font-size: 0.85rem;
 	color: var(--light-gray3);
 	border: 1px solid var(--help-module-bg-color);
 	border-radius: 6px;
@@ -362,7 +362,6 @@ button {
 .help-docs .nav-buttons {
 	display: flex;
 	flex-flow: row nowrap;
-	justify-content: space-between;
 	align-items: center;
 	padding: 0.5rem 1rem 1rem 1rem;
 	color: var(--nav-button-active-bg-color);
@@ -404,7 +403,7 @@ button {
 	color: var(--nav-button-active-bg-color);
 	font-size: 1.1rem;
 	font-weight: 500;
-	letter-spacing: 0.4px;
+	letter-spacing: 0.6px;
 	text-align: center;
 }
 
@@ -421,7 +420,7 @@ button {
 }
 
 .help-docs p {
-	line-height: 1.6;
+	line-height: 1.4;
 	letter-spacing: 0.2px;
 	margin: 0;
 }

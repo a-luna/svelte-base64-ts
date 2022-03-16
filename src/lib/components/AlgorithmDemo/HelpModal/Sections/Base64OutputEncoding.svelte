@@ -1,12 +1,12 @@
 <script lang="ts">
 	import SelectBase64Encoding from '$lib/components/AlgorithmDemo/SelectBase64Encoding.svelte';
-	import { base64OutputEncoding } from '../../_demoText';
+	import { base64OutputEncoding } from '$lib/components/AlgorithmDemo/_demoText';
 </script>
 
 <div class="settings-help help-module">
 	<div class="encoding-wrapper">
 		<div class="b64-encoding">
-			<SelectBase64Encoding disabled={false} dropdownShown={true} />
+			<SelectBase64Encoding fontSize={'0.75rem'} disabled={false} dropdownShown={true} />
 		</div>
 		<div class="encoding-description">
 			{#each base64OutputEncoding as paragraph}

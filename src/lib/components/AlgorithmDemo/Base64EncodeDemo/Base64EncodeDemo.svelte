@@ -85,20 +85,7 @@
 	const getValidationEventType = (action: NavAction): 'VALIDATE_INPUT' | 'START_AUTO_PLAY' | 'GO_TO_LAST_STEP' =>
 		validateTransitions.find((t) => t.state === $state.value && t.action === action)?.event;
 
-	function handleNavButtonEvent(e: CustomEvent<{ action: NavAction }>) {
-		({ action } = e.detail);
-		const validationEventType = getValidationEventType(action);
-		if (validationEventType && isStringEncoding(inputTextEncoding) && isBase64Encoding(outputBase64Encoding)) {
-			send({
-				type: validationEventType,
-				inputText: inputText,
-				inputEncoding: inputTextEncoding,
-				outputEncoding: outputBase64Encoding,
-			});
-		} else {
-			send(action);
-		}
-	}
+	const handleNavButtonEvent = (e: CustomEvent<{ action: NavAction }>) => sendEvent(e.detail.action);
 
 	function handleKeyPress(key: string) {
 		if (!$demoState.modalOpen) {
@@ -119,10 +106,24 @@
 				}
 			}
 			if (action) {
-				send(action);
+				sendEvent(action);
 			} else {
 				action = savePreviousAction;
 			}
+		}
+	}
+
+	function sendEvent(action: NavAction) {
+		const validationEventType = getValidationEventType(action);
+		if (validationEventType && isStringEncoding(inputTextEncoding) && isBase64Encoding(outputBase64Encoding)) {
+			send({
+				type: validationEventType,
+				inputText: inputText,
+				inputEncoding: inputTextEncoding,
+				outputEncoding: outputBase64Encoding,
+			});
+		} else {
+			send(action);
 		}
 	}
 </script>

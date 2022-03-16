@@ -20,8 +20,8 @@
 				{#each hexStringFormats as [example, format]}
 					<li>
 						<div class="hex-example">
-							<span class="example"><code>{@html example}</code></span>
 							<span class="format">{@html format}</span>
+							<span class="example"><code>{@html example}</code></span>
 						</div>
 					</li>
 				{/each}
@@ -55,7 +55,7 @@
 		white-space: nowrap;
 	}
 	.encoding-description li {
-		margin: 0 0 0.25rem 0;
+		margin: 0 0 0.1rem 0;
 	}
 	.hex-example {
 		display: flex;
@@ -67,6 +67,7 @@
 		flex: 0 1 88px;
 	}
 	.hex-example .format {
+		flex: 1;
 		color: var(--nav-button-autoplay-border-color);
 		font-style: italic;
 	}

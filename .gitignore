@@ -1,9 +1,28 @@
-.DS_Store
-node_modules
-.vscode
-/.svelte
+# SvelteKit Files
+build/
+functions/
 /.svelte-kit
-/build
-/functions
-/.netlify/state.json
+/.svelte
+ 
+# Dependency directories
+node_modules/
+/package
+ 
+# Optional eslint cache
+.eslintcache
+ 
+# dotenv environment variable files
+.env*
+!.env.EXAMPLE
+ 
+# Mac files
+.DS_Store
+ 
+# Local Netlify folder
+.netlify
+
+# VSCode Settings/Config folder
+.vscode
+
+# Test Coverate Results
 coverage
