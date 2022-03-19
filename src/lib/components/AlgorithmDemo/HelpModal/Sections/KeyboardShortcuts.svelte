@@ -1,29 +1,25 @@
 <script lang="ts">
+	export let title: string;
 </script>
 
 <div class="keyboard-help help-module">
+	<div class="help-docs-section-title"><h2><span>{title}</span></h2></div>
 	<div class="keyboard-shortcuts">
-		<div class="help-row"><kbd>Space</kbd><span>Start/Stop auto-play</span></div>
-		<div class="help-row"><kbd>Right Arrow</kbd><span>Go to previous step</span></div>
-		<div class="help-row"><kbd>Left Arrow</kbd><span>Go to next step</span></div>
+		<kbd title="Space Bar">Space</kbd><span>Start/Stop auto-play</span>
+		<kbd class="arrow" title="Right Arrow Key">→</kbd><span>Go to previous step</span>
+		<kbd class="arrow" title="Left Arrow Key">←</kbd><span>Go to next step</span>
 	</div>
 </div>
 
 <style lang="postcss">
-	.keyboard-help,
-	.keyboard-shortcuts {
-		display: flex;
-		flex-flow: column nowrap;
-		gap: 0.5rem;
-	}
 	.keyboard-help {
 		margin: 0 auto;
-		padding: 0.5rem 0;
 	}
-	.help-row {
-		display: flex;
-		flex-flow: row nowrap;
-		gap: 1rem;
+	.keyboard-shortcuts {
+		display: grid;
+		grid-template-columns: 43px auto;
+		gap: 0.5rem;
+		margin: 0 auto;
 	}
 	kbd {
 		background-color: var(--light-gray2);
@@ -36,7 +32,10 @@
 		line-height: 1;
 		padding: 2px 4px;
 		white-space: nowrap;
-		width: 90px;
 		text-align: center;
+	}
+	.arrow {
+		font-size: 1.1rem;
+		padding: 0 4px;
 	}
 </style>

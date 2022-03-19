@@ -29,6 +29,7 @@
 	let highlightBase64: string;
 	let action: NavAction;
 	let pageWidth: number;
+	let stateName: string;
 
 	const { state, send } = useMachine<EncodingContext, EncodingEvent, EncodingTypeState>(encodingMachine);
 
@@ -72,17 +73,17 @@
 	const validateTransitions: {
 		state: string;
 		action: NavAction;
-		event: 'VALIDATE_INPUT' | 'START_AUTO_PLAY' | 'GO_TO_LAST_STEP';
+		event: 'VALIDATE_INPUT' | 'VALIDATE_INPUT_AUTO' | 'ENCODE_INPUT_TEXT';
 	}[] = [
 		{ state: 'inactive', action: 'GO_TO_NEXT_STEP', event: 'VALIDATE_INPUT' },
-		{ state: 'inactive', action: 'GO_TO_LAST_STEP', event: 'GO_TO_LAST_STEP' },
-		{ state: 'inactive', action: 'START_AUTO_PLAY', event: 'START_AUTO_PLAY' },
+		{ state: 'inactive', action: 'GO_TO_LAST_STEP', event: 'ENCODE_INPUT_TEXT' },
+		{ state: 'inactive', action: 'START_AUTO_PLAY', event: 'VALIDATE_INPUT_AUTO' },
 		{ state: 'inputTextError', action: 'GO_TO_NEXT_STEP', event: 'VALIDATE_INPUT' },
-		{ state: 'inputTextError', action: 'GO_TO_LAST_STEP', event: 'GO_TO_LAST_STEP' },
-		{ state: 'inputTextError', action: 'START_AUTO_PLAY', event: 'START_AUTO_PLAY' },
+		{ state: 'inputTextError', action: 'GO_TO_LAST_STEP', event: 'ENCODE_INPUT_TEXT' },
+		{ state: 'inputTextError', action: 'START_AUTO_PLAY', event: 'VALIDATE_INPUT_AUTO' },
 	];
 
-	const getValidationEventType = (action: NavAction): 'VALIDATE_INPUT' | 'START_AUTO_PLAY' | 'GO_TO_LAST_STEP' =>
+	const getValidationEventType = (action: NavAction): 'VALIDATE_INPUT' | 'VALIDATE_INPUT_AUTO' | 'ENCODE_INPUT_TEXT' =>
 		validateTransitions.find((t) => t.state === $state.value && t.action === action)?.event;
 
 	const handleNavButtonEvent = (e: CustomEvent<{ action: NavAction }>) => sendEvent(e.detail.action);

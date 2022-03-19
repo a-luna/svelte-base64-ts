@@ -10,7 +10,9 @@
 	const navButtonEventDispatcher = createEventDispatcher<{ navButtonEvent: { action: NavAction } }>();
 
 	$: autoplay = state ? $state.context.autoplay : false;
-	$: disabled = state ? !$state.can('GO_TO_LAST_STEP') : false;
+	$: disabled = state
+		? !($state.can('GO_TO_LAST_STEP') || $state.matches('inactive') || $state.matches('inputTextError'))
+		: false;
 </script>
 
 <button

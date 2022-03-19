@@ -1,19 +1,21 @@
 <script lang="ts">
 	import Select from '$lib/components/Select/Select.svelte';
 	import type { SelectMenuOption } from '$lib/types';
+	import { createEventDispatcher } from 'svelte';
 
-	export let sectionNames: string[] = [];
+	export let helpTopics: string[] = [];
 	export let width = 'auto';
-	export let fontSize: string = '0.75rem';
+	export let fontSize = '0.75rem';
 	export let value: number;
 	export let disabled = false;
 	export let dropdownShown = false;
-	export let flexStyles = 'flex: 1;';
+	export let flexStyles = 'flex: 0 1 190px;';
 	export let buttonHeight = '25px';
 	export let buttonPadding = '6px 8px 6px 11px';
 	let options: SelectMenuOption[];
+	const dispatch = createEventDispatcher<{ helpTopicChanged: { sectionIndex: number } }>();
 
-	$: options = sectionNames.map((name, i) => ({
+	$: options = helpTopics.map((name, i) => ({
 		label: name,
 		value: i,
 		optionNumber: i,
@@ -25,6 +27,7 @@
 
 	function handleHelpSectionChanged(sectionNumber: number) {
 		value = sectionNumber;
+		dispatch('helpTopicChanged', { sectionIndex: sectionNumber });
 	}
 </script>
 

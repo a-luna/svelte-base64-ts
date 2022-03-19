@@ -6,9 +6,12 @@
 	import ResetButton from '$lib/components/AlgorithmDemo/Buttons/ResetButton.svelte';
 	import StartAutoPlayButton from '$lib/components/AlgorithmDemo/Buttons/StartAutoPlayButton.svelte';
 	import StopAutoPlayButton from '$lib/components/AlgorithmDemo/Buttons/StopAutoPlayButton.svelte';
+
+	export let title: string;
 </script>
 
 <div class="nav-buttons-help help-module">
+	<div class="help-docs-section-title"><h2><span>{title}</span></h2></div>
 	<div class="nav-buttons-wrapper">
 		<div class="nav-button-column">
 			<div class="help-row"><ResetButton /><span>Reset form</span></div>
@@ -25,22 +28,19 @@
 </div>
 
 <style lang="postcss">
-	.nav-button-column,
-	.nav-buttons-help {
+	.nav-button-column {
 		display: flex;
 		flex-flow: column nowrap;
 		gap: 0.5rem;
+		pointer-events: none;
 	}
 	.help-row {
 		display: flex;
 		flex-flow: row nowrap;
 		gap: 1rem;
-	}
-	.nav-buttons-help .help-row {
 		align-items: center;
 		height: 33px;
 	}
-
 	.nav-buttons-wrapper {
 		display: flex;
 		flex-flow: row nowrap;

@@ -5,9 +5,9 @@
 
 	export let size: 'xs' | 'sm' | 'md' | 'lg' = 'sm';
 	export let color: ButtonColor = 'blue';
-	export let disabled: boolean = false;
+	export let disabled = false;
 	let bgColor: HslColor;
-	let edgeGradient: string = '';
+	let edgeGradient = '';
 
 	$: fontSize = size === 'xs' ? '0.75rem' : size === 'sm' ? '1rem' : size === 'md' ? '1.2rem' : '1.4rem';
 	$: fgColorCssPropName = disabled ? '--button-disabled-text-color' : `--fg-color-on-${color}`;

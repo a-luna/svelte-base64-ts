@@ -1,9 +1,12 @@
 <script lang="ts">
 	import SelectStringEncoding from '$lib/components/AlgorithmDemo/SelectStringEncoding.svelte';
 	import { stringInputEncoding1 } from '$lib/components/AlgorithmDemo/_demoText';
+
+	export let title: string;
 </script>
 
 <div class="settings-help help-module">
+	<div class="help-docs-section-title"><h2><span>{title}</span></h2></div>
 	<div class="encoding-wrapper">
 		<div class="string-encoding">
 			<SelectStringEncoding disabled={false} dropdownShown={true} />
@@ -17,21 +20,20 @@
 </div>
 
 <style lang="postcss">
-	.settings-help,
-	.encoding-description {
-		display: flex;
-		flex-flow: column nowrap;
-		gap: 0.5rem;
-	}
 	.encoding-wrapper {
 		display: flex;
 		flex-flow: row nowrap;
 		gap: 1rem;
 	}
-	.encoding-description {
-		flex: 1;
-	}
 	.string-encoding {
 		padding: 0 0.5rem;
+		pointer-events: none;
+	}
+	.encoding-description {
+		display: flex;
+		flex-flow: column nowrap;
+		align-items: flex-start;
+		gap: 0.5rem;
+		flex: 1;
 	}
 </style>

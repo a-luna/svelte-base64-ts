@@ -1,0 +1,30 @@
+module.exports = {
+	extends: 'stylelint-config-recommended',
+	plugins: ['stylelint-a11y'],
+	rules: {
+		'a11y/media-prefers-reduced-motion': true,
+		'a11y/no-outline-none': true,
+		'a11y/selector-pseudo-class-focus': true,
+		'color-named': 'never',
+		'font-family-name-quotes': 'always-where-required',
+		'function-url-no-scheme-relative': true,
+		'function-url-quotes': 'always',
+		'string-quotes': 'single',
+		'value-keyword-case': 'lower',
+		'unit-disallowed-list': [],
+		'max-empty-lines': 2,
+		'no-descending-specificity': true,
+		'no-duplicate-selectors': true,
+		'font-family-no-missing-generic-family-keyword': null,
+		'property-no-unknown': [
+			true,
+			{
+				ignoreProperties: ['/^lost-/'],
+			},
+		],
+		'selector-pseudo-class-no-unknown': [true, { ignorePseudoClasses: ['global'] }],
+	},
+	ignoreFiles: ['node_modules/*', 'src/assets/**', 'build/**'],
+	defaultSeverity: 'error',
+	customSyntax: 'postcss-html',
+};

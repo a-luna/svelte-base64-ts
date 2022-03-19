@@ -5,7 +5,7 @@
 	export let style: string;
 	export let inputText: string;
 	export let placeholder = '';
-	export let disabled: boolean = false;
+	export let disabled = false;
 	export let error = false;
 	let inputTextElement: HTMLInputElement;
 	const dispatch = createEventDispatcher();
@@ -30,7 +30,7 @@
 	{disabled}
 	bind:this={inputTextElement}
 	bind:value={inputText}
-	on:keydown={(e) => handleKeyPress(e.key)}
+	on:keydown|stopPropagation={(e) => handleKeyPress(e.key)}
 	use:focusInput
 />
 

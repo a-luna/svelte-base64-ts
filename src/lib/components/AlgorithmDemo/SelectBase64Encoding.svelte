@@ -3,7 +3,7 @@
 	import type { Base64Encoding, SelectMenuOption } from '$lib/types';
 
 	export let width = '114px';
-	export let fontSize: string = '0.875rem';
+	export let fontSize = '0.875rem';
 	export let value: Base64Encoding = 'base64';
 	export let disabled = false;
 	export let dropdownShown = false;

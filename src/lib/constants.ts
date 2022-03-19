@@ -12,7 +12,7 @@ import type {
 
 export const B64_ALPHABET_COMMON = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
-export const BIN_TO_HEX = {
+export const BIN_TO_HEX: { [index: string]: string } = {
 	'0000': '0',
 	'0001': '1',
 	'0010': '2',

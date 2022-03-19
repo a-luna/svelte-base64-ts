@@ -5,9 +5,12 @@
 		stringInputEncoding2a,
 		stringInputEncoding2b,
 	} from '$lib/components/AlgorithmDemo/_demoText';
+
+	export let title: string;
 </script>
 
 <div class="settings-help help-module">
+	<div class="help-docs-section-title"><h2><span>{title}</span></h2></div>
 	<div class="encoding-wrapper">
 		<div class="string-encoding">
 			<SelectStringEncoding value={'hex'} disabled={false} dropdownShown={true} />
@@ -16,16 +19,12 @@
 			{#each stringInputEncoding2a as paragraph}
 				<p>{@html paragraph}</p>
 			{/each}
-			<ul>
+			<div class="valid-hex-format">
 				{#each hexStringFormats as [example, format]}
-					<li>
-						<div class="hex-example">
-							<span class="format">{@html format}</span>
-							<span class="example"><code>{@html example}</code></span>
-						</div>
-					</li>
+					<span class="example"><code>{@html example}</code></span>
+					<span class="format">{@html format}</span>
 				{/each}
-			</ul>
+			</div>
 			{#each stringInputEncoding2b as paragraph}
 				<p>{@html paragraph}</p>
 			{/each}
@@ -34,44 +33,30 @@
 </div>
 
 <style lang="postcss">
-	.settings-help,
-	.encoding-description {
-		display: flex;
-		flex-flow: column nowrap;
-		gap: 0.5rem;
-	}
 	.encoding-wrapper {
 		display: flex;
 		flex-flow: row nowrap;
 		gap: 1rem;
 	}
-	.encoding-description {
-		flex: 1;
-	}
-	.encoding-description ul {
-		list-style: none;
-		margin: 0;
-		padding: 0 0 0 1rem;
-		white-space: nowrap;
-	}
-	.encoding-description li {
-		margin: 0 0 0.1rem 0;
-	}
-	.hex-example {
-		display: flex;
-		flex-flow: row nowrap;
-		align-items: baseline;
-		gap: 0.5rem;
-	}
-	.hex-example .example {
-		flex: 0 1 88px;
-	}
-	.hex-example .format {
-		flex: 1;
-		color: var(--nav-button-autoplay-border-color);
-		font-style: italic;
-	}
 	.string-encoding {
 		padding: 0 0.5rem;
+		pointer-events: none;
+	}
+	.encoding-description {
+		display: flex;
+		flex-flow: column nowrap;
+		align-items: flex-start;
+		gap: 0.75rem;
+		flex: 1;
+	}
+	.valid-hex-format {
+		display: grid;
+		grid-template-columns: 87px auto;
+		gap: 0.25rem;
+		padding: 0 0 0 1rem;
+	}
+	.valid-hex-format .format {
+		color: var(--nav-button-autoplay-border-color);
+		font-style: italic;
 	}
 </style>

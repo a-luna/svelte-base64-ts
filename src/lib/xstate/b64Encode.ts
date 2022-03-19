@@ -40,98 +40,44 @@ export type EncodingEvent =
 	| { type: 'RESET' }
 	| { type: 'UPDATE_INPUT_TEXT'; inputText: string; inputEncoding: StringEncoding; outputEncoding: Base64Encoding }
 	| { type: 'VALIDATE_INPUT'; inputText: string; inputEncoding: StringEncoding; outputEncoding: Base64Encoding }
+	| { type: 'VALIDATE_INPUT_AUTO'; inputText: string; inputEncoding: StringEncoding; outputEncoding: Base64Encoding }
+	| { type: 'ENCODE_INPUT_TEXT'; inputText: string; inputEncoding: StringEncoding; outputEncoding: Base64Encoding }
 	| { type: 'GO_TO_FIRST_STEP' }
 	| { type: 'GO_TO_PREV_STEP' }
 	| { type: 'GO_TO_NEXT_STEP' }
-	| { type: 'GO_TO_LAST_STEP'; inputText: string; inputEncoding: StringEncoding; outputEncoding: Base64Encoding }
-	| { type: 'START_AUTO_PLAY'; inputText: string; inputEncoding: StringEncoding; outputEncoding: Base64Encoding }
+	| { type: 'GO_TO_LAST_STEP' }
+	| { type: 'START_AUTO_PLAY' }
 	| { type: 'STOP_AUTO_PLAY' };
 
 export type EncodingTypeState =
-	| {
-			value: 'inactive';
-			context: EncodingContext;
-	  }
-	| {
-			value: 'validateInputText';
-			context: EncodingContext;
-	  }
-	| {
-			value: 'inputTextError';
-			context: EncodingContext;
-	  }
-	| {
-			value: 'encodeInputText';
-			context: EncodingContext;
-	  }
-	| {
-			value: { encodeInputText: 'idle' };
-			context: EncodingContext;
-	  }
-	| {
-			value: { encodeInputText: 'autoPlayEncodeByte' };
-			context: EncodingContext;
-	  }
-	| {
-			value: { encodeInputText: 'encodeByte' };
-			context: EncodingContext;
-	  }
-	| {
-			value: { encodeInputText: 'encodingComplete' };
-			context: EncodingContext;
-	  }
-	| {
-			value: 'createInputChunks';
-			context: EncodingContext;
-	  }
-	| {
-			value: { createInputChunks: 'idle' };
-			context: EncodingContext;
-	  }
-	| {
-			value: { createInputChunks: 'autoPlayCreateInputChunk' };
-			context: EncodingContext;
-	  }
-	| {
-			value: { createInputChunks: 'createInputChunk' };
-			context: EncodingContext;
-	  }
-	| {
-			value: { createInputChunks: 'createLastPaddedChunk' };
-			context: EncodingContext;
-	  }
-	| {
-			value: { createInputChunks: 'createdAllInputChunks' };
-			context: EncodingContext;
-	  }
-	| {
-			value: 'encodeOutputText';
-			context: EncodingContext;
-	  }
-	| {
-			value: { encodeOutputText: 'idle' };
-			context: EncodingContext;
-	  }
-	| {
-			value: { encodeOutputText: 'autoPlayEncodeBase64' };
-			context: EncodingContext;
-	  }
-	| {
-			value: { encodeOutputText: 'encodeBase64' };
-			context: EncodingContext;
-	  }
-	| {
-			value: { encodeOutputText: 'encodingComplete' };
-			context: EncodingContext;
-	  }
-	| {
-			value: 'finished';
-			context: EncodingContext;
-	  };
+	| { value: 'inactive'; context: EncodingContext }
+	| { value: 'validateInputText'; context: EncodingContext }
+	| { value: 'inputTextError'; context: EncodingContext }
+	| { value: 'encodeInputText'; context: EncodingContext }
+	| { value: { encodeInputText: 'idle' }; context: EncodingContext }
+	| { value: { encodeInputText: 'autoPlayEncodeByte' }; context: EncodingContext }
+	| { value: { encodeInputText: 'encodeByte' }; context: EncodingContext }
+	| { value: { encodeInputText: 'encodingComplete' }; context: EncodingContext }
+	| { value: 'createInputChunks'; context: EncodingContext }
+	| { value: { createInputChunks: 'idle' }; context: EncodingContext }
+	| { value: { createInputChunks: 'autoPlayCreateInputChunk' }; context: EncodingContext }
+	| { value: { createInputChunks: 'createInputChunk' }; context: EncodingContext }
+	| { value: { createInputChunks: 'createLastPaddedChunk' }; context: EncodingContext }
+	| { value: { createInputChunks: 'createdAllInputChunks' }; context: EncodingContext }
+	| { value: 'encodeOutputText'; context: EncodingContext }
+	| { value: { encodeOutputText: 'idle' }; context: EncodingContext }
+	| { value: { encodeOutputText: 'autoPlayEncodeBase64' }; context: EncodingContext }
+	| { value: { encodeOutputText: 'encodeBase64' }; context: EncodingContext }
+	| { value: { encodeOutputText: 'encodingComplete' }; context: EncodingContext }
+	| { value: 'finished'; context: EncodingContext };
 
 export const encodingMachine = createMachine<EncodingContext, EncodingEvent, EncodingTypeState>(
 	{
 		id: 'b64Encode',
+		schema: {
+			context: {} as EncodingContext,
+			events: {} as EncodingEvent,
+		},
 		initial: 'inactive',
 		context: {
 			autoplay: false,
@@ -154,10 +100,13 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 				entry: ['stopAutoPlay'],
 				id: 'inactive',
 				on: {
-					START_AUTO_PLAY: { target: 'validateInputText', actions: ['resetContext', 'validate', 'startAutoPlay'] },
+					VALIDATE_INPUT_AUTO: {
+						target: 'validateInputText',
+						actions: ['resetContext', 'validate', 'startAutoPlay'],
+					},
 					VALIDATE_INPUT: { target: 'validateInputText', actions: ['resetContext', 'validate'] },
 					UPDATE_INPUT_TEXT: { target: 'inactive', actions: ['resetContext', 'validate'] },
-					GO_TO_LAST_STEP: { target: 'skipDemoSteps', actions: ['resetContext', 'validate'] },
+					ENCODE_INPUT_TEXT: { target: 'skipDemoSteps', actions: ['resetContext', 'validate'] },
 					RESET: { target: 'inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
 				},
 			},
@@ -176,13 +125,11 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 			inputTextError: {
 				entry: ['stopAutoPlay'],
 				on: {
+					VALIDATE_INPUT_AUTO: { target: 'validateInputText', actions: ['validate', 'startAutoPlay'] },
 					VALIDATE_INPUT: { target: 'validateInputText', actions: 'validate' },
 					UPDATE_INPUT_TEXT: { target: 'inactive', actions: 'validate' },
-					RESET: { target: 'inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
-					GO_TO_FIRST_STEP: { target: 'inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
-					GO_TO_PREV_STEP: { target: 'inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
-					GO_TO_LAST_STEP: [
-						{ actions: ['resetContext', 'validate'] },
+					ENCODE_INPUT_TEXT: [
+						{ actions: ['validate'] },
 						{
 							target: 'finished',
 							actions: ['encode', 'generateBase64Maps', 'generateByteMaps'],
@@ -190,6 +137,9 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 						},
 						{ target: 'inputTextError' },
 					],
+					RESET: { target: 'inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
+					GO_TO_FIRST_STEP: { target: 'inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
+					GO_TO_PREV_STEP: { target: 'inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
 				},
 			},
 			encodeInputText: {
@@ -470,8 +420,8 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 					if (
 						event.type === 'VALIDATE_INPUT' ||
 						event.type === 'UPDATE_INPUT_TEXT' ||
-						event.type === 'START_AUTO_PLAY' ||
-						event.type === 'GO_TO_LAST_STEP'
+						event.type === 'VALIDATE_INPUT_AUTO' ||
+						event.type === 'ENCODE_INPUT_TEXT'
 					) {
 						return validateEncoderInput(event.inputText, event.inputEncoding, event.outputEncoding);
 					}

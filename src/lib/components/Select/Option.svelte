@@ -4,7 +4,7 @@
 	export let value: number | string;
 	export let label: string;
 	export let optionNumber: number;
-	export let active: boolean = false;
+	export let active = false;
 	export let menuId: string;
 	export let fontSize: string;
 	const dispatch = createEventDispatcher();

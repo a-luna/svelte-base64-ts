@@ -4,7 +4,7 @@
 	import FaExclamationTriangle from 'svelte-icons/fa/FaExclamationTriangle.svelte';
 	import { fade, slide } from 'svelte/transition';
 
-	export let duration: number = 5000;
+	export let duration = 5000;
 	let timeout: NodeJS.Timeout;
 	let shown: boolean;
 

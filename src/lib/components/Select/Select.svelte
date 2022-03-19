@@ -9,19 +9,19 @@
 	import { cubicIn, cubicOut } from 'svelte/easing';
 	import { scale } from 'svelte/transition';
 
-	export let menuLabel: string = 'Options';
+	export let menuLabel = 'Options';
 	export let options: SelectMenuOption[] = [];
 	export let selectedValue: number | string;
 	export let flexStyles = 'flex: 1 0 auto;';
-	export let width: string = 'auto';
-	export let margin: string = '0';
-	export let fontSize: string = '0.95rem';
-	export let disabled: boolean = false;
+	export let width = 'auto';
+	export let margin = '0';
+	export let fontSize = '0.95rem';
+	export let disabled = false;
 	export let displaySelectedOptionText = true;
-	export let menuId: string = `select-menu-${getRandomHexString(4)}`;
+	export let menuId = `select-menu-${getRandomHexString(4)}`;
 	export let buttonHeight = '33px';
 	export let buttonPadding = '9px 11px 9px 14px';
-	export let dropdownShown: boolean = false;
+	export let dropdownShown = false;
 	export let tooltip = '';
 	let selectedOption: SelectMenuOption;
 	const dispatch = createEventDispatcher();

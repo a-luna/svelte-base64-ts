@@ -4,6 +4,8 @@
 
 	export let modalId = `modal-${getRandomHexString(4)}`;
 	export let title: string;
+	export let noButtons = false;
+	export let noHeader = false;
 	export let closed = true;
 	export const toggleModal = () => (closed = !closed);
 
@@ -30,16 +32,20 @@
 >
 	<div class="modal-dialog">
 		<div class="modal-content">
-			<div class="modal-header">
-				<h5 id={modelLabel}>{title}</h5>
-				<button type="button" class="btn-close" aria-label="Close" on:click={() => toggleModal()}><Close /></button>
-			</div>
+			{#if !noHeader}
+				<div class="modal-header">
+					<h5 id={modelLabel}>{title}</h5>
+					<button type="button" class="btn-close" aria-label="Close" on:click={() => toggleModal()}><Close /></button>
+				</div>
+			{/if}
 			<div class="modal-body">
 				<slot />
 			</div>
-			<div class="modal-footer">
-				<button type="button" class="modal-button" on:click={() => toggleModal()}>Close</button>
-			</div>
+			{#if !noButtons}
+				<div class="modal-footer">
+					<button type="button" class="modal-button" on:click={() => toggleModal()}>Close</button>
+				</div>
+			{/if}
 		</div>
 	</div>
 </div>
@@ -72,9 +78,9 @@
 	.modal-dialog {
 		position: relative;
 		width: auto;
-		max-width: 650px;
+		max-width: 500px;
 		margin: 2rem auto;
-		padding: 1rem;
+		padding: 0;
 		background-clip: padding-box;
 		background-color: var(--modal-dialog-bg-color);
 		border-radius: 6px;

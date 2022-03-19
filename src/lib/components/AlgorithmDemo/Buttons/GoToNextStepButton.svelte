@@ -1,6 +1,6 @@
 <script lang="ts">
 	import NextStep from '$lib/components/Icons/NextStep.svelte';
-import { demoState } from '$lib/stores/demoState';
+	import { demoState } from '$lib/stores/demoState';
 	import type { NavAction } from '$lib/types';
 	import type { EncodingContext, EncodingEvent, EncodingTypeState } from '$lib/xstate/b64Encode';
 	import { createEventDispatcher } from 'svelte';
@@ -12,13 +12,14 @@ import { demoState } from '$lib/stores/demoState';
 
 	$: autoplay = state ? $state.context.autoplay : false;
 	$: disabled = state ? !$state.can('GO_TO_NEXT_STEP') : false;
-	$: exceptionalState = !$demoState.modalOpen && ($state.matches('inactive') || $state.matches('inputTextError'));
+	$: exceptionalState = state
+		? !$demoState.modalOpen && ($state.matches('inactive') || $state.matches('inputTextError'))
+		: false;
 </script>
 
 <button
 	type="button"
 	title="Go To Next Step"
-
 	disabled={autoplay || (disabled && !exceptionalState)}
 	on:click={() => navButtonEventDispatcher('navButtonEvent', { action: 'GO_TO_NEXT_STEP' })}
 >

@@ -3,7 +3,7 @@
 	import type { SelectMenuOption, StringEncoding } from '$lib/types';
 
 	export let width = '86px';
-	export let fontSize: string = '0.875rem';
+	export let fontSize = '0.875rem';
 	export let value: StringEncoding = 'ASCII';
 	export let disabled = false;
 	export let dropdownShown = false;

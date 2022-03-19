@@ -139,7 +139,7 @@ function mapHexBytesToBase64Chunks(
 	inputChunks: DecoderInputChunk[],
 ): OutputChunk[] {
 	return Array.from({ length: inputChunks.length }, (_, i) => {
-		const bytesInChunk = [];
+		const bytesInChunk: HexByteMap[] = [];
 		for (let j = 0; j < 3; j++) {
 			const byteIndex = i * 3 + j;
 			if (byteIndex === hexMap.length) {
