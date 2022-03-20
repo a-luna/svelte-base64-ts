@@ -4,7 +4,6 @@ specifiers:
   '@babel/core': ^7.17.7
   '@babel/preset-env': ^7.16.11
   '@babel/preset-typescript': ^7.16.7
-  '@beyonk/svelte-carousel': ^2.9.0
   '@commitlint/config-conventional': ^16.2.1
   '@sveltejs/adapter-netlify': ^1.0.0-next.51
   '@sveltejs/adapter-static': next
@@ -33,6 +32,7 @@ specifiers:
   prettier: ^2.6.0
   prettier-plugin-svelte: ^2.6.0
   sass: ^1.49.9
+  siema: ^1.5.1
   svelte: ^3.46.4
   svelte-check: ^2.4.6
   svelte-feather-icons: ^3.5.1
@@ -55,7 +55,6 @@ devDependencies:
   '@babel/core': 7.17.7
   '@babel/preset-env': 7.16.11_@babel+core@7.17.7
   '@babel/preset-typescript': 7.16.7_@babel+core@7.17.7
-  '@beyonk/svelte-carousel': 2.9.0
   '@commitlint/config-conventional': 16.2.1
   '@sveltejs/adapter-netlify': 1.0.0-next.51
   '@sveltejs/vite-plugin-svelte': 1.0.0-next.39_svelte@3.46.4+vite@2.8.6
@@ -82,6 +81,7 @@ devDependencies:
   prettier: 2.6.0
   prettier-plugin-svelte: 2.6.0_prettier@2.6.0+svelte@3.46.4
   sass: 1.49.9
+  siema: 1.5.1
   svelte: 3.46.4
   svelte-check: 2.4.6_96dce6eae1e6ee51efd0ab7429621cc3
   svelte-feather-icons: 3.5.1
@@ -1268,12 +1268,6 @@ packages:
 
   /@bcoe/v8-coverage/0.2.3:
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
-    dev: true
-
-  /@beyonk/svelte-carousel/2.9.0:
-    resolution: {integrity: sha512-LOfW8PGbGDHI3om847yTiMmrSLM9OA+jzkIAkX5213IPf4GoWPHhJgK2N91uxdWGGYW6hGQVHtngarKT3f6r1g==}
-    dependencies:
-      siema: 1.5.1
     dev: true
 
   /@commitlint/config-conventional/16.2.1:

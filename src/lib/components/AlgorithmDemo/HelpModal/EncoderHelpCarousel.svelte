@@ -1,8 +1,8 @@
 <script lang="ts">
+	import Carousel from '$lib/components/AlgorithmDemo/HelpModal/Carousel.svelte';
 	import ChevronLeft from '$lib/components/Icons/ChevronLeft.svelte';
 	import ChevronRight from '$lib/components/Icons/ChevronRight.svelte';
 	import { demoState } from '$lib/stores/demoState';
-	import Carousel from '@beyonk/svelte-carousel';
 	import { encodingHelpSections } from './_helpSections';
 
 	let currentSlideIndex: number;
@@ -14,11 +14,13 @@
 
 	$: $demoState.modalOpen = !closed;
 	$: if (encodingHelpSections) encodingHelpSections.forEach((section, i) => (encodingHelpMap[section.id] = i));
-	$: if (carousel) changeHelpSection(0);
+	$: if (carousel) changeHelpSection(encodingHelpSections[0].id);
+	$: helpTopics = encodingHelpSections.map((section) => section.title);
 	$: fontSize = pageWidth > 670 ? '0.8rem' : '0.75rem';
 
 	export function initialize() {
-		changeHelpSection(0);
+		currentSectionId = encodingHelpSections[0].id;
+		changeHelpSection(currentSectionId);
 	}
 
 	const getNextIndex = (i: number) => (i + 1) % encodingHelpSections.length;
@@ -34,21 +36,23 @@
 	}
 
 	function next() {
-		changeHelpSection(getNextIndex(currentSlideIndex));
+		currentSectionId = encodingHelpSections[getNextIndex(currentSlideIndex)].id;
+		changeHelpSection(currentSectionId);
 	}
 
 	function prev() {
-		changeHelpSection(getPrevIndex(currentSlideIndex));
+		currentSectionId = encodingHelpSections[getPrevIndex(currentSlideIndex)].id;
+		changeHelpSection(currentSectionId);
 	}
 
 	function handleHelpSectionChanged(detail: { currentSlide: number; slideCount: number }) {
-		changeHelpSection(detail.currentSlide);
+		currentSectionId = encodingHelpSections[detail.currentSlide].id;
+		currentSlideIndex = encodingHelpMap[currentSectionId];
 	}
 
-	function changeHelpSection(index: number) {
-		currentSlideIndex = index;
-		currentSectionId = encodingHelpSections[index].id;
-		carousel.go(index);
+	function changeHelpSection(sectionId: string) {
+		currentSlideIndex = encodingHelpMap[sectionId];
+		carousel.go(currentSlideIndex);
 	}
 </script>
 
