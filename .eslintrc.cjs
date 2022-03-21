@@ -25,5 +25,15 @@ module.exports = {
 	settings: {
 		'svelte3/typescript': () => require('typescript'),
 	},
-	overrides: [{ files: ['*.svelte'], processor: 'svelte3/svelte3' }],
+	overrides: [
+		{ 
+			files: ['*.svelte'], 
+			rules: {
+				"no-unsafe-argument": "off",
+				"no-unsafe-member-access": "off",
+				"no-inner-declarations": "off",
+			},
+			processor: 'svelte3/svelte3',
+		}
+	]
 };

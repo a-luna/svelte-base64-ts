@@ -4,7 +4,7 @@
 
 	export let sectionTitles: string[] = [];
 	export let width = 'auto';
-	export let fontSize: string = '0.75rem';
+	export let fontSize = '0.75rem';
 	export let value: number;
 	export let disabled = false;
 	export let dropdownShown = false;
