@@ -254,7 +254,6 @@
 	}
 </script>
 
-/* eslint-disable */
 <svelte:window on:keydown={(e) => handleKeyPress(e.code)} bind:innerWidth={pageWidth} />
 
 <div class="form-top-row">
@@ -345,4 +344,3 @@
 		<div class="placeholder" style="width: 292px" />
 	{/if}
 </div>
-/* eslint-enable */
