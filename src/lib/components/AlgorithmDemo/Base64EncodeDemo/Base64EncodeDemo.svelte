@@ -332,7 +332,7 @@
 	</div>
 </div>
 <div class="demo-references" style="flex: 1 0 {tableSectionHeight}">
-	{#if $state.matches('encodeInputText') && $state.context.input.ascii}
+	{#if ($state.matches('encodeInputText') && $state.context.input.ascii) || $state.matches('createInputChunks')}
 		<div transition:fade class="ascii-table">
 			<AsciiLookupTable asciiTableChunkSize={tableChunkSize} {highlightHexByte} fontSize={'0.65rem'} />
 		</div>
