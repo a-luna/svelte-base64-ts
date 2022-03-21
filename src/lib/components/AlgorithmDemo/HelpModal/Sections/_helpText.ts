@@ -27,10 +27,14 @@ export const whatIsBase64Url = [
 
 export const stringInputEncoding1 = [
 	'This demo allows you to encode ASCII (text), hex or binary data to base64 and illustrates every step of the process.',
+	'Please select either ASCII, hex or bin from the dropdown menu next to the <code>?</code> help button to specify the format of the string you have provided.',
+];
+
+export const stringInputEncoding2 = [
 	'If you are providing a ASCII (text) string, <strong>it can only contain characters in the printable range of the ASCII table (<code>0x20</code> - <code>0x7E</code>)</strong>. Which includes most punctuation characters, the space character and all alphanumeric characters.',
 ];
 
-export const stringInputEncoding2a = [
+export const stringInputEncoding3a = [
 	'If you are providing a hex string, it can be provided in any of the formats below:',
 ];
 
@@ -41,11 +45,11 @@ export const hexStringFormats = [
 	['12 78 AB EF', 'bytes separated by spaces'],
 ];
 
-export const stringInputEncoding2b = [
+export const stringInputEncoding3b = [
 	'Additionally, your hex string must contain an even number of digits in order to be encoded, otherwise you would be missing the last 4 bits of the last byte.',
 ];
 
-export const stringInputEncoding3 = [
+export const stringInputEncoding4 = [
 	'If you are providing a binary string, it must meet both of the requirements below:',
 ];
 

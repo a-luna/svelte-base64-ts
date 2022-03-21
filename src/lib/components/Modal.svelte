@@ -5,6 +5,7 @@
 	export let modalId = `modal-${getRandomHexString(4)}`;
 	export let title: string;
 	export let closed = true;
+	export let noHeader = false;
 	export const toggleModal = () => (closed = !closed);
 
 	$: modelLabel = `${modalId}-label`;
@@ -30,10 +31,12 @@
 >
 	<div class="modal-dialog">
 		<div class="modal-content">
-			<div class="modal-header">
-				<h5 id={modelLabel}>{title}</h5>
-				<button type="button" class="btn-close" aria-label="Close" on:click={() => toggleModal()}><Close /></button>
-			</div>
+			{#if !noHeader}
+				<div class="modal-header">
+					<h5 id={modelLabel}>{title}</h5>
+					<button type="button" class="btn-close" aria-label="Close" on:click={() => toggleModal()}><Close /></button>
+				</div>
+			{/if}
 			<div class="modal-body">
 				<slot />
 			</div>

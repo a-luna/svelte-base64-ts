@@ -1,6 +1,6 @@
 <script lang="ts">
+	import { stringInputEncoding1 } from '$lib/components/AlgorithmDemo/HelpModal/Sections/_helpText';
 	import SelectStringEncoding from '$lib/components/AlgorithmDemo/SelectStringEncoding.svelte';
-	import { stringInputEncoding1 } from '$lib/components/AlgorithmDemo/_demoText';
 </script>
 
 <div class="settings-help help-module">

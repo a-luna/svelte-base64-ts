@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { whyBase64 } from '$lib/components/AlgorithmDemo/_demoText';
+	import { whyBase64 } from '$lib/components/AlgorithmDemo/HelpModal/Sections/_helpText';
 </script>
 
 <div class="help-module">

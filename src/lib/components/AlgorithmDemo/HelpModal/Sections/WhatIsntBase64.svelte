@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { whatIsntBase64 } from '$lib/components/AlgorithmDemo/_demoText';
+	import { whatIsntBase64 } from '$lib/components/AlgorithmDemo/HelpModal/Sections/_helpText';
 </script>
 
 <div class="help-module">

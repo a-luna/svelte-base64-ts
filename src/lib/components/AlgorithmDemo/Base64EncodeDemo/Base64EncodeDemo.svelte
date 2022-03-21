@@ -1,122 +1,3 @@
-<style lang="postcss">
-	.form-top-row {
-		display: flex;
-		flex-flow: column nowrap;
-		justify-content: flex-start;
-		align-items: flex-start;
-		height: auto;
-		gap: 1rem;
-
-		grid-column: 1 / span 1;
-		grid-row: 1 / span 1;
-	}
-	.author-name {
-		margin: 0 0 1rem 0;
-
-		grid-column: 1 / span 1;
-		grid-row: 2 / span 1;
-	}
-	.demo-steps {
-		display: grid;
-		grid-template-columns: 193px auto;
-		grid-template-rows: auto auto 1fr;
-		gap: 0.5rem;
-		background-color: var(--black2);
-		border-radius: 6px;
-		overflow: auto;
-		padding: 1rem;
-
-		grid-column: 1 / span 1;
-		grid-row: 4 / span 1;
-	}
-	#input-hex {
-		grid-column: 1 / span 1;
-		grid-row: 2 / span 1;
-	}
-	#hex-b64-mapping {
-		grid-column: 1 / span 2;
-		grid-row: 1 / span 1;
-	}
-	#output-b64 {
-		grid-column: 2 / span 1;
-		grid-row: 2 / span 1;
-	}
-	.binary-chunks {
-		display: flex;
-		flex-flow: column nowrap;
-		transition: transform 0.75s ease-in-out;
-		flex: 0 1 auto;
-	}
-	.encoded-bytes {
-		display: flex;
-		flex-flow: column nowrap;
-		flex: 0 1 auto;
-		justify-self: flex-start;
-		gap: 1.5rem;
-	}
-	.encoded-byte,
-	.base64-char {
-		display: flex;
-		justify-content: flex-end;
-	}
-	.demo-references {
-		padding: 0.25rem;
-		overflow: auto;
-		width: min-content;
-		margin: 0 auto;
-
-		grid-column: 1 / span 1;
-		grid-row: 5 / span 1;
-	}
-	.ascii-table,
-	.base64-table {
-		flex: 0 1 auto;
-		margin: 0 auto;
-	}
-	:global(.highlight-hex-byte),
-	:global(.highlight-base64) {
-		background-color: var(--dark-gray1);
-		font-weight: 700;
-		transition: background-color 0.35s ease-in-out;
-	}
-	@media screen and (min-width: 785px) {
-		.form-top-row {
-			flex-flow: row nowrap;
-			justify-content: space-between;
-			align-items: center;
-			gap: 1rem;
-			height: 33px;
-			margin: 0;
-
-			grid-column: 1 / span 1;
-			grid-row: 1 / span 1;
-		}
-		.demo-steps {
-			grid-template-columns: 173px 355px 142px;
-			grid-template-rows: auto;
-
-			grid-column: 1 / span 1;
-			grid-row: 3 / span 1;
-		}
-		#input-hex {
-			grid-column: 1 / span 1;
-			grid-row: 1 / span 1;
-		}
-		#hex-b64-mapping {
-			grid-column: 2 / span 1;
-			grid-row: 1 / span 1;
-		}
-		#output-b64 {
-			grid-column: 3 / span 1;
-			grid-row: 1 / span 1;
-		}
-		.demo-references {
-			grid-column: 1 / span 1;
-			grid-row: 4 / span 1;
-		}
-	}
-</style>
-
 <script lang="ts">
 	import AuthorName from '$lib/components/AlgorithmDemo/AuthorName.svelte';
 	import InputForm from '$lib/components/AlgorithmDemo/Base64EncodeDemo/InputForm/InputForm.svelte';
@@ -344,3 +225,122 @@
 		<div class="placeholder" style="width: 292px" />
 	{/if}
 </div>
+
+<style lang="postcss">
+	.form-top-row {
+		display: flex;
+		flex-flow: column nowrap;
+		justify-content: flex-start;
+		align-items: flex-start;
+		height: auto;
+		gap: 1rem;
+
+		grid-column: 1 / span 1;
+		grid-row: 1 / span 1;
+	}
+	.author-name {
+		margin: 0 0 1rem 0;
+
+		grid-column: 1 / span 1;
+		grid-row: 2 / span 1;
+	}
+	.demo-steps {
+		display: grid;
+		grid-template-columns: 193px auto;
+		grid-template-rows: auto auto 1fr;
+		gap: 0.5rem;
+		background-color: var(--black2);
+		border-radius: 6px;
+		overflow: auto;
+		padding: 1rem;
+
+		grid-column: 1 / span 1;
+		grid-row: 4 / span 1;
+	}
+	#input-hex {
+		grid-column: 1 / span 1;
+		grid-row: 2 / span 1;
+	}
+	#hex-b64-mapping {
+		grid-column: 1 / span 2;
+		grid-row: 1 / span 1;
+	}
+	#output-b64 {
+		grid-column: 2 / span 1;
+		grid-row: 2 / span 1;
+	}
+	.binary-chunks {
+		display: flex;
+		flex-flow: column nowrap;
+		transition: transform 0.75s ease-in-out;
+		flex: 0 1 auto;
+	}
+	.encoded-bytes {
+		display: flex;
+		flex-flow: column nowrap;
+		flex: 0 1 auto;
+		justify-self: flex-start;
+		gap: 1.5rem;
+	}
+	.encoded-byte,
+	.base64-char {
+		display: flex;
+		justify-content: flex-end;
+	}
+	.demo-references {
+		padding: 0.25rem;
+		overflow: auto;
+		width: min-content;
+		margin: 0 auto;
+
+		grid-column: 1 / span 1;
+		grid-row: 5 / span 1;
+	}
+	.ascii-table,
+	.base64-table {
+		flex: 0 1 auto;
+		margin: 0 auto;
+	}
+	:global(.highlight-hex-byte),
+	:global(.highlight-base64) {
+		background-color: var(--dark-gray1);
+		font-weight: 700;
+		transition: background-color 0.35s ease-in-out;
+	}
+	@media screen and (min-width: 785px) {
+		.form-top-row {
+			flex-flow: row nowrap;
+			justify-content: space-between;
+			align-items: center;
+			gap: 1rem;
+			height: 33px;
+			margin: 0;
+
+			grid-column: 1 / span 1;
+			grid-row: 1 / span 1;
+		}
+		.demo-steps {
+			grid-template-columns: 173px 355px 142px;
+			grid-template-rows: auto;
+
+			grid-column: 1 / span 1;
+			grid-row: 3 / span 1;
+		}
+		#input-hex {
+			grid-column: 1 / span 1;
+			grid-row: 1 / span 1;
+		}
+		#hex-b64-mapping {
+			grid-column: 2 / span 1;
+			grid-row: 1 / span 1;
+		}
+		#output-b64 {
+			grid-column: 3 / span 1;
+			grid-row: 1 / span 1;
+		}
+		.demo-references {
+			grid-column: 1 / span 1;
+			grid-row: 4 / span 1;
+		}
+	}
+</style>

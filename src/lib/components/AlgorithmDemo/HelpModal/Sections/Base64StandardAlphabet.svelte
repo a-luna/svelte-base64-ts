@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { whatIsBase64Standard } from '$lib/components/AlgorithmDemo/_demoText';
+	import { whatIsBase64Standard } from '$lib/components/AlgorithmDemo/HelpModal/Sections/_helpText';
 </script>
 
 <div class="settings-help help-module">

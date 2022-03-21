@@ -39,11 +39,11 @@
 
 <svelte:window on:keydown={(e) => handleKeyPress(e.code)} bind:innerWidth={pageWidth} />
 
-<Modal bind:this={modal} bind:closed title={'Base64 Encoding Help Docs'}>
+<Modal bind:this={modal} bind:closed title={'Base64 Encoding Help Docs'} noHeader={true}>
 	<div class="help-docs">
 		{#if showContentsPanel}
 			<div class="help-docs-nav">
-				<h3><span>Contents</span></h3>
+				<h3><span>Help Topics</span></h3>
 				<ul>
 					{#each encodingHelpSections as { title }, i}
 						<li>

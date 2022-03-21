@@ -1,50 +1,44 @@
 <script lang="ts">
-	import SelectStringEncoding from '$lib/components/AlgorithmDemo/SelectStringEncoding.svelte';
-	import { binStringFormats, stringInputEncoding3 } from '$lib/components/AlgorithmDemo/_demoText';
+	import {
+		hexStringFormats,
+		stringInputEncoding3a,
+		stringInputEncoding3b,
+	} from '$lib/components/AlgorithmDemo/HelpModal/Sections/_helpText';
 </script>
 
 <div class="settings-help help-module">
-	<div class="binary-string-docs">
-		<div class="string-encoding">
-			<SelectStringEncoding value={'bin'} disabled={false} dropdownShown={true} />
-		</div>
-		<div class="encoding-description">
-			{#each stringInputEncoding3 as paragraph}
-				<p>{@html paragraph}</p>
+	<div class="encoding-description">
+		{#each stringInputEncoding3a as paragraph}
+			<p>{@html paragraph}</p>
+		{/each}
+		<div class="valid-hex-format">
+			{#each hexStringFormats as [example, format]}
+				<span class="example"><code>{@html example}</code></span>
+				<span class="format">{@html format}</span>
 			{/each}
-			<div class="valid-binary-format">
-				{#each binStringFormats as format}
-					<span class="format">{@html format}</span>
-				{/each}
-			</div>
 		</div>
+		{#each stringInputEncoding3b as paragraph}
+			<p>{@html paragraph}</p>
+		{/each}
 	</div>
 </div>
 
 <style lang="postcss">
-	.binary-string-docs {
-		display: flex;
-		flex-flow: row nowrap;
-		gap: 1rem;
-	}
-	.string-encoding {
-		padding: 0 0.5rem;
-		height: 158px;
-		pointer-events: none;
-	}
 	.encoding-description {
 		display: flex;
 		flex-flow: column nowrap;
-		gap: 0.5rem;
+		align-items: flex-start;
+		gap: 0.75rem;
 		flex: 1;
 	}
-	.valid-binary-format {
+	.valid-hex-format {
 		display: grid;
-		grid-template-columns: auto;
-		gap: 0.5rem;
+		grid-template-columns: 87px auto;
+		gap: 0.25rem;
 		padding: 0 0 0 1rem;
+		white-space: nowrap;
 	}
-	.format {
+	.valid-hex-format .format {
 		color: var(--nav-button-autoplay-border-color);
 		font-style: italic;
 	}

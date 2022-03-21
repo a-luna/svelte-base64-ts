@@ -1,6 +1,6 @@
 <script lang="ts">
+	import { base64OutputEncoding } from '$lib/components/AlgorithmDemo/HelpModal/Sections/_helpText';
 	import SelectBase64Encoding from '$lib/components/AlgorithmDemo/SelectBase64Encoding.svelte';
-	import { base64OutputEncoding } from '$lib/components/AlgorithmDemo/_demoText';
 </script>
 
 <div class="settings-help help-module">
