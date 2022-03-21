@@ -31,9 +31,13 @@
 </script>
 
 <div class="input-form">
-	<div class="input-form-left">
+	<div class="help-button">
 		<HelpButton {state} on:click={() => helpModal.toggleModal()} />
+	</div>
+	<div class="input-encoding">
 		<SelectStringEncoding bind:value={inputTextEncoding} disabled={controlsDisabled} />
+	</div>
+	<div class="input-text">
 		<InputTextBox
 			bind:inputText
 			placeholder={getPlaceholder(inputTextEncoding)}
@@ -43,8 +47,10 @@
 			on:submit
 		/>
 	</div>
-	<div class="input-form-right">
+	<div class="nav-buttons">
 		<NavButtons {state} on:reset={() => (inputText = '')} on:navButtonEvent />
+	</div>
+	<div class="output-encoding">
 		<SelectBase64Encoding bind:value={outputBase64Encoding} disabled={controlsDisabled} />
 	</div>
 </div>
@@ -52,18 +58,66 @@
 
 <style lang="postcss">
 	.input-form {
-		display: flex;
-		flex-flow: row wrap;
-		align-items: center;
-		gap: 0.75rem;
-		width: 100%;
+		display: grid;
+		grid-template-columns: 33px 86px 28px 28px 29px 114px 1fr;
+		grid-template-rows: repeat(3, auto);
+		row-gap: 1rem;
+		column-gap: 0.75rem;
+		margin: 0 0 1rem 0;
+
+		grid-column: 1 / span 2;
+		grid-row: 3 / span 1;
+	}
+	.help-button {
+		grid-column: 1 / span 1;
+		grid-row: 1 / span 1;
+	}
+	.input-encoding {
+		grid-column: 2 / span 1;
+		grid-row: 1 / span 1;
+	}
+	.output-encoding {
+		grid-column: 6 / span 1;
+		grid-row: 1 / span 1;
+	}
+	.input-text {
+		grid-column: 1 / span 6;
+		grid-row: 2 / span 1;
+	}
+	.nav-buttons {
+		grid-column: 1 / span 6;
+		grid-row: 3 / span 1;
 	}
 
-	.input-form-left,
-	.input-form-right {
-		display: flex;
-		flex: 0 0 48%;
-		justify-content: space-between;
-		gap: 0.75rem;
+	@media screen and (min-width: 785px) {
+		.input-form {
+			grid-template-columns: 33px 86px auto auto auto 114px;
+			grid-template-rows: auto;
+			gap: 0.75rem;
+			margin: 0;
+
+			grid-column: 1 / span 1;
+			grid-row: 2 / span 1;
+		}
+		.help-button {
+			grid-column: 1 / span 1;
+			grid-row: 1 / span 1;
+		}
+		.input-encoding {
+			grid-column: 2 / span 1;
+			grid-row: 1 / span 1;
+		}
+		.input-text {
+			grid-column: 3 / span 2;
+			grid-row: 1 / span 1;
+		}
+		.nav-buttons {
+			grid-column: 5 / span 1;
+			grid-row: 1 / span 1;
+		}
+		.output-encoding {
+			grid-column: 6 / span 1;
+			grid-row: 1 / span 1;
+		}
 	}
 </style>

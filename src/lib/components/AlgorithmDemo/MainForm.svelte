@@ -3,7 +3,7 @@
 	import { demoState } from '$lib/stores/demoState';
 	let pageWidth: number;
 
-	$: height = pageWidth < 830 ? 'auto' : '100vh';
+	$: height = pageWidth < 785 ? 'auto' : '100vh';
 </script>
 
 <svelte:window bind:innerWidth={pageWidth} />
@@ -17,15 +17,24 @@
 
 <style lang="postcss">
 	.base64-algo-demo {
-		display: flex;
-		flex-flow: column nowrap;
-		justify-content: space-between;
-		gap: 1.5rem;
+		display: grid;
+		grid-template-columns: 378px 1fr;
+		grid-template-rows: auto auto auto 1fr auto;
+		gap: 0.5rem;
 		position: relative;
 		background-color: var(--page-bg-color);
 		padding: 1rem 1.5rem;
 		box-sizing: border-box;
-		max-width: 832px;
 		margin: 0 auto;
+		width: 426px;
+	}
+	@media screen and (min-width: 785px) {
+		.base64-algo-demo {
+			grid-template-columns: auto;
+			grid-template-rows: auto auto auto auto 1fr;
+			width: 100%;
+			max-width: 790px;
+			gap: 1.5rem;
+		}
 	}
 </style>

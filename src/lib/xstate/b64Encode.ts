@@ -149,7 +149,7 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 					idle: {
 						entry: ['resetRemainingBytes'],
 						after: {
-							250: { target: 'autoPlayEncodeByte', cond: 'autoPlayEnabled' },
+							1000: { target: 'autoPlayEncodeByte', cond: 'autoPlayEnabled' },
 						},
 						on: {
 							START_AUTO_PLAY: {
@@ -157,10 +157,11 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 								actions: 'startAutoPlay',
 								cond: 'autoPlayDisabled',
 							},
+							STOP_AUTO_PLAY: { actions: 'stopAutoPlay', cond: 'autoPlayEnabled' },
 							RESET: { target: '#inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
 							GO_TO_FIRST_STEP: { target: '#inactive', cond: 'autoPlayDisabled' },
 							GO_TO_PREV_STEP: { target: '#inactive', cond: 'autoPlayDisabled' },
-							GO_TO_NEXT_STEP: { target: 'encodeByte', actions: 'mapNextByte', cond: 'bytesRemaining' },
+							GO_TO_NEXT_STEP: { target: 'encodeByte', cond: 'bytesRemaining' },
 							GO_TO_LAST_STEP: { target: '#finished', cond: 'autoPlayDisabled' },
 						},
 					},
@@ -176,7 +177,7 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 								{ target: 'encodingComplete', cond: 'noBytesRemaining' },
 							],
 						},
-						on: { STOP_AUTO_PLAY: { actions: 'stopAutoPlay', cond: 'autoPlayEnabled' } },
+						on: { STOP_AUTO_PLAY: { target: 'encodeByte', actions: 'stopAutoPlay', cond: 'autoPlayEnabled' } },
 					},
 					encodeByte: {
 						entry: ['getCurrentByte'],
@@ -249,7 +250,7 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 								{ target: 'createdAllInputChunks', cond: 'noChunksRemaining' },
 							],
 						},
-						on: { STOP_AUTO_PLAY: { actions: 'stopAutoPlay', cond: 'autoPlayEnabled' } },
+						on: { STOP_AUTO_PLAY: { target: 'createInputChunk', actions: 'stopAutoPlay', cond: 'autoPlayEnabled' } },
 					},
 					createInputChunk: {
 						entry: ['getCurrentChunk'],
@@ -259,7 +260,6 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 								actions: 'startAutoPlay',
 								cond: 'autoPlayDisabled',
 							},
-							STOP_AUTO_PLAY: { actions: 'stopAutoPlay', cond: 'autoPlayEnabled' },
 							RESET: { target: '#inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
 							GO_TO_FIRST_STEP: { target: 'idle', cond: 'autoPlayDisabled' },
 							GO_TO_PREV_STEP: [
@@ -347,7 +347,7 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 								{ target: 'encodingComplete', cond: 'noBase64CharsRemaining' },
 							],
 						},
-						on: { STOP_AUTO_PLAY: { actions: 'stopAutoPlay', cond: 'autoPlayEnabled' } },
+						on: { STOP_AUTO_PLAY: { target: 'encodeBase64', actions: 'stopAutoPlay', cond: 'autoPlayEnabled' } },
 					},
 					encodeBase64: {
 						entry: ['getCurrentBase64Char'],
@@ -357,7 +357,6 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 								actions: 'startAutoPlay',
 								cond: 'autoPlayDisabled',
 							},
-							STOP_AUTO_PLAY: { actions: 'stopAutoPlay', cond: 'autoPlayEnabled' },
 							RESET: { target: '#inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
 							GO_TO_FIRST_STEP: { target: '#inactive', cond: 'autoPlayDisabled' },
 							GO_TO_PREV_STEP: [

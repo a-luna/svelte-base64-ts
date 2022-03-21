@@ -103,7 +103,7 @@
 		align-self: end;
 	}
 	.base64-char {
-		margin: 0 0.5rem 0 0;
+		margin: 0 0.2rem 0 0;
 	}
 	.bit {
 		background-color: var(--gray3);
@@ -111,7 +111,7 @@
 		text-align: center;
 		padding: 1px 0;
 		border: 0.5px solid var(--black2);
-		width: 13px;
+		width: 12px;
 		font-weight: 500;
 	}
 	.mapping .bit {

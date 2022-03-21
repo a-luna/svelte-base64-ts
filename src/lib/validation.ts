@@ -49,7 +49,7 @@ function validateHexString(input: string): Result<string> {
 	return { success: true, value: input };
 }
 
-function validateBinaryString(input) {
+function validateBinaryString(input: string) {
 	if (!/^[01]+$/.test(input)) {
 		const error = `Binary string can only contain zeroes ('0') or ones ('1'), "${input}" contains invalid characters.`;
 		return { success: false, error: Error(error) };

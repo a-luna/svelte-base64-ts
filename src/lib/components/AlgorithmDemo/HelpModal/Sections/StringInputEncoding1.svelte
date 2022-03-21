@@ -1,12 +1,9 @@
 <script lang="ts">
 	import SelectStringEncoding from '$lib/components/AlgorithmDemo/SelectStringEncoding.svelte';
 	import { stringInputEncoding1 } from '$lib/components/AlgorithmDemo/_demoText';
-
-	export let title: string;
 </script>
 
 <div class="settings-help help-module">
-	<div class="help-docs-section-title"><h2><span>{title}</span></h2></div>
 	<div class="encoding-wrapper">
 		<div class="string-encoding">
 			<SelectStringEncoding disabled={false} dropdownShown={true} />

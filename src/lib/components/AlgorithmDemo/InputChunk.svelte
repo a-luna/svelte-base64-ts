@@ -38,7 +38,6 @@
 <div
 	out:slide
 	class="input-chunk"
-	class:output-mapping={$state.matches('encodeOutputText')}
 	data-chunk-id={chunkNumber}
 	data-bin={chunk.binary}
 	data-hex={chunk.hex}
@@ -95,7 +94,7 @@
 		justify-content: flex-start;
 		font-size: 11px;
 	}
-	.input-chunk.output-mapping {
+	.input-chunk {
 		margin: 0 0 0.25rem 0;
 	}
 	.chunk-id {
@@ -118,7 +117,7 @@
 		align-self: end;
 	}
 	.chunk-byte {
-		margin: 0 0.75rem 0 0;
+		margin: 0 0.3rem 0 0;
 	}
 	.bit {
 		background-color: var(--dark-gray4);
@@ -126,7 +125,7 @@
 		text-align: center;
 		padding: 1px 0;
 		border: 0.5px solid var(--black2);
-		width: 13px;
+		width: 12px;
 	}
 	.mapping .bit {
 		font-weight: 500;
@@ -142,6 +141,7 @@
 		white-space: pre;
 	}
 	.pad-bit {
+		color: var(--gray3);
 		background-color: var(--black1);
 	}
 </style>

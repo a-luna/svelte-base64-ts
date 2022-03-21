@@ -46,7 +46,7 @@ export function getBase64Alphabet(base64Encoding: Base64Encoding): string[] {
 
 export function getChunkedAsciiMap(args: { chunkSize: number }): AsciiCharacterMap[][] {
 	const { chunkSize } = args;
-	const asciiMap = [];
+	const asciiMap: AsciiCharacterMap[] = [];
 	// ASCII printable range is 0x20 (i.e., 32) through 0x7F (i.e., 127)
 	for (let i = 32; i < 127; i++) {
 		const bin = decimalToBinaryString(i);

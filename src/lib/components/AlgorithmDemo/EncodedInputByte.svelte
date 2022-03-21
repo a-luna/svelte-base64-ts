@@ -22,7 +22,8 @@
 	$: byteNumber = byteIndex + 1;
 	$: byteColor = rotatingColors[byteIndex % rotatingColors.length];
 	$: currentByte = $state.context.byteIndex;
-	$: byteMappingInProgress = stateName.includes('encodeInputText') && currentByte === byteIndex;
+	$: byteMappingInProgress =
+		!stateName.includes('idle') && stateName.includes('encodeInputText') && currentByte === byteIndex;
 	$: currentByteColor = byteMappingInProgress ? byteColor : currentChunkColor;
 
 	const getBase64CharColor = (groupId: string): string =>
@@ -123,7 +124,7 @@
 		text-align: center;
 		padding: 1px 0;
 		border: 0.5px solid var(--black2);
-		width: 13px;
+		width: 12px;
 	}
 	.mapping .bit {
 		font-weight: 500;

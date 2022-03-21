@@ -5,12 +5,9 @@
 		stringInputEncoding2a,
 		stringInputEncoding2b,
 	} from '$lib/components/AlgorithmDemo/_demoText';
-
-	export let title: string;
 </script>
 
 <div class="settings-help help-module">
-	<div class="help-docs-section-title"><h2><span>{title}</span></h2></div>
 	<div class="encoding-wrapper">
 		<div class="string-encoding">
 			<SelectStringEncoding value={'hex'} disabled={false} dropdownShown={true} />
@@ -54,6 +51,7 @@
 		grid-template-columns: 87px auto;
 		gap: 0.25rem;
 		padding: 0 0 0 1rem;
+		white-space: nowrap;
 	}
 	.valid-hex-format .format {
 		color: var(--nav-button-autoplay-border-color);

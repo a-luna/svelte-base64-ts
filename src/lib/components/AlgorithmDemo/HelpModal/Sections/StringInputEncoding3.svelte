@@ -1,12 +1,9 @@
 <script lang="ts">
 	import SelectStringEncoding from '$lib/components/AlgorithmDemo/SelectStringEncoding.svelte';
 	import { binStringFormats, stringInputEncoding3 } from '$lib/components/AlgorithmDemo/_demoText';
-
-	export let title: string;
 </script>
 
 <div class="settings-help help-module">
-	<div class="help-docs-section-title"><h2><span>{title}</span></h2></div>
 	<div class="binary-string-docs">
 		<div class="string-encoding">
 			<SelectStringEncoding value={'bin'} disabled={false} dropdownShown={true} />

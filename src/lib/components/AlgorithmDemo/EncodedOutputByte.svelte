@@ -107,7 +107,7 @@
 		text-align: center;
 		padding: 1px 0;
 		border: 0.5px solid var(--black2);
-		width: 13px;
+		width: 12px;
 		font-weight: 500;
 	}
 	.mapping .bit {

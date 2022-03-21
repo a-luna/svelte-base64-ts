@@ -46,6 +46,12 @@
 		highlightHexByte = null;
 		highlightBase64 = null;
 	}
+	$: if ($state.matches('encodeInputText') && stateName.includes('Byte')) {
+		highlightHexByte = $state.context.currentByte.byte;
+	}
+	$: if ($state.matches('encodeOutputText') && stateName.includes('Base64')) {
+		highlightBase64 = $state.context.currentBase64Char.b64;
+	}
 	$: tableChunkSize = pageWidth < 830 ? 32 : 16;
 	$: tableSectionHeight = pageWidth < 830 ? 'auto' : '260px';
 	$: updateInputText(inputText, inputTextEncoding, outputBase64Encoding);
@@ -70,7 +76,7 @@
 		}
 	}
 
-	const validateTransitions: {
+	const validationEventMap: {
 		state: string;
 		action: NavAction;
 		event: 'VALIDATE_INPUT' | 'VALIDATE_INPUT_AUTO' | 'ENCODE_INPUT_TEXT';
@@ -84,7 +90,7 @@
 	];
 
 	const getValidationEventType = (action: NavAction): 'VALIDATE_INPUT' | 'VALIDATE_INPUT_AUTO' | 'ENCODE_INPUT_TEXT' =>
-		validateTransitions.find((t) => t.state === $state.value && t.action === action)?.event;
+		validationEventMap.find((t) => t.state === $state.value && t.action === action)?.event;
 
 	const handleNavButtonEvent = (e: CustomEvent<{ action: NavAction }>) => sendEvent(e.detail.action);
 
@@ -92,10 +98,10 @@
 		if (!$demoState.modalOpen) {
 			const savePreviousAction = action;
 			action = null;
-			if (key === 'ArrowRight' && $state.can('GO_TO_NEXT_STEP')) {
+			if (key === 'ArrowRight') {
 				action = 'GO_TO_NEXT_STEP';
 			}
-			if (key === 'ArrowLeft' && $state.can('GO_TO_PREV_STEP')) {
+			if (key === 'ArrowLeft') {
 				action = 'GO_TO_PREV_STEP';
 			}
 			if (key === 'Space') {
@@ -123,7 +129,7 @@
 				inputEncoding: inputTextEncoding,
 				outputEncoding: outputBase64Encoding,
 			});
-		} else {
+		} else if ($state.can(action)) {
 			send(action);
 		}
 	}
@@ -133,8 +139,15 @@
 
 <div class="form-top-row">
 	<FormTitle title={'Base64 Algorithm Demo'} fontSize={'1.8rem'} letterSpacing={'2.7px'} />
-	<AuthorName />
+	{#if pageWidth >= 785}
+		<AuthorName />
+	{/if}
 </div>
+{#if pageWidth < 785}
+	<div class="author-name">
+		<AuthorName />
+	</div>
+{/if}
 <InputForm
 	{state}
 	bind:inputText
@@ -144,7 +157,7 @@
 	on:submit={() => submitForm(inputText)}
 />
 <div class="demo-steps">
-	<div class="encoded-bytes">
+	<div id="input-hex" class="encoded-bytes">
 		{#if anyEncodingState}
 			<div class="binary-chunks">
 				{#each $state.context.byteMaps as byte, byteIndex}
@@ -165,7 +178,7 @@
 			</div>
 		{/if}
 	</div>
-	<div class="binary-chunks data-mapping">
+	<div id="hex-b64-mapping" class="binary-chunks data-mapping">
 		{#if $state.context?.input?.chunks}
 			{#each $state.context.input.chunks as chunk, i}
 				{#if $state.matches('createInputChunks') || $state.matches('encodeOutputText') || $state.matches('finished')}
@@ -177,7 +190,7 @@
 			{/each}
 		{/if}
 	</div>
-	<div class="encoded-bytes">
+	<div id="output-b64" class="encoded-bytes">
 		{#if $state.matches('encodeOutputText') || $state.matches('finished')}
 			<div class="binary-chunks">
 				{#each $state.context.base64Maps as b64, charIndex}
@@ -200,37 +213,61 @@
 	</div>
 </div>
 <div class="demo-references" style="flex: 1 0 {tableSectionHeight}">
-	{#if (($state.matches('encodeInputText') && !stateName.includes('idle')) || $state.matches('createInputChunks')) && $state.context.input.ascii}
+	{#if $state.matches('encodeInputText') && $state.context.input.ascii}
 		<div transition:fade class="ascii-table">
 			<AsciiLookupTable asciiTableChunkSize={tableChunkSize} {highlightHexByte} fontSize={'0.65rem'} />
 		</div>
-	{/if}
-	{#if $state.matches('encodeOutputText')}
+	{:else if $state.matches('encodeOutputText')}
 		<div transition:fade class="base64-table">
 			<Base64LookupTable base64TableChunkSize={tableChunkSize} {highlightBase64} fontSize={'0.65rem'} />
 		</div>
+	{:else}
+		<div class="placeholder" style="width: 292px" />
 	{/if}
 </div>
 
 <style lang="postcss">
 	.form-top-row {
 		display: flex;
-		justify-content: space-between;
-		align-items: center;
+		flex-flow: column nowrap;
+		justify-content: flex-start;
+		align-items: flex-start;
+		height: auto;
 		gap: 1rem;
-		height: 33px;
+
+		grid-column: 1 / span 1;
+		grid-row: 1 / span 1;
+	}
+	.author-name {
+		margin: 0 0 1rem 0;
+
+		grid-column: 1 / span 1;
+		grid-row: 2 / span 1;
 	}
 	.demo-steps {
-		display: flex;
-		flex: 1 1 auto;
-		flex-flow: row wrap;
-		align-items: flex-start;
-		justify-content: flex-start;
+		display: grid;
+		grid-template-columns: 193px auto;
+		grid-template-rows: auto auto 1fr;
 		gap: 0.5rem;
 		background-color: var(--black2);
 		border-radius: 6px;
 		overflow: auto;
-		padding: 1rem 0.5rem;
+		padding: 1rem;
+
+		grid-column: 1 / span 1;
+		grid-row: 4 / span 1;
+	}
+	#input-hex {
+		grid-column: 1 / span 1;
+		grid-row: 2 / span 1;
+	}
+	#hex-b64-mapping {
+		grid-column: 1 / span 2;
+		grid-row: 1 / span 1;
+	}
+	#output-b64 {
+		grid-column: 2 / span 1;
+		grid-row: 2 / span 1;
 	}
 	.binary-chunks {
 		display: flex;
@@ -249,13 +286,15 @@
 	.base64-char {
 		display: flex;
 		justify-content: flex-end;
-		gap: 0.25rem;
 	}
 	.demo-references {
 		padding: 0.25rem;
 		overflow: auto;
 		width: min-content;
 		margin: 0 auto;
+
+		grid-column: 1 / span 1;
+		grid-row: 5 / span 1;
 	}
 	.ascii-table,
 	.base64-table {
@@ -264,8 +303,44 @@
 	}
 	:global(.highlight-hex-byte),
 	:global(.highlight-base64) {
-		text-shadow: var(--hl-text-shadow) 1px 0px 1px, var(--hl-text-shadow) 0px 1px 1px,
-			var(--hl-text-shadow) -1px 0px 1px, var(--hl-text-shadow) 0px -1px 1px;
-		transition: text-shadow 0.35s ease-in-out;
+		background-color: var(--dark-gray1);
+		font-weight: 700;
+		transition: background-color 0.35s ease-in-out;
+	}
+	@media screen and (min-width: 785px) {
+		.form-top-row {
+			flex-flow: row nowrap;
+			justify-content: space-between;
+			align-items: center;
+			gap: 1rem;
+			height: 33px;
+			margin: 0;
+
+			grid-column: 1 / span 1;
+			grid-row: 1 / span 1;
+		}
+		.demo-steps {
+			grid-template-columns: 173px 355px 142px;
+			grid-template-rows: auto;
+
+			grid-column: 1 / span 1;
+			grid-row: 3 / span 1;
+		}
+		#input-hex {
+			grid-column: 1 / span 1;
+			grid-row: 1 / span 1;
+		}
+		#hex-b64-mapping {
+			grid-column: 2 / span 1;
+			grid-row: 1 / span 1;
+		}
+		#output-b64 {
+			grid-column: 3 / span 1;
+			grid-row: 1 / span 1;
+		}
+		.demo-references {
+			grid-column: 1 / span 1;
+			grid-row: 4 / span 1;
+		}
 	}
 </style>

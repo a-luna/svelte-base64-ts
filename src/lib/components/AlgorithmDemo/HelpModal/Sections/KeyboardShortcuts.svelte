@@ -1,9 +1,7 @@
 <script lang="ts">
-	export let title: string;
 </script>
 
 <div class="keyboard-help help-module">
-	<div class="help-docs-section-title"><h2><span>{title}</span></h2></div>
 	<div class="keyboard-shortcuts">
 		<kbd title="Space Bar">Space</kbd><span>Start/Stop auto-play</span>
 		<kbd class="arrow" title="Right Arrow Key">→</kbd><span>Go to previous step</span>

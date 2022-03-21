@@ -6,12 +6,9 @@
 	import ResetButton from '$lib/components/AlgorithmDemo/Buttons/ResetButton.svelte';
 	import StartAutoPlayButton from '$lib/components/AlgorithmDemo/Buttons/StartAutoPlayButton.svelte';
 	import StopAutoPlayButton from '$lib/components/AlgorithmDemo/Buttons/StopAutoPlayButton.svelte';
-
-	export let title: string;
 </script>
 
 <div class="nav-buttons-help help-module">
-	<div class="help-docs-section-title"><h2><span>{title}</span></h2></div>
 	<div class="nav-buttons-wrapper">
 		<div class="nav-button-column">
 			<div class="help-row"><ResetButton /><span>Reset form</span></div>
