@@ -1,5 +1,5 @@
 <script lang="ts">
-	import SelectHelpTopic from '$lib/components/AlgorithmDemo/HelpModal/SelectHelpTopic.svelte';
+	import HelpTopicsDots from '$lib/components/AlgorithmDemo/HelpModal/HelpTopicsDots.svelte';
 	import { encodingHelpSections } from '$lib/components/AlgorithmDemo/HelpModal/_helpSections';
 	import ChevronLeft from '$lib/components/Icons/ChevronLeft.svelte';
 	import ChevronRight from '$lib/components/Icons/ChevronRight.svelte';
@@ -12,8 +12,8 @@
 	let pageWidth: number;
 
 	$: $demoState.modalOpen = !closed;
-	$: showContentsPanel = pageWidth > 670;
-	$: showContentsDropDown = pageWidth <= 670;
+	$: showContentsPanel = pageWidth >= 730;
+	$: showContentsDropDown = pageWidth < 730;
 	$: sectionTitles = encodingHelpSections.map((section) => section.title);
 
 	export function toggleModal() {
@@ -55,8 +55,12 @@
 		{/if}
 		<div class="help-docs-wrapper">
 			<div class="help-docs-section-title"><h2><span>{encodingHelpSections[index].title}</span></h2></div>
-			<div class="help-docs-content">
-				<svelte:component this={encodingHelpSections[index].component} />
+			<div class="help-docs-content-wrapper">
+				<div class="nav-prev-column" on:click={() => prev()} />
+				<div class="help-docs-content">
+					<svelte:component this={encodingHelpSections[index].component} />
+				</div>
+				<div class="nav-next-column" on:click={() => next()} />
 			</div>
 			<div class="nav-buttons">
 				{#if index > 0}
@@ -65,10 +69,10 @@
 						<span>Prev</span>
 					</div>
 				{:else}
-					<div class="placeholder" />
+					<div class="placeholder nav-prev" />
 				{/if}
 				{#if showContentsDropDown}
-					<SelectHelpTopic {sectionTitles} bind:value={index} />
+					<HelpTopicsDots {sectionTitles} bind:index />
 				{/if}
 				{#if index < encodingHelpSections.length - 1}
 					<div class="nav nav-next" on:click={() => next()}>
@@ -76,7 +80,7 @@
 						<div class="nav-icon"><ChevronRight /></div>
 					</div>
 				{:else}
-					<div class="placeholder" />
+					<div class="placeholder nav-next" />
 				{/if}
 			</div>
 		</div>

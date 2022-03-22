@@ -2,9 +2,11 @@
 	import type { EncodingContext, EncodingEvent, EncodingTypeState } from '$lib/xstate/b64Encode';
 	import { createEventDispatcher } from 'svelte';
 	import type { Readable } from 'svelte/store';
-	import type { State, TypegenDisabled } from 'xstate';
+	import type { State, StateSchema, TypegenDisabled } from 'xstate';
 
-	export let state: Readable<State<EncodingContext, EncodingEvent, any, EncodingTypeState, TypegenDisabled>>;
+	export let state: Readable<
+		State<EncodingContext, EncodingEvent, StateSchema<EncodingContext>, EncodingTypeState, TypegenDisabled>
+	>;
 	const openHelpModalEventDispatcher = createEventDispatcher<{ openHelpModal: {} }>();
 
 	function openHelpDocsModal() {
@@ -15,7 +17,7 @@
 </script>
 
 <div class="help-button-wrapper" on:click={() => openHelpDocsModal()}>
-	<span class="help-docs-label">View Help Docs</span>
+	<span class="help-docs-label">Help Docs</span>
 </div>
 
 <style lang="postcss">
@@ -37,8 +39,8 @@
 		color: var(--sec-color);
 	}
 	.help-docs-label {
-		font-size: 0.8rem;
-		font-style: italic;
-		letter-spacing: 0.4px;
+		font-size: 0.75rem;
+		font-weight: 500;
+		letter-spacing: 0.5px;
 	}
 </style>

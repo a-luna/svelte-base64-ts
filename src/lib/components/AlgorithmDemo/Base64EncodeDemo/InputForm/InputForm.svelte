@@ -7,9 +7,11 @@
 	import type { Base64Encoding, StringEncoding } from '$lib/types';
 	import type { EncodingContext, EncodingEvent, EncodingTypeState } from '$lib/xstate/b64Encode';
 	import type { Readable } from 'svelte/store';
-	import type { State, TypegenDisabled } from 'xstate';
+	import type { State, StateSchema, TypegenDisabled } from 'xstate';
 
-	export let state: Readable<State<EncodingContext, EncodingEvent, any, EncodingTypeState, TypegenDisabled>>;
+	export let state: Readable<
+		State<EncodingContext, EncodingEvent, StateSchema<EncodingContext>, EncodingTypeState, TypegenDisabled>
+	>;
 	export let inputText: string;
 	export let inputTextEncoding: StringEncoding = 'ASCII';
 	export let outputBase64Encoding: Base64Encoding = 'base64';
@@ -58,7 +60,6 @@
 	.form-label {
 		line-height: 1;
 		font-size: 0.75rem;
-		font-style: italic;
 		letter-spacing: 0.4px;
 		color: var(--nav-button-active-bg-color);
 	}
@@ -93,6 +94,7 @@
 	.output-encoding-label {
 		line-height: 1;
 		margin: 0;
+		justify-self: flex-end;
 
 		grid-column: 3 / span 1;
 		grid-row: 3 / span 1;
@@ -140,6 +142,7 @@
 		}
 		.input-encoding-label {
 			margin: 0.25rem 0 0 0;
+			justify-self: center;
 
 			grid-column: 1 / span 1;
 			grid-row: 3 / span 1;
@@ -150,6 +153,7 @@
 		}
 		.output-encoding-label {
 			margin: 0.25rem 0 0 0;
+			justify-self: center;
 
 			grid-column: 2 / span 1;
 			grid-row: 3 / span 1;

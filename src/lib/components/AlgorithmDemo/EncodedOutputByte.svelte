@@ -4,11 +4,13 @@
 	import { getChunkIndexFromBase64CharIndex } from '$lib/util';
 	import type { EncodingContext, EncodingEvent, EncodingTypeState } from '$lib/xstate/b64Encode';
 	import type { Readable } from 'svelte/store';
-	import type { State, TypegenDisabled } from 'xstate';
+	import type { State, StateSchema, TypegenDisabled } from 'xstate';
 
 	export let charIndex: number;
 	export let b64: Base64ByteMap;
-	export let state: Readable<State<EncodingContext, EncodingEvent, any, EncodingTypeState, TypegenDisabled>>;
+	export let state: Readable<
+		State<EncodingContext, EncodingEvent, StateSchema<EncodingContext>, EncodingTypeState, TypegenDisabled>
+	>;
 
 	$: chunkId = getChunkIndexFromBase64CharIndex(charIndex);
 	$: chunkNumber = chunkId + 1;

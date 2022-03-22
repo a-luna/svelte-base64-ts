@@ -317,6 +317,7 @@
 		.form-top-row {
 			grid-template-columns: auto auto 1fr auto;
 			grid-template-rows: auto;
+			align-items: flex-start;
 			width: 698px;
 
 			grid-column: 1 / span 1;

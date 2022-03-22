@@ -1,18 +1,21 @@
-export const whyBase64 = [
+export const whyBase641 = [
 	'Many application-level protocols, such as those used for email and web access, are character-based.',
 	'Although these protocols exchange bytes, those bytes are assumed to be restricted to a limited set of characters that are printable or contain print instructions. Such characters use only the low-order 7 bits in each 8-bit byte.',
+];
+
+export const whyBase642 = [
 	'This is fine when the applications are exchanging simple, printable text. But it does not allow the protocols to exchange binary files such as images, audio clips, or executables.',
+	'These files use all 8 bits of each byte, and any attempt to treat them as printable text would result in corruption as the top bit of each byte was discarded.',
 ];
 
 export const whatIsBase64 = [
-	'These files use all 8 bits of each byte, and any attempt to treat them as printable text would result in corruption as the top bit of each byte was discarded.',
 	'Base64 is a way to encode binary data into an ASCII character set in order to transmit the data without loss or modification.',
 	'The name refers to the fact that each encoded character stores 6 bits of data (2<sup>6</sup> = 64). Thus, the base64 "alphabet" consists of 64 ASCII characters.',
 ];
 
 export const whatIsntBase64 = [
 	'<strong>base64 is not a method to encrypt or compress data</strong>. In fact, encoded data is exactly 1.333... times larger than the original data.',
-	'This bloated message size is a required price that must be paid in order to exchange binary files with systems that only understand character-based data.',
+	'This bloated message size is the price that must be paid in order to exchange binary files with systems that only understand character-based data.',
 ];
 
 export const whatIsBase64Standard = [

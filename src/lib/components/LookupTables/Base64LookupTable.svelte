@@ -36,12 +36,12 @@
 
 <style lang="postcss">
 	.table-wrapper h2 {
-		font-size: 1rem;
+		font-size: 0.85rem;
 		font-weight: 400;
 		line-height: 1;
 		letter-spacing: 0.8px;
 		text-align: center;
-		margin: 0 0 0.625rem 0;
+		margin: 0 0 0.5rem 0;
 	}
 
 	.base64-lookup-table {

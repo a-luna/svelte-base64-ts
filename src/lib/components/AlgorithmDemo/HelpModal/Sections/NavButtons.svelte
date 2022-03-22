@@ -34,15 +34,16 @@
 	.help-row {
 		display: flex;
 		flex-flow: row nowrap;
-		gap: 1rem;
+		gap: 0.5rem;
 		align-items: center;
 		height: 33px;
+		white-space: nowrap;
 	}
 	.nav-buttons-wrapper {
 		display: flex;
 		flex-flow: row nowrap;
 		justify-content: center;
-		gap: 1.5rem;
+		gap: 1rem;
 		padding: 0.5rem 0;
 	}
 </style>

@@ -75,7 +75,7 @@
 	.modal-dialog {
 		position: relative;
 		width: auto;
-		max-width: 650px;
+		max-width: 450px;
 		margin: 2rem auto;
 		padding: 1rem;
 		background-clip: padding-box;
@@ -158,5 +158,10 @@
 		border-top-width: 1px;
 		border-color: #e5e7eb;
 		padding: 0;
+	}
+	@media screen and (min-width: 730px) {
+		.modal-dialog {
+			max-width: 650px;
+		}
 	}
 </style>

@@ -1,10 +1,10 @@
 <script lang="ts">
-	import { whyBase64 } from '$lib/components/AlgorithmDemo/HelpModal/Sections/_helpText';
+	import { whyBase642 } from '$lib/components/AlgorithmDemo/HelpModal/Sections/_helpText';
 </script>
 
 <div class="help-module">
 	<div class="base64-help">
-		{#each whyBase64 as paragraph}
+		{#each whyBase642 as paragraph}
 			<p>{@html paragraph}</p>
 		{/each}
 	</div>

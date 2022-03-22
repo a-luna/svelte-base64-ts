@@ -8,9 +8,11 @@
 	import StopAutoPlayButton from '$lib/components/AlgorithmDemo/Buttons/StopAutoPlayButton.svelte';
 	import type { EncodingContext, EncodingEvent, EncodingTypeState } from '$lib/xstate/b64Encode';
 	import type { Readable } from 'svelte/store';
-	import type { State, TypegenDisabled } from 'xstate';
+	import type { State, StateSchema, TypegenDisabled } from 'xstate';
 
-	export let state: Readable<State<EncodingContext, EncodingEvent, any, EncodingTypeState, TypegenDisabled>>;
+	export let state: Readable<
+		State<EncodingContext, EncodingEvent, StateSchema<EncodingContext>, EncodingTypeState, TypegenDisabled>
+	>;
 </script>
 
 <div class="algo-nav-buttons" class:autoplay={$state.context.autoplay}>

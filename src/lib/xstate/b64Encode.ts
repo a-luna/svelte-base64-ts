@@ -410,8 +410,7 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 				input: (context: EncodingContext) => context.input,
 				output: (_: EncodingContext) => defaultEncoderOutput,
 			}),
-			resetInput: assign({ input: (_: EncodingContext) => defaultEncoderInput }),
-			resetOutput: assign({ output: (_: EncodingContext) => defaultEncoderOutput }),
+			resetInput: assign({ input: (_) => defaultEncoderInput }),
 			startAutoPlay: assign({ autoplay: (_) => true }),
 			stopAutoPlay: assign({ autoplay: (_) => false }),
 			validate: assign({
@@ -516,7 +515,6 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 			inputChunksRemaining: (context: EncodingContext) =>
 				(context.remainingChunks > 0 && !context.input.lastChunkPadded) ||
 				(context.remainingChunks > 1 && context.input.lastChunkPadded) || false,
-			outputChunksRemaining: (context: EncodingContext) => context.remainingChunks > 0,
 			finalPaddedChunkRemaining: (context: EncodingContext) =>
 				context.remainingChunks === 1 && context.input.lastChunkPadded || false,
 			noChunksRemaining: (context: EncodingContext) => context.remainingChunks === 0,
