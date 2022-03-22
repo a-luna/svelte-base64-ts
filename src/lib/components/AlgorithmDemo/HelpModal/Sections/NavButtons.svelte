@@ -6,20 +6,27 @@
 	import ResetButton from '$lib/components/AlgorithmDemo/Buttons/ResetButton.svelte';
 	import StartAutoPlayButton from '$lib/components/AlgorithmDemo/Buttons/StartAutoPlayButton.svelte';
 	import StopAutoPlayButton from '$lib/components/AlgorithmDemo/Buttons/StopAutoPlayButton.svelte';
+	import type { EncodingContext, EncodingEvent, EncodingTypeState } from '$lib/xstate/b64Encode';
+	import type { Readable } from 'svelte/store';
+	import type { State, StateSchema, TypegenDisabled } from 'xstate';
+
+	export let state: Readable<
+		State<EncodingContext, EncodingEvent, StateSchema<EncodingContext>, EncodingTypeState, TypegenDisabled>
+	>;
 </script>
 
 <div class="nav-buttons-help help-module">
 	<div class="nav-buttons-wrapper">
 		<div class="nav-button-column">
-			<div class="help-row"><ResetButton /><span>Reset form</span></div>
-			<div class="help-row"><StartAutoPlayButton /><span>Start auto-play</span></div>
-			<div class="help-row"><StopAutoPlayButton /><span>Stop auto-play</span></div>
+			<div class="help-row"><ResetButton {state} /><span>Reset form</span></div>
+			<div class="help-row"><StartAutoPlayButton {state} /><span>Start auto-play</span></div>
+			<div class="help-row"><StopAutoPlayButton {state} /><span>Stop auto-play</span></div>
 		</div>
 		<div class="nav-button-column">
-			<div class="help-row"><GoToFirstStepButton /><span>Go to first step</span></div>
-			<div class="help-row"><GoToPreviousStepButton /><span>Go to previous step</span></div>
-			<div class="help-row"><GoToNextStepButton /><span>Go to next step</span></div>
-			<div class="help-row"><GoToLastStepButton /><span>Go to last step</span></div>
+			<div class="help-row"><GoToFirstStepButton {state} /><span>Go to first step</span></div>
+			<div class="help-row"><GoToPreviousStepButton {state} /><span>Go to previous step</span></div>
+			<div class="help-row"><GoToNextStepButton {state} /><span>Go to next step</span></div>
+			<div class="help-row"><GoToLastStepButton {state} /><span>Go to last step</span></div>
 		</div>
 	</div>
 </div>
