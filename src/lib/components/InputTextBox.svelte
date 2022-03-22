@@ -45,7 +45,7 @@
 		margin: auto 0;
 		padding: 0.375rem 0.5rem;
 		width: 100%;
-		font-size: 0.8rem;
+		font-size: 1rem;
 		line-height: 19px;
 	}
 	input:focus {
