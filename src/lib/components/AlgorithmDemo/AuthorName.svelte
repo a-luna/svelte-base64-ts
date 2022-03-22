@@ -19,7 +19,7 @@
 		color: var(--nav-button-bg-color);
 		border-right: 1px solid var(--nav-button-bg-color);
 		padding: 0 0.5rem 0 0;
-		font-size: 0.75rem;
+		font-size: 0.7rem;
 	}
 	a {
 		text-decoration: none;

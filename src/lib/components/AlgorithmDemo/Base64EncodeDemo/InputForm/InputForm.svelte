@@ -1,7 +1,6 @@
 <script lang="ts">
-	import HelpButton from '$lib/components/AlgorithmDemo/Buttons/HelpButton.svelte';
 	import NavButtons from '$lib/components/AlgorithmDemo/Buttons/NavButtons.svelte';
-	import EncoderHelpModal from '$lib/components/AlgorithmDemo/HelpModal/EncoderHelpModal.svelte';
+	import OpenHelpDocs from '$lib/components/AlgorithmDemo/OpenHelpDocs.svelte';
 	import SelectBase64Encoding from '$lib/components/AlgorithmDemo/SelectBase64Encoding.svelte';
 	import SelectStringEncoding from '$lib/components/AlgorithmDemo/SelectStringEncoding.svelte';
 	import InputTextBox from '$lib/components/InputTextBox.svelte';
@@ -14,7 +13,6 @@
 	export let inputText: string;
 	export let inputTextEncoding: StringEncoding = 'ASCII';
 	export let outputBase64Encoding: Base64Encoding = 'base64';
-	let helpModal: EncoderHelpModal;
 
 	$: inputTextBoxStyles = 'flex: 1;';
 	$: controlsDisabled = !$state.matches('inactive') && !$state.matches('inputTextError');
@@ -31,12 +29,12 @@
 </script>
 
 <div class="input-form">
-	<div class="help-button">
-		<HelpButton {state} on:click={() => helpModal.toggleModal()} />
-	</div>
+	<span class="input-encoding-label form-label">Text Encoding</span>
 	<div class="input-encoding">
 		<SelectStringEncoding bind:value={inputTextEncoding} disabled={controlsDisabled} />
 	</div>
+	<span class="input-text-label form-label">Input Text/Data</span>
+	<OpenHelpDocs {state} on:openHelpModal />
 	<div class="input-text">
 		<InputTextBox
 			bind:inputText
@@ -50,74 +48,120 @@
 	<div class="nav-buttons">
 		<NavButtons {state} on:reset={() => (inputText = '')} on:navButtonEvent />
 	</div>
+	<span class="output-encoding-label form-label">Output Encoding</span>
 	<div class="output-encoding">
 		<SelectBase64Encoding bind:value={outputBase64Encoding} disabled={controlsDisabled} />
 	</div>
 </div>
-<EncoderHelpModal bind:this={helpModal} />
 
 <style lang="postcss">
+	.form-label {
+		line-height: 1;
+		font-size: 0.75rem;
+		font-style: italic;
+		letter-spacing: 0.4px;
+		color: var(--nav-button-active-bg-color);
+	}
 	.input-form {
 		display: grid;
-		grid-template-columns: 33px 86px 28px 28px 29px 114px 1fr;
-		grid-template-rows: repeat(3, auto);
-		row-gap: 1rem;
-		column-gap: 0.75rem;
-		margin: 0 0 1rem 0;
+		grid-template-columns: 114px auto 114px;
+		grid-template-rows: auto auto auto auto auto;
+		row-gap: 0.5rem;
+		column-gap: 1rem;
+		margin: 0;
 
 		grid-column: 1 / span 2;
-		grid-row: 3 / span 1;
+		grid-row: 2 / span 1;
 	}
-	.help-button {
+	.input-text-label {
 		grid-column: 1 / span 1;
 		grid-row: 1 / span 1;
 	}
-	.input-encoding {
-		grid-column: 2 / span 1;
-		grid-row: 1 / span 1;
-	}
-	.output-encoding {
-		grid-column: 6 / span 1;
-		grid-row: 1 / span 1;
-	}
 	.input-text {
-		grid-column: 1 / span 6;
+		margin: 0 0 0.5rem 0;
+
+		grid-column: 1 / span 3;
 		grid-row: 2 / span 1;
 	}
-	.nav-buttons {
-		grid-column: 1 / span 6;
+	.input-encoding-label {
+		line-height: 1;
+		margin: 0;
+
+		grid-column: 1 / span 1;
 		grid-row: 3 / span 1;
 	}
+	.output-encoding-label {
+		line-height: 1;
+		margin: 0;
 
-	@media screen and (min-width: 785px) {
+		grid-column: 3 / span 1;
+		grid-row: 3 / span 1;
+	}
+	.input-encoding {
+		margin: 0 0 0.25rem 0;
+
+		grid-column: 1 / span 1;
+		grid-row: 4 / span 1;
+	}
+	.output-encoding {
+		margin: 0 0 0.25rem 0;
+
+		grid-column: 3 / span 1;
+		grid-row: 4 / span 1;
+	}
+	.nav-buttons {
+		margin: 0.5rem 0 0 0;
+
+		grid-column: 1 / span 3;
+		grid-row: 5 / span 1;
+	}
+
+	@media screen and (min-width: 730px) {
 		.input-form {
-			grid-template-columns: 33px 86px auto auto auto 114px;
-			grid-template-rows: auto;
-			gap: 0.75rem;
+			display: grid;
+			grid-template-columns: 86px 114px auto;
+			grid-template-rows: auto auto auto auto;
+			row-gap: 0.5rem;
+			column-gap: 1rem;
 			margin: 0;
+			width: 698px;
 
 			grid-column: 1 / span 1;
 			grid-row: 2 / span 1;
 		}
-		.help-button {
-			grid-column: 1 / span 1;
-			grid-row: 1 / span 1;
-		}
-		.input-encoding {
-			grid-column: 2 / span 1;
+		.input-text-label {
+			grid-column: 1 / span 2;
 			grid-row: 1 / span 1;
 		}
 		.input-text {
-			grid-column: 3 / span 2;
-			grid-row: 1 / span 1;
+			grid-column: 1 / span 3;
+			grid-row: 2 / span 1;
+			margin: 0;
 		}
-		.nav-buttons {
-			grid-column: 5 / span 1;
-			grid-row: 1 / span 1;
+		.input-encoding-label {
+			margin: 0.25rem 0 0 0;
+
+			grid-column: 1 / span 1;
+			grid-row: 3 / span 1;
+		}
+		.input-encoding {
+			grid-column: 1 / span 1;
+			grid-row: 4 / span 1;
+		}
+		.output-encoding-label {
+			margin: 0.25rem 0 0 0;
+
+			grid-column: 2 / span 1;
+			grid-row: 3 / span 1;
 		}
 		.output-encoding {
-			grid-column: 6 / span 1;
-			grid-row: 1 / span 1;
+			grid-column: 2 / span 1;
+			grid-row: 4 / span 1;
+		}
+		.nav-buttons {
+			grid-column: 3 / span 1;
+			grid-row: 4 / span 1;
+			margin: 0;
 		}
 	}
 </style>

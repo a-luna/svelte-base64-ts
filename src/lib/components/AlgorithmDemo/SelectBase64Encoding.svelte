@@ -2,7 +2,7 @@
 	import Select from '$lib/components/Select/Select.svelte';
 	import type { Base64Encoding, SelectMenuOption } from '$lib/types';
 
-	export let width = '114px';
+	export let width = '100%';
 	export let fontSize = '0.875rem';
 	export let value: Base64Encoding = 'base64';
 	export let disabled = false;
@@ -30,6 +30,6 @@
 	{disabled}
 	{dropdownShown}
 	tooltip={'Select Base64 (Output) Encoding'}
-	flexStyles={'flex: 0 0 auto;'}
+	flexStyles={'flex: 0 1 auto;'}
 	on:changed={(e) => handleStringEncodingChanged(e.detail)}
 />

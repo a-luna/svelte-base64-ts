@@ -3,6 +3,7 @@
 	import InputForm from '$lib/components/AlgorithmDemo/Base64EncodeDemo/InputForm/InputForm.svelte';
 	import EncodedInputByte from '$lib/components/AlgorithmDemo/EncodedInputByte.svelte';
 	import EncodedOutputByte from '$lib/components/AlgorithmDemo/EncodedOutputByte.svelte';
+	import EncoderHelpModal from '$lib/components/AlgorithmDemo/HelpModal/EncoderHelpModal.svelte';
 	import InputChunk from '$lib/components/AlgorithmDemo/InputChunk.svelte';
 	import OutputChunk from '$lib/components/AlgorithmDemo/OutputChunk.svelte';
 	import FormTitle from '$lib/components/FormTitle.svelte';
@@ -30,6 +31,7 @@
 	let action: NavAction;
 	let pageWidth: number;
 	let stateName: string;
+	let helpModal: EncoderHelpModal;
 
 	const { state, send } = useMachine<EncodingContext, EncodingEvent, EncodingTypeState>(encodingMachine);
 
@@ -52,8 +54,9 @@
 	$: if ($state.matches('encodeOutputText') && stateName.includes('Base64')) {
 		highlightBase64 = $state.context.currentBase64Char.b64;
 	}
-	$: tableChunkSize = pageWidth < 830 ? 32 : 16;
-	$: tableSectionHeight = pageWidth < 830 ? 'auto' : '260px';
+	$: tableChunkSize = pageWidth < 730 ? 32 : 16;
+	$: tableSectionHeight = pageWidth < 730 ? 'auto' : '260px';
+	$: formTitleFontSize = pageWidth < 730 ? '1.65rem' : '1.8rem';
 	$: updateInputText(inputText, inputTextEncoding, outputBase64Encoding);
 
 	function updateInputText(input: string, stringEncoding: StringEncoding, base64Encoding: Base64Encoding) {
@@ -138,16 +141,13 @@
 <svelte:window on:keydown={(e) => handleKeyPress(e.code)} bind:innerWidth={pageWidth} />
 
 <div class="form-top-row">
-	<FormTitle title={'Base64 Algorithm Demo'} fontSize={'1.8rem'} letterSpacing={'2.7px'} />
-	{#if pageWidth >= 785}
-		<AuthorName />
-	{/if}
-</div>
-{#if pageWidth < 785}
+	<div class="form-title-wrappper">
+		<FormTitle title={'Base64 Algorithm Demo'} fontSize={formTitleFontSize} letterSpacing={'2.7px'} />
+	</div>
 	<div class="author-name">
 		<AuthorName />
 	</div>
-{/if}
+</div>
 <InputForm
 	{state}
 	bind:inputText
@@ -155,6 +155,7 @@
 	bind:outputBase64Encoding
 	on:navButtonEvent={handleNavButtonEvent}
 	on:submit={() => submitForm(inputText)}
+	on:openHelpModal={() => helpModal.toggleModal()}
 />
 <div class="demo-steps">
 	<div id="input-hex" class="encoded-bytes">
@@ -196,7 +197,7 @@
 				{#each $state.context.base64Maps as b64, charIndex}
 					<div
 						transition:fade={{ duration: 200 }}
-						class="base64-char"
+						class="encoded-base64"
 						data-chunk-id={getChunkIndexFromBase64CharIndex(charIndex) + 1}
 						data-b64char-number={charIndex + 1}
 						data-b64={b64.b64}
@@ -225,39 +226,47 @@
 		<div class="placeholder" style="width: 292px" />
 	{/if}
 </div>
+<EncoderHelpModal bind:this={helpModal} />
 
 <style lang="postcss">
 	.form-top-row {
-		display: flex;
-		flex-flow: column nowrap;
-		justify-content: flex-start;
-		align-items: flex-start;
-		height: auto;
-		gap: 1rem;
+		display: grid;
+		grid-template-columns: auto auto;
+		grid-template-rows: auto auto;
+		align-items: baseline;
+		gap: 0.5rem;
 
 		grid-column: 1 / span 1;
 		grid-row: 1 / span 1;
 	}
-	.author-name {
-		margin: 0 0 1rem 0;
+	.form-title-wrappper {
+		justify-self: center;
 
-		grid-column: 1 / span 1;
+		grid-column: 1 / span 2;
+		grid-row: 1 / span 1;
+	}
+	.author-name {
+		grid-column: 2 / span 1;
 		grid-row: 2 / span 1;
 	}
 	.demo-steps {
 		display: grid;
-		grid-template-columns: 193px auto;
+		grid-template-columns: 1fr 1fr;
 		grid-template-rows: auto auto 1fr;
 		gap: 0.5rem;
 		background-color: var(--black2);
 		border-radius: 6px;
 		overflow: auto;
-		padding: 1rem;
+		padding: 0.5rem;
+
+		font-family: menlo, monospace;
 
 		grid-column: 1 / span 1;
-		grid-row: 4 / span 1;
+		grid-row: 3 / span 1;
 	}
 	#input-hex {
+		justify-self: center;
+
 		grid-column: 1 / span 1;
 		grid-row: 2 / span 1;
 	}
@@ -266,6 +275,8 @@
 		grid-row: 1 / span 1;
 	}
 	#output-b64 {
+		justify-self: center;
+
 		grid-column: 2 / span 1;
 		grid-row: 2 / span 1;
 	}
@@ -282,11 +293,6 @@
 		justify-self: flex-start;
 		gap: 1.5rem;
 	}
-	.encoded-byte,
-	.base64-char {
-		display: flex;
-		justify-content: flex-end;
-	}
 	.demo-references {
 		padding: 0.25rem;
 		overflow: auto;
@@ -294,7 +300,7 @@
 		margin: 0 auto;
 
 		grid-column: 1 / span 1;
-		grid-row: 5 / span 1;
+		grid-row: 4 / span 1;
 	}
 	.ascii-table,
 	.base64-table {
@@ -307,21 +313,29 @@
 		font-weight: 700;
 		transition: background-color 0.35s ease-in-out;
 	}
-	@media screen and (min-width: 785px) {
+	@media screen and (min-width: 730px) {
 		.form-top-row {
-			flex-flow: row nowrap;
-			justify-content: space-between;
-			align-items: center;
-			gap: 1rem;
-			height: 33px;
-			margin: 0;
+			grid-template-columns: auto auto 1fr auto;
+			grid-template-rows: auto;
+			width: 698px;
 
 			grid-column: 1 / span 1;
 			grid-row: 1 / span 1;
 		}
+		.form-title-wrappper {
+			grid-column: 1 / span 1;
+		}
+		.author-name {
+			grid-column: 4 / span 1;
+			grid-row: 1 / span 1;
+		}
 		.demo-steps {
-			grid-template-columns: 173px 355px 142px;
+			grid-template-columns: 148px 5px 353px 5px 122px;
 			grid-template-rows: auto;
+			align-items: flex-start;
+			gap: 0.5rem;
+			padding: 1rem;
+			width: 666px;
 
 			grid-column: 1 / span 1;
 			grid-row: 3 / span 1;
@@ -331,11 +345,11 @@
 			grid-row: 1 / span 1;
 		}
 		#hex-b64-mapping {
-			grid-column: 2 / span 1;
+			grid-column: 3 / span 1;
 			grid-row: 1 / span 1;
 		}
 		#output-b64 {
-			grid-column: 3 / span 1;
+			grid-column: 5 / span 1;
 			grid-row: 1 / span 1;
 		}
 		.demo-references {

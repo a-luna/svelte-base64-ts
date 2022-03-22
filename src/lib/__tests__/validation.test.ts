@@ -22,7 +22,7 @@ describe('validateTextEncoding', () => {
 	test('can identify an invalid ASCII string (contains non-printable characters)', () => {
 		const result = validateTextEncoding('do§', 'ASCII');
 		expect(result.success).toBe(false);
-		expect(result.error.message).toBe('"do§" contains data that is not part of the ASCII printable character set.');
+		expect(result.error.message).toBe("'do§' contains 1 invalid character:\n\t§ (0xA7) Count: 1");
 	});
 
 	test('can identify a valid hex string', () => {

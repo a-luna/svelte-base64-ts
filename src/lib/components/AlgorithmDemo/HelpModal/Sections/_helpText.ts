@@ -12,11 +12,11 @@ export const whatIsBase64 = [
 
 export const whatIsntBase64 = [
 	'<strong>base64 is not a method to encrypt or compress data</strong>. In fact, encoded data is exactly 1.333... times larger than the original data.',
-	'Since transmittting/receiving non-ASCII data with these protocols requires encoding to base64, this increased bandwidth is a necessary price to pay.',
+	'This bloated message size is a required price that must be paid in order to exchange binary files with systems that only understand character-based data.',
 ];
 
 export const whatIsBase64Standard = [
-	'The standard base64 alphabet consists of all uppercase letters A-Z (26 characters), all lowercase letters a-z (26 characters), and all numbers 0-9 (10 characters).',
+	'The standard base64 alphabet consists of uppercase letters A-Z (26 characters), lowercase letters a-z (26 characters), and numbers 0-9 (10 characters).',
 	'These three groups provide 62 of the necessary 64 characters. In standard base64 encoding, letter 63 is the <code>+</code> (plus) character and letter 64 is the <code>/</code> character (forward-slash).',
 ];
 
@@ -27,7 +27,7 @@ export const whatIsBase64Url = [
 
 export const stringInputEncoding1 = [
 	'This demo allows you to encode ASCII (text), hex or binary data to base64 and illustrates every step of the process.',
-	'Please select either ASCII, hex or bin from the dropdown menu next to the <code>?</code> help button to specify the format of the string you have provided.',
+	'Please select either <strong>ASCII</strong>, <strong>hex</strong> or <strong>bin</strong> from the dropdown menu labeled <strong>Text Encoding</strong> to specify the format of the string you have provided.',
 ];
 
 export const stringInputEncoding2 = [

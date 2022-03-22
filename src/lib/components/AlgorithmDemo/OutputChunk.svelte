@@ -37,12 +37,12 @@
 	data-ascii={chunk.ascii}
 >
 	<div class="chunk-id" data-chunk-id={chunkNumber}>
-		<span class="chunk-label" style="color: var({chunkColor});">Out</span>
+		<span class="chunk-label" style="color: var({chunkColor});">OUT</span>
 		<span class="chunk-number" style="color: var({chunkColor});">{chunkNumber}</span>
 	</div>
 	{#each chunk.base64Map as map}
 		<div
-			class="base64-char"
+			class="chunk-byte"
 			data-chunk-id={chunkNumber}
 			data-bit-group={map.groupId}
 			data-dec={map.dec}
@@ -70,65 +70,3 @@
 		</div>
 	{/each}
 </div>
-
-<style lang="postcss">
-	.output-chunk,
-	.base64-char,
-	.hex-bit-group {
-		display: flex;
-		flex-flow: row nowrap;
-		justify-content: flex-start;
-		font-size: 11px;
-	}
-	.output-chunk {
-		margin: 0 0 0.5rem 0;
-	}
-	.chunk-id {
-		display: flex;
-		flex-flow: row nowrap;
-		justify-content: flex-start;
-		width: 28px;
-	}
-	.chunk-label,
-	.chunk-number {
-		font-size: 10px;
-		font-style: italic;
-	}
-	.chunk-label {
-		margin: 0 1px 0 0;
-		align-self: center;
-	}
-	.chunk-number {
-		margin: 0 2px 0 0;
-		align-self: end;
-	}
-	.base64-char {
-		margin: 0 0.2rem 0 0;
-	}
-	.bit {
-		background-color: var(--gray3);
-		line-height: 1;
-		text-align: center;
-		padding: 1px 0;
-		border: 0.5px solid var(--black2);
-		width: 12px;
-		font-weight: 500;
-	}
-	.mapping .bit {
-		font-weight: 500;
-		background-color: var(--dark-gray2);
-		transition-property: color, background-color;
-		transition-timing-function: ease-in-out;
-		transition-duration: 0.35s;
-	}
-	.bit span {
-		margin: auto;
-	}
-	code {
-		white-space: pre;
-	}
-	.pad-bit {
-		color: var(--dark-gray2);
-		background-color: var(--gray3);
-	}
-</style>

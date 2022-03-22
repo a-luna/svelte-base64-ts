@@ -5,7 +5,7 @@ import {
 	defaultEncoderInput,
 	defaultEncoderOutput,
 	defaultHexByteMap,
-	defaultOutputChunk,
+	defaultOutputChunk
 } from '$lib/constants';
 import { validateEncoderInput } from '$lib/dataPrep';
 import type {
@@ -15,7 +15,7 @@ import type {
 	EncoderOutput,
 	HexByteMap,
 	OutputChunk,
-	StringEncoding,
+	StringEncoding
 } from '$lib/types';
 import { assign, createMachine } from 'xstate';
 
@@ -515,10 +515,10 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 			hasPreviousByte: (context: EncodingContext) => context.byteIndex > 0,
 			inputChunksRemaining: (context: EncodingContext) =>
 				(context.remainingChunks > 0 && !context.input.lastChunkPadded) ||
-				(context.remainingChunks > 1 && context.input.lastChunkPadded),
+				(context.remainingChunks > 1 && context.input.lastChunkPadded) || false,
 			outputChunksRemaining: (context: EncodingContext) => context.remainingChunks > 0,
 			finalPaddedChunkRemaining: (context: EncodingContext) =>
-				context.remainingChunks === 1 && context.input.lastChunkPadded,
+				context.remainingChunks === 1 && context.input.lastChunkPadded || false,
 			noChunksRemaining: (context: EncodingContext) => context.remainingChunks === 0,
 			allChunksRemaining: (context: EncodingContext) => context.remainingChunks + 1 === context.input.totalChunks,
 			currentChunkIsPadded: (context: EncodingContext) => context.currentChunk.bytes.length !== 3,

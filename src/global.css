@@ -124,11 +124,11 @@
 	--options-details-name-color: var(--gray2);
 	--options-details-value-color: var(--white2);
 	--default-border-color: hsla(0, 0%, 85%, 0.45);
-	--modal-outer-bg-color: hsla(0, 0%, 0%, 0.45);
-	--modal-dialog-bg-color: hsla(0, 0%, 13%, 0.9);
-	--modal-body-bg-color: hsla(0, 0%, 13%, 0.9);
+	--modal-outer-bg-color: hsla(0, 0%, 0%, 0.8);
+	--modal-dialog-bg-color: hsl(0, 0%, 13%);
+	--modal-body-bg-color: hsl(0, 0%, 13%);
 	--modal-header-text-color: var(--white1);
-	--help-module-bg-color: hsla(0, 0%, 21%, 0.9);
+	--help-module-bg-color: hsl(0, 0%, 21%);
 }
 
 *,
@@ -258,6 +258,7 @@ pre {
 	background-color: inherit;
 	color: inherit;
 	padding: 0;
+	white-space: pre;
 	-webkit-font-smoothing: antialiased;
 }
 
@@ -286,6 +287,174 @@ button {
 	width: auto;
 	margin: auto;
 }
+
+/* Algorithm Demonstration Steps */
+
+.encoded-byte,
+.encoded-base64 {
+	display: flex;
+	gap: 4px;
+	margin: 0 0 1px 0;
+}
+
+.byte-id,
+.chunk-id,
+.b64Char-id {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-start;
+	gap: 1px;
+	font-size: 10px;
+	font-style: italic;
+	margin: 0;
+} 
+
+.byte-id,
+.b64Char-id {
+	flex: 0 1 21px;
+}
+
+.chunk-id {
+	flex: 0 1 30px;
+}
+
+.letter-H,
+.letter-B,
+.chunk-label {
+	align-self: flex-start;
+	margin: 0;
+}
+
+.byte-number,
+.chunk-number,
+.b64Char-number {
+	align-self: flex-end;
+	font-size: 8px;
+	margin: 0;
+}
+
+.ascii,
+.hex,
+.input-byte,
+.base64,
+.dec,
+.base64-char {
+	font-size: 10px;
+}
+
+.ascii,
+.hex {
+	color: var(--pri-color);
+}
+
+.base64,
+.dec {
+	color: var(--sec-color);
+}
+
+.ascii,
+.base64 {
+	flex: 0 1 6px;
+}
+
+.hex,
+.dec {
+	flex: 0 1 14px;
+}
+
+.input-byte,
+.base64-bit-group,
+.chunk-byte,
+.base64-char,
+.hex-bit-group {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-start;
+	gap: 0;
+    font-size: 10px;
+}
+
+.input-chunk,
+.output-chunk {
+	display: flex;
+}
+
+.input-chunk {
+	margin: 0 0 4px 0;
+}
+
+.output-chunk {
+	margin: 0 0 8px 0;
+}
+
+.input-chunk .chunk-byte {
+	margin: 0 2px 0 0;
+}
+
+.output-chunk .chunk-byte {
+	margin: 0 1.33px 0 0;
+}
+
+.chunk-label {
+	font-size: 9px;
+}
+
+#input-hex .bit,
+#output-b64 .bit,
+.input-chunk .bit,
+.output-chunk .bit {
+    border: 0.5px solid var(--black2);
+    line-height: 1;
+    text-align: center;
+    padding: 1px 0;
+    width: 11px;
+}
+
+.base64-bit-group {
+	color: var(--light-gray3);
+}
+
+.chunk-byte {
+	color: var(--black1);
+}
+
+#input-hex .bit,
+.input-chunk .bit {
+    background-color: var(--dark-gray4);
+}
+
+#output-b64 .bit,
+.output-chunk .bit {
+    background-color: var(--gray3);
+    font-weight: 500;
+}
+
+.bit span {
+	margin: auto;
+}
+
+.mapping .bit {
+	font-weight: 500;
+	background-color: var(--dark-gray2);
+	transition-property: color, background-color;
+	transition-timing-function: ease-in-out;
+	transition-duration: 0.35s;
+}
+
+.input-chunk .pad-bit {
+    color: var(--gray3);
+    background-color: var(--black1);
+}
+
+.output-chunk .pad-bit {
+    background-color: var(--gray3);
+}
+
+.output-chunk .mapping .pad-bit {
+    background-color: var(--dark-gray2);
+}
+
+/* Help Docs Modal */
 
 .help-docs {
 	display: flex;
@@ -646,8 +815,44 @@ button {
 	margin: auto;
 }
 
-@media screen and (max-width: 400px) {
-	:global(body) {
-		background-color: var(--page-bg-color);
+@media screen and (min-width: 730px) {
+	html,
+	body {
+		background-color: var(--gray4);
+	} 
+	.byte-number,
+	.chunk-number,
+	.b64Char-number {
+		font-size: 8px;
+	}
+	.ascii,
+	.hex,
+	.input-byte,
+	.base64,
+	.dec,
+	.base64-char {
+		font-size: 11px;
+	}
+	.input-byte,
+	.base64-bit-group,
+	.chunk-byte,
+	.base64-char,
+	.hex-bit-group {
+		font-size: 11px;
+	}
+	.input-chunk .chunk-byte {
+		margin: 0 2.4px 0 0;
+	}
+	.output-chunk .chunk-byte {
+		margin: 0 1.6px 0 0;
+	}
+	.chunk-id {
+		flex: 0 1 33px;
+	}
+	#input-hex .bit,
+	#output-b64 .bit,
+	.input-chunk .bit,
+	.output-chunk .bit {
+		width: 12px;
 	}
 }

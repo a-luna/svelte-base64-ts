@@ -26,11 +26,23 @@ export function validateTextEncoding(input: string, encoding: StringEncoding): R
 
 function validateAsciiString(input: string): Result<string> {
 	if (!/^[ -~]+$/.test(input)) {
-		const error = `"${input}" contains data that is not part of the ASCII printable character set.`;
+		const nonAsciiChars = getNonAsciiCharsFromString(input);
+		const error = `'${input}' contains ${nonAsciiChars.length} invalid character${nonAsciiChars.length > 1 ? 's' : ''}:\n${nonAsciiChars.join('\n')}`;
 		return { success: false, error: Error(error) };
 	}
 	return { success: true, value: input };
 }
+
+function getNonAsciiCharsFromString(input: string): string[] {
+	const bytes = Array.from(input, (_, i) => input.charCodeAt(i))
+	const nonAsciiBytes = [...new Set(bytes)].filter((byte) => (32 > byte || byte > 126));
+	const byteCounts = nonAsciiBytes.map(byte => ({byte, count: bytes.filter(b => b === byte)?.length ?? 0}));
+	return byteCounts.sort((a, b) => b.count - a.count).map(getInvalidCharReport);
+}
+
+const charCodeIsWhitespace = (byte: number): boolean => /\s/.test(String.fromCharCode(byte));
+const getStringRepresentationOfCharCode = (byte: number): string => charCodeIsWhitespace(byte) ? `' '` : String.fromCharCode(byte);
+const getInvalidCharReport = (details: {byte: number, count: number}): string => `\t${getStringRepresentationOfCharCode(details.byte)} (0x${details.byte.toString(16).toUpperCase().padStart(2, '0')}) Count: ${details.count}`
 
 function validateHexString(input: string): Result<string> {
 	const originalInput = input;

@@ -45,7 +45,7 @@
 	class:mapping={highlightChunk}
 >
 	<div class="chunk-id" data-chunk-id={chunkNumber}>
-		<span class="chunk-label" style="color: var({chunkColor});">In</span>
+		<span class="chunk-label" style="color: var({chunkColor});">IN</span>
 		<span class="chunk-number" style="color: var({chunkColor});">{chunkNumber}</span>
 	</div>
 	{#each chunk.inputMap as map}
@@ -84,64 +84,3 @@
 		</div>
 	{/if}
 </div>
-
-<style lang="postcss">
-	.input-chunk,
-	.chunk-byte,
-	.base64-bit-group {
-		display: flex;
-		flex-flow: row nowrap;
-		justify-content: flex-start;
-		font-size: 11px;
-	}
-	.input-chunk {
-		margin: 0 0 0.25rem 0;
-	}
-	.chunk-id {
-		display: flex;
-		flex-flow: row nowrap;
-		justify-content: flex-start;
-		width: 28px;
-	}
-	.chunk-label,
-	.chunk-number {
-		font-size: 10px;
-		font-style: italic;
-	}
-	.chunk-label {
-		margin: 0 1px 0 0;
-		align-self: center;
-	}
-	.chunk-number {
-		margin: 0 2px 0 0;
-		align-self: end;
-	}
-	.chunk-byte {
-		margin: 0 0.3rem 0 0;
-	}
-	.bit {
-		background-color: var(--dark-gray4);
-		line-height: 1;
-		text-align: center;
-		padding: 1px 0;
-		border: 0.5px solid var(--black2);
-		width: 12px;
-	}
-	.mapping .bit {
-		font-weight: 500;
-		background-color: var(--dark-gray2);
-		transition-property: color, background-color;
-		transition-timing-function: ease-in-out;
-		transition-duration: 0.35s;
-	}
-	.bit span {
-		margin: auto;
-	}
-	code {
-		white-space: pre;
-	}
-	.pad-bit {
-		color: var(--gray3);
-		background-color: var(--black1);
-	}
-</style>
