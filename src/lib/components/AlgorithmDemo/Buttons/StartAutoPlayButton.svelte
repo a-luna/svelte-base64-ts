@@ -1,14 +1,9 @@
 <script lang="ts">
 	import StartAutoPlay from '$lib/components/Icons/StartAutoPlay.svelte';
-	import type { NavAction } from '$lib/types';
-	import type { EncodingContext, EncodingEvent, EncodingTypeState } from '$lib/xstate/b64Encode';
+	import type { NavAction, XStateMachineState } from '$lib/types';
 	import { createEventDispatcher } from 'svelte';
-	import type { Readable } from 'svelte/store';
-	import type { State, StateSchema, TypegenDisabled } from 'xstate';
 
-	export let state: Readable<
-		State<EncodingContext, EncodingEvent, StateSchema<EncodingContext>, EncodingTypeState, TypegenDisabled>
-	>;
+	export let state: XStateMachineState;
 	const navButtonEventDispatcher = createEventDispatcher<{ navButtonEvent: { action: NavAction } }>();
 
 	$: autoplay = state ? $state.context.autoplay : false;
@@ -16,7 +11,7 @@
 
 <button
 	type="button"
-	title="Start AutoPlay"
+	title="Start Autoplay"
 	disabled={autoplay}
 	on:click={() => navButtonEventDispatcher('navButtonEvent', { action: 'START_AUTO_PLAY' })}
 >
@@ -26,6 +21,10 @@
 </button>
 
 <style lang="postcss">
+	button {
+		grid-column: 2 / span 1;
+		grid-row: 2 / span 1;
+	}
 	.algo-nav-buttons button .icon.play-icon {
 		width: 10px;
 	}

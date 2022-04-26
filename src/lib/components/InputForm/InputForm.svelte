@@ -54,44 +54,35 @@
 	}
 </script>
 
-<div class="input-form" class:error={!$app.inputStringIsValid}>
-	<FormTitle title={$app.formTitle} />
-	<PushableButton size={'xs'} color={$app.switchModeButtonColor} on:click={() => toggleMode()}
-		>Switch Mode</PushableButton
-	>
-	<PushableButton size={'xs'} color={'gray'} on:click={() => resetForm()}>Reset</PushableButton>
-	<div class="input-encoding-options" style={inputEncodingGridStyles}>
-		{#if $app.encoderMode}
-			<InputStringEncodingRadioButtons bind:this={inputStringEncodingButtons} />
-		{:else}
-			<InputBase64EncodingRadioButtons bind:this={inputBase64EncodingOptions} />
-		{/if}
-	</div>
-	<div class="output-encoding-options" style={outputEncodingGridStyles}>
-		{#if $app.encoderMode}
-			<OutputBase64EncodingRadioButtons bind:this={outputBase64EncodingOptions} />
-		{:else}
-			<div class="placeholder" />
-		{/if}
-	</div>
-	<InputTextBox
-		bind:inputText
-		bind:this={inputTextBox}
-		error={!$app.inputStringIsValid}
-		style={inputTextBoxGridStyles}
-		on:submit={() => submitForm()}
-	/>
-	<PushableButton size={'xs'} color={$app.buttonColor} on:click={() => submitForm()}>{$app.buttonLabel}</PushableButton>
+<FormTitle title={$app.formTitle} />
+<PushableButton size={'xs'} color={$app.switchModeButtonColor} on:click={() => toggleMode()}>Switch Mode</PushableButton
+>
+<PushableButton size={'xs'} color={'gray'} on:click={() => resetForm()}>Reset</PushableButton>
+<div class="input-encoding-options" style={inputEncodingGridStyles}>
+	{#if $app.encoderMode}
+		<InputStringEncodingRadioButtons bind:this={inputStringEncodingButtons} />
+	{:else}
+		<InputBase64EncodingRadioButtons bind:this={inputBase64EncodingOptions} />
+	{/if}
 </div>
+<div class="output-encoding-options" style={outputEncodingGridStyles}>
+	{#if $app.encoderMode}
+		<OutputBase64EncodingRadioButtons bind:this={outputBase64EncodingOptions} />
+	{:else}
+		<div class="placeholder" />
+	{/if}
+</div>
+<InputTextBox
+	bind:inputText
+	bind:this={inputTextBox}
+	error={!$app.inputStringIsValid}
+	style={inputTextBoxGridStyles}
+	on:submit={() => submitForm()}
+/>
+<PushableButton size={'xs'} color={$app.buttonColor} on:click={() => submitForm()}>{$app.buttonLabel}</PushableButton>
 
 <style lang="postcss">
 	.input-form {
-		display: grid;
-		grid-template-columns: 87px auto auto 87px;
-		grid-template-rows: 31px auto 31px;
-		grid-auto-flow: row;
-		align-items: end;
-		grid-gap: 1rem 0.5rem;
 	}
 	.input-encoding-options,
 	.output-encoding-options {

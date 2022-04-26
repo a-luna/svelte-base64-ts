@@ -4,7 +4,7 @@
 	import { createEventDispatcher } from 'svelte';
 
 	export let state: XStateMachineState;
-	export const openHelpModalEventDispatcher = createEventDispatcher<{ openHelpModal: Record<string, never> }>();
+	const openHelpModalEventDispatcher = createEventDispatcher<{ openHelpModal: Record<string, never> }>();
 
 	function openHelpDocsModal() {
 		if (!$state.context.autoplay) {
@@ -13,18 +13,14 @@
 	}
 </script>
 
-{#if !$state.matches('inactive') && !$state.matches('inputTextError')}
-	<div class="help-docs-button-wrapper">
-		<LinkedLabel name="help-docs-button-input-form" tooltip="Open Help Docs" on:click={() => openHelpDocsModal()}>
-			Help Docs
-		</LinkedLabel>
-	</div>
-{/if}
+<div class="help-docs-button-wrapper">
+	<LinkedLabel name="help-docs-button-input-form" tooltip="Open Help Docs" on:click={() => openHelpDocsModal()}>
+		Help Docs
+	</LinkedLabel>
+</div>
 
 <style lang="postcss">
 	.help-docs-button-wrapper {
-		font-size: 0.75rem;
-
 		justify-self: flex-end;
 		grid-column: 3 / span 1;
 		grid-row: 1 / span 1;

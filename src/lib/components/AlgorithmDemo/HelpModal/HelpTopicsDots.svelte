@@ -7,8 +7,8 @@
 </script>
 
 <ul>
-	{#each sectionTitles as _, i}
-		<li class="help-topic-dot" class:current-section={index === i} on:click={() => (index = i)}>
+	{#each sectionTitles as title, i}
+		<li class="help-topic-dot" {title} class:current-section={index === i} on:click={() => (index = i)}>
 			{#if index === i}
 				<CircleFull />
 			{:else}

@@ -1,14 +1,9 @@
 <script lang="ts">
 	import StopAutoPlay from '$lib/components/Icons/StopAutoPlay.svelte';
-	import type { NavAction } from '$lib/types';
-	import type { EncodingContext, EncodingEvent, EncodingTypeState } from '$lib/xstate/b64Encode';
+	import type { NavAction, XStateMachineState } from '$lib/types';
 	import { createEventDispatcher } from 'svelte';
-	import type { Readable } from 'svelte/store';
-	import type { State, StateSchema, TypegenDisabled } from 'xstate';
 
-	export let state: Readable<
-		State<EncodingContext, EncodingEvent, StateSchema<EncodingContext>, EncodingTypeState, TypegenDisabled>
-	>;
+	export let state: XStateMachineState;
 	const navButtonEventDispatcher = createEventDispatcher<{ navButtonEvent: { action: NavAction } }>();
 
 	$: autoplay = state ? $state.context.autoplay : true;
@@ -16,7 +11,7 @@
 
 <button
 	type="button"
-	title="Stop AutoPlay"
+	title="Stop Autoplay"
 	disabled={!autoplay}
 	on:click={() => navButtonEventDispatcher('navButtonEvent', { action: 'STOP_AUTO_PLAY' })}
 >
@@ -24,3 +19,10 @@
 		<StopAutoPlay />
 	</div>
 </button>
+
+<style lang="postcss">
+	button {
+		grid-column: 3 / span 1;
+		grid-row: 2 / span 1;
+	}
+</style>

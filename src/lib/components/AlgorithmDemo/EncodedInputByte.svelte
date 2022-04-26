@@ -1,48 +1,57 @@
 <script lang="ts">
 	import { rotatingColors } from '$lib/constants';
-	import type { HexByteMap } from '$lib/types';
+	import type { HexByteMap, XStateMachineState } from '$lib/types';
 	import { getBase64CharIndexFromGroupId, getChunkIndexFromByteIndex } from '$lib/util';
-	import type { EncodingContext, EncodingEvent, EncodingTypeState } from '$lib/xstate/b64Encode';
-	import type { Readable } from 'svelte/store';
-	import type { State, StateSchema, TypegenDisabled } from 'xstate';
 
 	export let byte: HexByteMap;
 	export let byteIndex: number;
-	export let state: Readable<
-		State<EncodingContext, EncodingEvent, StateSchema<EncodingContext>, EncodingTypeState, TypegenDisabled>
-	>;
+	export let state: XStateMachineState;
 	let stateName: string;
 	let currentByteColor: string;
 
 	$: chunkId = getChunkIndexFromByteIndex(byteIndex);
 	$: chunkNumber = chunkId + 1;
 	$: chunkColor = rotatingColors[chunkId % rotatingColors.length];
-	$: currentChunk = $state.context.chunkIndex;
+	$: currentInputChunk = $state.context.inputChunkIndex;
+	$: currentOutputChunk = $state.context.outputChunkIndex;
 	$: stateName = $state.toStrings().join(' ');
-	$: chunkMappingInProgress =
-		!stateName.includes('idle') && stateName.includes('createInputChunks') && currentChunk === chunkId;
-	$: currentChunkColor = chunkMappingInProgress ? chunkColor : '--light-gray3';
+	$: inputChunkMappingInProgress = !stateName.includes('idle') && $state.matches('createInputChunks');
+	$: outputChunkMappingInProgress = !stateName.includes('idle') && $state.matches('createOutputChunks');
+	$: currentInputChunkIsMapped = inputChunkMappingInProgress && currentInputChunk === chunkId;
+	$: currentOutputChunkIsMapped = outputChunkMappingInProgress && currentOutputChunk === chunkId;
+	$: currentChunkIsMapped = currentInputChunkIsMapped || currentOutputChunkIsMapped;
+	$: currentChunkColor = currentChunkIsMapped ? chunkColor : '--light-gray3';
 
 	$: byteNumber = byteIndex + 1;
 	$: byteColor = rotatingColors[byteIndex % rotatingColors.length];
 	$: currentByte = $state.context.byteIndex;
-	$: byteMappingInProgress =
-		!stateName.includes('idle') && stateName.includes('encodeInputText') && currentByte === byteIndex;
-	$: currentByteColor = byteMappingInProgress ? byteColor : currentChunkColor;
+	$: byteMappingInProgress = !stateName.includes('idle') && $state.matches('encodeInput');
+	$: currentByteIsMapped = byteMappingInProgress && currentByte === byteIndex;
+	$: b64MappingInProgress = $state.matches('encodeOutput');
+	$: currentByteColor = currentByteIsMapped
+		? byteColor
+		: currentInputChunkIsMapped
+		? currentChunkColor
+		: '--light-gray3';
+	$: currentByteIdColor = currentByteIsMapped
+		? byteColor
+		: currentChunkIsMapped || b64MappingInProgress || $state.matches('finished')
+		? chunkColor
+		: '--light-gray3';
 
 	const getBase64CharColor = (groupId: string): string =>
 		rotatingColors[getBase64CharIndexFromGroupId(groupId) % rotatingColors.length];
 	const highlightBitGroup = (base64CharIndex: number, groupId: string): boolean =>
 		!stateName.includes('idle') &&
-		stateName.includes('encodeOutputText') &&
+		stateName.includes('encodeOutput') &&
 		base64CharIndex === getBase64CharIndexFromGroupId(groupId);
 	const getCurrentBitGroupColor = (base64CharIndex: number, groupId: string): string =>
 		highlightBitGroup(base64CharIndex, groupId) ? getBase64CharColor(groupId) : currentByteColor;
 </script>
 
 <div class="byte-id" data-byte-number={byteNumber}>
-	<span class="letter-H" style="color: var({chunkColor});">H</span>
-	<span class="byte-number" style="color: var({chunkColor});">{byteNumber}</span>
+	<span class="letter-H" style="color: var({currentByteIdColor});">H</span>
+	<span class="byte-number" style="color: var({currentByteIdColor});">{byteNumber}</span>
 </div>
 {#if byte.ascii}
 	<span class="ascii" data-ascii={byte.ascii}>{@html byte.isWhiteSpace ? '&nbsp;' : byte.ascii}</span>
@@ -51,7 +60,7 @@
 <div
 	class="input-byte"
 	data-chunk-id={chunkNumber}
-	class:mapping={chunkMappingInProgress || byteMappingInProgress}
+	class:mapping={inputChunkMappingInProgress || byteMappingInProgress}
 	style="color: var({currentByteColor});"
 >
 	{#if byte.bitGroups && byte.bitGroups?.length}

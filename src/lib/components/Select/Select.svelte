@@ -122,7 +122,6 @@
 
 	button:focus {
 		box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-		outline: 0;
 	}
 
 	.select-menu-wrapper {
@@ -131,14 +130,16 @@
 		text-align: left;
 	}
 
-	.open-list-button,
-	.dropdown {
-		background-color: var(--select-bg-color, var(--white2));
-		color: var(--select-text-color, var(--black2));
-		border: 1px solid var(--select-border-color, var(--light-gray2));
+	.open-list-button {
+		background-color: var(--list-button-bg-color, var(--white2));
+		color: var(--list-button-text-color, var(--black2));
+		border: 1px solid var(--list-button-border-color, var(--light-gray2));
 	}
 
 	.dropdown {
+		background-color: var(--dropdown-bg-color, var(--white2));
+		color: var(--dropdown-text-color, var(--black2));
+		border: 1px solid var(--dropdown-border-color, var(--light-gray2));
 		transform-origin: top right;
 		position: absolute;
 		right: 0;
@@ -153,18 +154,21 @@
 		outline: 0;
 	}
 
-	.open-list-button:hover {
-		background-color: var(--select-bg-color-hov, var(--white4));
+	.open-list-button:hover,
+	.open-list-button:focus {
+		background-color: var(--list-button-hover-bg-color, var(--white4));
+		color: var(--list-button-hover-text-color, var(--black2));
+		border: 1px solid var(--list-button-border-color, var(--light-gray2));
 	}
 
 	.open-list-button.disabled {
 		cursor: default;
-		color: var(--select-text-color-disabled, var(--dark-gray2));
-		background-color: var(--select-bg-color-disabled, var(--light-gray1));
+		color: var(--list-button-disabled-text-color, var(--dark-gray2));
+		background-color: var(--list-button-disabled-bg-color, var(--light-gray1));
 	}
 
 	.open-list-button.no-selection {
-		color: var(--select-text-color-no-selection, var(--gray4));
+		color: var(--list-button-text-color-no-selection, var(--gray4));
 	}
 
 	.selected-value {

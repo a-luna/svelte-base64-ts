@@ -1,18 +1,19 @@
 <script lang="ts">
 	import { getChunkedBase64Map } from '$lib/maps';
-	import { app } from '$lib/stores/app';
-	import type { Base64CharacterMap } from '$lib/types';
+	import type { Base64CharacterMap, Base64Encoding } from '$lib/types';
 
+	export let base64Encoding: Base64Encoding = 'base64';
 	export let base64TableChunkSize: number;
 	export let highlightBase64: string;
 	export let fontSize: string;
 	let base64MapChunked: Base64CharacterMap[][];
 
-	$: base64MapChunked = getChunkedBase64Map({ base64Encoding: $app.base64Encoding, chunkSize: base64TableChunkSize });
+	$: base64MapChunked = getChunkedBase64Map({ base64Encoding, chunkSize: base64TableChunkSize });
+	$: b64AlphabetDetail = base64Encoding == 'base64' ? 'Standard' : 'URL and Filename safe';
 </script>
 
 <div class="table-wrapper" style="font-size: {fontSize}">
-	<h2>Base64 Alphabet ({$app.b64AlphabetDetail})</h2>
+	<h2>Base64 Alphabet ({b64AlphabetDetail})</h2>
 	<div class="base64-lookup-table">
 		{#each base64MapChunked as base64Map}
 			<div class="base64-lookup-chunk">
@@ -24,9 +25,9 @@
 						data-six-bit={base64.bin}
 						data-decimal={base64.dec}
 					>
-						<code>{base64.dec}</code>
-						<code>{base64.bin}</code>
 						<code>{base64.b64}</code>
+						<code class="dec-value">{base64.dec}</code>
+						<code>{base64.bin}</code>
 					</div>
 				{/each}
 			</div>
@@ -79,5 +80,9 @@
 		margin: 0 0.3125rem;
 		white-space: nowrap;
 		text-transform: none;
+	}
+	.dec-value {
+		width: 13px;
+		text-align: right;
 	}
 </style>

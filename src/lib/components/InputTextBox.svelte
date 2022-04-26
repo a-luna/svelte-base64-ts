@@ -4,7 +4,6 @@
 
 	export let style: string;
 	export let inputText: string;
-	export let placeholder = '';
 	export let disabled = false;
 	export let error = false;
 	let inputTextElement: HTMLInputElement;
@@ -24,7 +23,6 @@
 <input
 	type="text"
 	spellcheck="false"
-	{placeholder}
 	class:error
 	{style}
 	{disabled}
@@ -40,17 +38,12 @@
 		color: var(--pri-color);
 		background-color: var(--black2);
 		border: 1px solid var(--pri-color);
-		outline: none;
 		border-radius: 6px;
 		margin: auto 0;
 		padding: 0.375rem 0.5rem;
 		width: 100%;
 		font-size: 1rem;
 		line-height: 19px;
-	}
-	input:focus {
-		border: 1px solid var(--pri-color);
-		outline: none;
 	}
 	input.error {
 		border: 1px solid var(--red4);

@@ -1,4 +1,4 @@
-import type { StringEncoding } from '$lib/types';
+import type { Result, StringEncoding } from '$lib/types';
 import { validateAsciiBytes } from '$lib/validation';
 
 export const HEX_BIT_GROUP_REGEX = /hex-chunk-(?<chunk>\d+)-byte-(?<byte>1|2|3)/;
@@ -18,8 +18,8 @@ export const stringToByteArray = (s: string, encoding: StringEncoding): number[]
 	encoding === 'ASCII'
 		? asciiStringToByteArray(s)
 		: encoding === 'hex'
-		? hexStringToByteArray(s)
-		: binaryStringToByteArray(s);
+			? hexStringToByteArray(s)
+			: binaryStringToByteArray(s);
 
 export const asciiStringFromByteArray = (byteArray: number[]): string =>
 	validateAsciiBytes(byteArray) ? Array.from(byteArray, (x) => String.fromCharCode(x)).join('') : '';
@@ -27,10 +27,13 @@ export const asciiStringFromByteArray = (byteArray: number[]): string =>
 export const asciiStringFromHexString = (hexString: string): string =>
 	asciiStringFromByteArray(hexStringToByteArray(hexString));
 
-export function hexStringFromByteArray(byteArray: number[], upperCase = false, separator = ''): string {
-	const hex = byteArray.map((byte) => byte.toString(16).padStart(2, '0')).join(separator);
-	return upperCase ? hex.toUpperCase() : hex;
-}
+export const hexStringFromByte = (byte: number, upperCase = true): string =>
+	upperCase 
+		? byte.toString(16).toUpperCase().padStart(2, '0') 
+		: byte.toString(16).padStart(2, '0');
+
+export const hexStringFromByteArray = (byteArray: number[], upperCase = false, separator = ''): string =>
+	byteArray.map((byte) => hexStringFromByte(byte, upperCase)).join(separator);
 
 export const byteArrayToBinaryStringArray = (byteArray: number[]): string[] =>
 	byteArray.map((byte) => decimalToBinaryString(byte));
@@ -115,3 +118,18 @@ export function getBase64CharIndexFromGroupId(groupId: string): number {
 
 export const getChunkIndexFromByteIndex = (byteIndex: number): number => (byteIndex / 3) | 0;
 export const getChunkIndexFromBase64CharIndex = (charIndex: number): number => (charIndex / 4) | 0;
+
+export const capitalizeWords = (input: string): string => input.split(' ').map((word) =>
+	`${word.slice(0,1)?.toUpperCase()}${word.slice(1)}`).join(' ');
+
+
+export async function copyToClipboard(text: string): Promise<Result> {
+	if (typeof window !== 'undefined') {
+		try {
+			await navigator.clipboard.writeText(text);
+			return { success: true }
+		} catch {
+			return { success: false, error: Error('Error! Failed to copy text to clipboard.') };
+		}
+	}
+}

@@ -1,11 +1,12 @@
 <script lang="ts">
+	import ArrowKey from '$lib/components/Icons/KeyboardIcons/ArrowKey.svelte';
 </script>
 
 <div class="keyboard-help help-module">
 	<div class="keyboard-shortcuts">
 		<kbd title="Space Bar">Space</kbd><span>Start/Stop auto-play</span>
-		<kbd class="arrow" title="Right Arrow Key">→</kbd><span>Go to previous step</span>
-		<kbd class="arrow" title="Left Arrow Key">←</kbd><span>Go to next step</span>
+		<ArrowKey arrow="right" /><span>Go to previous step</span>
+		<ArrowKey arrow="left" /><span>Go to next step</span>
 	</div>
 </div>
 
@@ -15,7 +16,7 @@
 	}
 	.keyboard-shortcuts {
 		display: grid;
-		grid-template-columns: 43px auto;
+		grid-template-columns: 65px auto;
 		gap: 0.5rem;
 		margin: 0 auto;
 	}
@@ -31,9 +32,5 @@
 		padding: 2px 4px;
 		white-space: nowrap;
 		text-align: center;
-	}
-	.arrow {
-		font-size: 1.1rem;
-		padding: 0 4px;
 	}
 </style>

@@ -43,6 +43,10 @@
 		border: 1px solid hsla(0, 0%, 85%, 0.45);
 		border-radius: 0.375rem;
 		padding: 0.3125rem 0.625rem;
+		overflow: auto;
+
+		grid-column: 1 / span 4;
+		grid-row: 6 / span 1;
 	}
 
 	.visualization {
@@ -96,6 +100,7 @@
 		overflow-x: scroll;
 		cursor: ew-resize;
 		block-size: calc(100% + 25px);
+		list-style-type: none;
 	}
 
 	.encoding-map li {

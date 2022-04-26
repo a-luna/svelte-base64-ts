@@ -1,14 +1,9 @@
 <script lang="ts">
 	import Reset from '$lib/components/Icons/Reset.svelte';
-	import type { NavAction } from '$lib/types';
-	import type { EncodingContext, EncodingEvent, EncodingTypeState } from '$lib/xstate/b64Encode';
+	import type { NavAction, XStateMachineState } from '$lib/types';
 	import { createEventDispatcher } from 'svelte';
-	import type { Readable } from 'svelte/store';
-	import type { State, StateSchema, TypegenDisabled } from 'xstate';
 
-	export let state: Readable<
-		State<EncodingContext, EncodingEvent, StateSchema<EncodingContext>, EncodingTypeState, TypegenDisabled>
-	>;
+	export let state: XStateMachineState;
 	const navButtonEventDispatcher = createEventDispatcher<{ navButtonEvent: { action: NavAction } }>();
 	const dispatch = createEventDispatcher();
 
@@ -28,6 +23,10 @@
 </button>
 
 <style lang="postcss">
+	button {
+		grid-column: 1 / span 1;
+		grid-row: 2 / span 1;
+	}
 	.algo-nav-buttons button .icon.reset-icon {
 		width: 12px;
 	}

@@ -10,26 +10,26 @@ export const whyBase642 = [
 
 export const whatIsBase64 = [
 	'Base64 is a way to encode binary data into an ASCII character set in order to transmit the data without loss or modification.',
-	'The name refers to the fact that each encoded character stores 6 bits of data (2<sup>6</sup> = 64). Thus, the base64 "alphabet" consists of 64 ASCII characters.',
+	'The name refers to the fact that each encoded character stores 6 bits of data (2<sup>6</sup> = 64). Thus, the Base64 "alphabet" consists of 64 ASCII characters.',
 ];
 
 export const whatIsntBase64 = [
-	'<strong>base64 is not a method to encrypt or compress data</strong>. In fact, encoded data is exactly 1.333... times larger than the original data.',
-	'This bloated message size is the price that must be paid in order to exchange binary files with systems that only understand character-based data.',
+	'<strong>Base64 is not a method to encrypt or compress data</strong>. In fact, encoded data is at least 1.<span style="text-decoration: overline;">3</span> times larger than the original data.',
+	'This bloated message size is a necessary tradeoff in order to exchange binary files with systems that only understand character-based data.',
 ];
 
 export const whatIsBase64Standard = [
-	'The standard base64 alphabet consists of uppercase letters A-Z (26 characters), lowercase letters a-z (26 characters), and numbers 0-9 (10 characters).',
-	'These three groups provide 62 of the necessary 64 characters. In standard base64 encoding, letter 63 is the <code>+</code> (plus) character and letter 64 is the <code>/</code> character (forward-slash).',
+	'The standard Base64 alphabet consists of uppercase letters A-Z (26 characters), lowercase letters a-z (26 characters), and numbers 0-9 (10 characters).',
+	'These three groups provide 62 of the necessary 64 characters. In standard Base64 encoding, letter 63 is the <code>+</code> (plus) character and letter 64 is the <code>/</code> (forward-slash) character.',
 ];
 
 export const whatIsBase64Url = [
 	'Base64 is often used with HTTP requests and responses. Using the <code>+</code> and <code>/</code> characters can wreak havoc in this context (e.g., URL parsing, file paths).',
-	'In these contexts, you should use the URL and filename-safe version of the base64 alphabet (usually referred to as <code>base64url</code>), where letter 63 is the <code>-</code> (minus) character and letter 64 is the <code>_</code> character (underscore).',
+	'In these contexts, you should use the URL and filename-safe version of the Base64 alphabet (usually referred to as <code>base64url</code>), where letter 63 is the <code>-</code> (minus) character and letter 64 is the <code>_</code> (underscore) character.',
 ];
 
 export const stringInputEncoding1 = [
-	'This demo allows you to encode ASCII (text), hex or binary data to base64 and illustrates every step of the process.',
+	'This demo allows you to encode ASCII (text), hex or binary data to Base64 and illustrates every step of the process.',
 	'Please select either <strong>ASCII</strong>, <strong>hex</strong> or <strong>bin</strong> from the dropdown menu labeled <strong>Text Encoding</strong> to specify the format of the string you have provided.',
 ];
 
@@ -62,6 +62,23 @@ export const binStringFormats = [
 ];
 
 export const base64OutputEncoding = [
-	'The dropdown menu to the left of the navigational buttons controls the flavor of base64 that is produced.',
-	'By default, standard base64 encoding is used. Selecting <span class="b64">base64url</span> will use the URL/filename-safe alphabet.',
+	'The <strong>Output Encoding</strong> dropdown menu allows you to choose which Base64 alphabet to use for creating the final, encoded string.',
+	'By default, the Standard Base64 alphabet is used (<span class="b64">base64</span> in the dropdown menu). Selecting <span class="b64">base64url</span> will use the Base64 URL/filename-safe alphabet.',
 ];
+
+export const references = [
+	{
+		title: 'RFC 4648: The Base16, Base32, and Base64 Data Encodings',
+		url: 'https://datatracker.ietf.org/doc/html/rfc4648',
+		description: [
+			'<span class="emphasis">RFC 4648</span> is the specification for Base64 encoding (also Base32 and Base16 encodings, but these are rarely used). This document defines the standard and URL-safe alphabets used in this demonstration, as well as the algorithm for encoding 8-bit bytes to 6-bit ASCII characters.',
+		]
+	},
+	{
+		title: 'Base64 (wikipedia.com)',
+		url: 'https://en.wikipedia.org/wiki/Base64',
+		description: [
+			'The wikipedia article for Base64 covers a much larger number of subjects than RFC 4648, including the use of Base64 encoding with UTF-7, OpenPGP, MIME, and several other examples of practical uses for Base64 encoding.',
+		]
+	}
+]

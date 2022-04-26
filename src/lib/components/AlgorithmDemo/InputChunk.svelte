@@ -1,15 +1,10 @@
 <script lang="ts">
 	import { rotatingColors } from '$lib/constants';
-	import type { EncoderInputChunk } from '$lib/types';
+	import type { EncoderInputChunk, XStateMachineState } from '$lib/types';
 	import { getBase64CharIndexFromGroupId } from '$lib/util';
-	import type { EncodingContext, EncodingEvent, EncodingTypeState } from '$lib/xstate/b64Encode';
-	import type { Readable } from 'svelte/store';
 	import { slide } from 'svelte/transition';
-	import type { State, StateSchema, TypegenDisabled } from 'xstate';
 
-	export let state: Readable<
-		State<EncodingContext, EncodingEvent, StateSchema<EncodingContext>, EncodingTypeState, TypegenDisabled>
-	>;
+	export let state: XStateMachineState;
 	export let chunk: EncoderInputChunk;
 	export let chunkIndex: number;
 
@@ -17,15 +12,18 @@
 	$: chunkColor = rotatingColors[chunkIndex % rotatingColors.length];
 	$: stateName = $state.toStrings().join(' ');
 	$: highlightChunk =
-		!stateName.includes('idle') && stateName.includes('createInputChunks') && $state.context.chunkIndex === chunkIndex;
-	$: currentChunkColor = highlightChunk ? chunkColor : '--light-gray3';
+		!stateName.includes('idle') &&
+		!$state.matches({ createInputChunks: 'explainLastPaddedChunk' }) &&
+		stateName.includes('createInputChunks') &&
+		$state.context.inputChunkIndex === chunkIndex;
 	$: finalBase64GroupId = chunk.inputMap.slice(-1)[0].bitGroups.slice(-1)[0].groupId;
+	$: highlightPadBits = chunk.isPadded && $state.matches({ createInputChunks: 'explainLastPaddedChunk' });
 
 	const getBase64CharColor = (groupId: string): string =>
 		rotatingColors[getBase64CharIndexFromGroupId(groupId) % rotatingColors.length];
 	const highlightBitGroup = (base64CharIndex: number, groupId: string): boolean =>
 		!stateName.includes('idle') &&
-		stateName.includes('encodeOutputText') &&
+		stateName.includes('encodeOutput') &&
 		base64CharIndex === getBase64CharIndexFromGroupId(groupId);
 	const getCurrentBitGroupColor = (base64CharIndex: number, groupId: string, padding = false): string =>
 		highlightBitGroup(base64CharIndex, groupId)
@@ -78,6 +76,7 @@
 			class="base64-bit-group"
 			data-bit-group={finalBase64GroupId}
 			class:mapping={highlightBitGroup($state.context.base64CharIndex, finalBase64GroupId)}
+			class:explain={highlightPadBits}
 			style="color: var({getCurrentBitGroupColor($state.context.base64CharIndex, finalBase64GroupId, true)});"
 		>
 			{#each Array.from({ length: chunk.padLength }, () => 0) as padBit}

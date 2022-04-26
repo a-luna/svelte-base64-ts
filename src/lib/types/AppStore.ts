@@ -18,5 +18,4 @@ export interface AppStore {
 	inputStringIsValid: boolean;
 	buttonColor: ButtonColor;
 	buttonLabel: string;
-	b64AlphabetDetail: string;
 }

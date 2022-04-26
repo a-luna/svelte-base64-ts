@@ -1,9 +1,9 @@
 <script lang="ts">
 	import AuthorName from '$lib/components/AlgorithmDemo/AuthorName.svelte';
+	import DemoText from '$lib/components/AlgorithmDemo/Base64EncodeDemo/DemoText.svelte';
 	import InputForm from '$lib/components/AlgorithmDemo/Base64EncodeDemo/InputForm/InputForm.svelte';
 	import EncodedInputByte from '$lib/components/AlgorithmDemo/EncodedInputByte.svelte';
 	import EncodedOutputByte from '$lib/components/AlgorithmDemo/EncodedOutputByte.svelte';
-	import EncoderHelpModal from '$lib/components/AlgorithmDemo/HelpModal/EncoderHelpModal.svelte';
 	import InputChunk from '$lib/components/AlgorithmDemo/InputChunk.svelte';
 	import OutputChunk from '$lib/components/AlgorithmDemo/OutputChunk.svelte';
 	import FormTitle from '$lib/components/FormTitle.svelte';
@@ -28,18 +28,41 @@
 	let outputBase64Encoding: Base64Encoding = 'base64';
 	let highlightHexByte: number;
 	let highlightBase64: string;
-	let action: NavAction;
 	let pageWidth: number;
 	let stateName: string;
-	let helpModal: EncoderHelpModal;
 
 	const { state, send } = useMachine<EncodingContext, EncodingEvent, EncodingTypeState>(encodingMachine);
 
-	$: anyEncodingState =
-		$state.matches('encodeInputText') ||
-		$state.matches('createInputChunks') ||
-		$state.matches('encodeOutputText') ||
-		$state.matches('finished');
+	$: showInputBytes =
+		$state.matches({ encodeInput: 'autoPlayEncodeByte' }) ||
+		$state.matches({ encodeInput: 'encodeByte' }) ||
+		$state.matches({ encodeInput: 'encodingComplete' }) ||
+		$state.matches({ createInputChunks: 'autoPlayCreateInputChunk' }) ||
+		$state.matches({ createInputChunks: 'createInputChunk' }) ||
+		$state.matches({ createInputChunks: 'createLastPaddedChunk' }) ||
+		$state.matches({ createInputChunks: 'createdAllInputChunks' }) ||
+		$state.matches({ createOutputChunks: 'autoPlayCreateOutputChunk' }) ||
+		$state.matches({ createOutputChunks: 'createOutputChunk' }) ||
+		$state.matches({ createOutputChunks: 'createdAllOutputChunks' }) ||
+		$state.matches({ encodeOutput: 'autoPlayEncodeBase64' }) ||
+		$state.matches({ encodeOutput: 'encodeBase64' }) ||
+		$state.matches({ encodeOutput: 'encodingComplete' });
+	$: showInputChunks =
+		$state.matches({ createInputChunks: 'autoPlayCreateInputChunk' }) ||
+		$state.matches({ createInputChunks: 'createInputChunk' }) ||
+		$state.matches({ createInputChunks: 'createLastPaddedChunk' }) ||
+		$state.matches({ createInputChunks: 'createdAllInputChunks' });
+	$: showOutputChunks =
+		$state.matches({ createOutputChunks: 'autoPlayCreateOutputChunk' }) ||
+		$state.matches({ createOutputChunks: 'createOutputChunk' }) ||
+		$state.matches({ createOutputChunks: 'createdAllOutputChunks' }) ||
+		$state.matches({ encodeOutput: 'autoPlayEncodeBase64' }) ||
+		$state.matches({ encodeOutput: 'encodeBase64' }) ||
+		$state.matches({ encodeOutput: 'encodingComplete' });
+	$: showOutputBytes =
+		$state.matches({ encodeOutput: 'autoPlayEncodeBase64' }) ||
+		$state.matches({ encodeOutput: 'encodeBase64' }) ||
+		$state.matches({ encodeOutput: 'encodingComplete' });
 	$: stateName = $state.toStrings().join(' ');
 	$: if ($state.matches('inputTextError') && $state?.context?.input?.validationResult?.error?.message) {
 		$alert = $state.context.input.validationResult.error.message;
@@ -48,16 +71,17 @@
 		highlightHexByte = null;
 		highlightBase64 = null;
 	}
-	$: if ($state.matches('encodeInputText') && stateName.includes('Byte')) {
+	$: if ($state.matches({ encodeInput: 'autoPlayEncodeByte' }) || $state.matches({ encodeInput: 'encodeByte' })) {
 		highlightHexByte = $state.context.currentByte.byte;
 	}
-	$: if ($state.matches('encodeOutputText') && stateName.includes('Base64')) {
+	$: if ($state.matches({ encodeOutput: 'autoPlayEncodeBase64' }) || $state.matches({ encodeOutput: 'encodeBase64' })) {
 		highlightBase64 = $state.context.currentBase64Char.b64;
 	}
 	$: tableChunkSize = pageWidth < 730 ? 32 : 16;
 	$: tableSectionHeight = pageWidth < 730 ? 'auto' : '260px';
 	$: formTitleFontSize = pageWidth < 730 ? '1.65rem' : '1.8rem';
 	$: updateInputText(inputText, inputTextEncoding, outputBase64Encoding);
+	$: console.log({ state: $state.value, context: $state.context });
 
 	function updateInputText(input: string, stringEncoding: StringEncoding, base64Encoding: Base64Encoding) {
 		send({
@@ -79,53 +103,45 @@
 		}
 	}
 
-	const validationEventMap: {
-		state: string;
-		action: NavAction;
-		event: 'VALIDATE_INPUT' | 'VALIDATE_INPUT_AUTO' | 'ENCODE_INPUT_TEXT';
-	}[] = [
-		{ state: 'inactive', action: 'GO_TO_NEXT_STEP', event: 'VALIDATE_INPUT' },
-		{ state: 'inactive', action: 'GO_TO_LAST_STEP', event: 'ENCODE_INPUT_TEXT' },
-		{ state: 'inactive', action: 'START_AUTO_PLAY', event: 'VALIDATE_INPUT_AUTO' },
-		{ state: 'inputTextError', action: 'GO_TO_NEXT_STEP', event: 'VALIDATE_INPUT' },
-		{ state: 'inputTextError', action: 'GO_TO_LAST_STEP', event: 'ENCODE_INPUT_TEXT' },
-		{ state: 'inputTextError', action: 'START_AUTO_PLAY', event: 'VALIDATE_INPUT_AUTO' },
-	];
-
-	const getValidationEventType = (action: NavAction): 'VALIDATE_INPUT' | 'VALIDATE_INPUT_AUTO' | 'ENCODE_INPUT_TEXT' =>
-		validationEventMap.find((t) => t.state === $state.value && t.action === action)?.event;
-
-	const handleNavButtonEvent = (e: CustomEvent<{ action: NavAction }>) => sendEvent(e.detail.action);
+	function getValidationEventType(action: NavAction): 'VALIDATE_INPUT' | 'VALIDATE_INPUT_AUTO' | 'ENCODE_INPUT_TEXT' {
+		const validationEventMap: {
+			state: string;
+			action: NavAction;
+			event: 'VALIDATE_INPUT' | 'VALIDATE_INPUT_AUTO' | 'ENCODE_INPUT_TEXT';
+		}[] = [
+			{ state: 'inactive', action: 'GO_TO_NEXT_STEP', event: 'VALIDATE_INPUT' },
+			{ state: 'inactive', action: 'GO_TO_LAST_STEP', event: 'ENCODE_INPUT_TEXT' },
+			{ state: 'inactive', action: 'START_AUTO_PLAY', event: 'VALIDATE_INPUT_AUTO' },
+			{ state: 'inputTextError', action: 'GO_TO_NEXT_STEP', event: 'VALIDATE_INPUT' },
+			{ state: 'inputTextError', action: 'GO_TO_LAST_STEP', event: 'ENCODE_INPUT_TEXT' },
+			{ state: 'inputTextError', action: 'START_AUTO_PLAY', event: 'VALIDATE_INPUT_AUTO' },
+		];
+		return validationEventMap.find((t) => t.state === $state.value && t.action === action)?.event;
+	}
 
 	function handleKeyPress(key: string) {
 		if (!$demoState.modalOpen) {
-			const savePreviousAction = action;
-			action = null;
 			if (key === 'ArrowRight') {
-				action = 'GO_TO_NEXT_STEP';
+				sendEvent('GO_TO_NEXT_STEP');
 			}
 			if (key === 'ArrowLeft') {
-				action = 'GO_TO_PREV_STEP';
+				sendEvent('GO_TO_PREV_STEP');
 			}
 			if (key === 'Space') {
-				if ($state.context.autoplay && $state.can('STOP_AUTO_PLAY')) {
-					action = 'STOP_AUTO_PLAY';
+				if ($state.context.autoplay) {
+					sendEvent('STOP_AUTO_PLAY');
+				} else {
+					sendEvent('START_AUTO_PLAY');
 				}
-				if (!$state.context.autoplay) {
-					action = 'START_AUTO_PLAY';
-				}
-			}
-			if (action) {
-				sendEvent(action);
-			} else {
-				action = savePreviousAction;
 			}
 		}
 	}
 
+	const handleNavButtonEvent = (e: CustomEvent<{ action: NavAction }>) => sendEvent(e.detail.action);
+
 	function sendEvent(action: NavAction) {
 		const validationEventType = getValidationEventType(action);
-		if (validationEventType && isStringEncoding(inputTextEncoding) && isBase64Encoding(outputBase64Encoding)) {
+		if (validationEventType) {
 			send({
 				type: validationEventType,
 				inputText: inputText,
@@ -155,13 +171,16 @@
 	bind:outputBase64Encoding
 	on:navButtonEvent={handleNavButtonEvent}
 	on:submit={() => submitForm(inputText)}
-	on:openHelpModal={() => helpModal.toggleModal()}
 />
 <div class="demo-steps">
-	<div id="input-hex" class="encoded-bytes">
-		{#if anyEncodingState}
+	<div id="demo-text">
+		<DemoText {state} />
+	</div>
+	{#if showInputBytes}
+		<h3 class="input-heading">Input</h3>
+		<div id="input-hex" class="encoded-bytes">
 			<div class="binary-chunks">
-				{#each $state.context.byteMaps as byte, byteIndex}
+				{#each $state.context.updatedByteMaps as byte, byteIndex}
 					<div
 						transition:fade={{ duration: 200 }}
 						class="encoded-byte"
@@ -177,24 +196,28 @@
 					</div>
 				{/each}
 			</div>
-		{/if}
-	</div>
-	<div id="hex-b64-mapping" class="binary-chunks data-mapping">
-		{#if $state.context?.input?.chunks}
-			{#each $state.context.input.chunks as chunk, i}
-				{#if $state.matches('createInputChunks') || $state.matches('encodeOutputText') || $state.matches('finished')}
-					<InputChunk {state} {chunk} chunkIndex={i} />
-				{/if}
-				{#if $state.matches('encodeOutputText') || $state.matches('finished')}
-					<OutputChunk {state} chunk={$state.context.output.chunks[i]} chunkIndex={i} />
-				{/if}
+		</div>
+	{/if}
+	{#if showInputChunks}
+		<div id="hex-b64-mapping" class="binary-chunks data-mapping">
+			{#each $state.context.updatedInputChunks as chunk, i}
+				<InputChunk {state} {chunk} chunkIndex={i} />
 			{/each}
-		{/if}
-	</div>
-	<div id="output-b64" class="encoded-bytes">
-		{#if $state.matches('encodeOutputText') || $state.matches('finished')}
+		</div>
+	{/if}
+	{#if showOutputChunks}
+		<div id="hex-b64-mapping" class="binary-chunks data-mapping">
+			{#each $state.context.updatedOutputChunks as chunk, i}
+				<InputChunk {state} chunk={$state.context.updatedInputChunks[i]} chunkIndex={i} />
+				<OutputChunk {state} {chunk} chunkIndex={i} />
+			{/each}
+		</div>
+	{/if}
+	{#if showOutputBytes}
+		<h3 class="output-heading">Output</h3>
+		<div id="output-b64" class="encoded-bytes">
 			<div class="binary-chunks">
-				{#each $state.context.base64Maps as b64, charIndex}
+				{#each $state.context.updatedBase64Maps as b64, charIndex}
 					<div
 						transition:fade={{ duration: 200 }}
 						class="encoded-base64"
@@ -210,23 +233,27 @@
 					</div>
 				{/each}
 			</div>
-		{/if}
-	</div>
+		</div>
+	{/if}
 </div>
 <div class="demo-references" style="flex: 1 0 {tableSectionHeight}">
-	{#if ($state.matches('encodeInputText') && $state.context.input.ascii) || $state.matches('createInputChunks')}
+	{#if $state.matches('encodeInput') && $state.context.input.ascii}
 		<div transition:fade class="ascii-table">
 			<AsciiLookupTable asciiTableChunkSize={tableChunkSize} {highlightHexByte} fontSize={'0.65rem'} />
 		</div>
-	{:else if $state.matches('encodeOutputText')}
+	{:else if $state.matches('explainByteMapping') || $state.matches('encodeOutput')}
 		<div transition:fade class="base64-table">
-			<Base64LookupTable base64TableChunkSize={tableChunkSize} {highlightBase64} fontSize={'0.65rem'} />
+			<Base64LookupTable
+				base64Encoding={outputBase64Encoding}
+				base64TableChunkSize={tableChunkSize}
+				{highlightBase64}
+				fontSize={'0.65rem'}
+			/>
 		</div>
 	{:else}
 		<div class="placeholder" style="width: 292px" />
 	{/if}
 </div>
-<EncoderHelpModal bind:this={helpModal} />
 
 <style lang="postcss">
 	.form-top-row {
@@ -235,6 +262,7 @@
 		grid-template-rows: auto auto;
 		align-items: baseline;
 		gap: 0.5rem;
+		margin: 0 0 1rem 0;
 
 		grid-column: 1 / span 1;
 		grid-row: 1 / span 1;
@@ -252,38 +280,69 @@
 	.demo-steps {
 		display: grid;
 		grid-template-columns: 1fr 1fr;
-		grid-template-rows: auto auto 1fr;
-		gap: 0.5rem;
+		grid-template-rows: auto auto auto auto auto 1fr;
+		column-gap: 0.5rem;
 		background-color: var(--black2);
 		border-radius: 6px;
 		overflow: auto;
-		padding: 0.5rem;
+		padding: 0.5rem 0.75rem;
+		transition: transform 0.75s ease-in-out;
+		margin: 1rem 0;
 
-		font-family: menlo, monospace;
+		font-family: 'Roboto Mono', menlo, monospace;
 
 		grid-column: 1 / span 1;
 		grid-row: 3 / span 1;
+	}
+	h3 {
+		font-size: 0.9rem;
+		margin: 0;
+		text-decoration: underline;
+		text-align: center;
+		margin: 0.5rem 0;
+	}
+	#demo-text {
+		display: flex;
+		flex-flow: column nowrap;
+		align-self: flex-start;
+		margin: 0 0 0.5rem 0;
+
+		grid-column: 1 / span 2;
+		grid-row: 2 / span 1;
+	}
+	h3.input-heading {
+		color: var(--pri-color);
+
+		grid-column: 1 / span 1;
+		grid-row: 4 / span 1;
 	}
 	#input-hex {
 		justify-self: center;
 
 		grid-column: 1 / span 1;
-		grid-row: 2 / span 1;
+		grid-row: 5 / span 1;
 	}
 	#hex-b64-mapping {
+		margin: 0 0 0.5rem 0;
+
 		grid-column: 1 / span 2;
-		grid-row: 1 / span 1;
+		grid-row: 3 / span 1;
+	}
+	h3.output-heading {
+		color: var(--sec-color);
+
+		grid-column: 2 / span 1;
+		grid-row: 4 / span 1;
 	}
 	#output-b64 {
 		justify-self: center;
 
 		grid-column: 2 / span 1;
-		grid-row: 2 / span 1;
+		grid-row: 5 / span 1;
 	}
 	.binary-chunks {
 		display: flex;
 		flex-flow: column nowrap;
-		transition: transform 0.75s ease-in-out;
 		flex: 0 1 auto;
 	}
 	.encoded-bytes {
@@ -330,28 +389,48 @@
 			grid-column: 4 / span 1;
 			grid-row: 1 / span 1;
 		}
+		#demo-text {
+			grid-column: 1 / span 1;
+			grid-row: 3 / span 1;
+		}
 		.demo-steps {
 			grid-template-columns: 148px 5px 353px 5px 122px;
-			grid-template-rows: auto;
+			grid-template-rows: auto auto auto auto;
 			align-items: flex-start;
-			gap: 0.5rem;
+			column-gap: 0.5rem;
 			padding: 1rem;
+			margin: 0;
 			width: 666px;
 
 			grid-column: 1 / span 1;
 			grid-row: 3 / span 1;
 		}
+		h3 {
+			font-size: 1rem;
+		}
+		#demo-text {
+			grid-column: 1 / span 5;
+			grid-row: 2 / span 1;
+		}
+		h3.input-heading {
+			grid-column: 1 / span 1;
+			grid-row: 3 / span 1;
+		}
 		#input-hex {
 			grid-column: 1 / span 1;
-			grid-row: 1 / span 1;
+			grid-row: 4 / span 1;
 		}
 		#hex-b64-mapping {
 			grid-column: 3 / span 1;
-			grid-row: 1 / span 1;
+			grid-row: 4 / span 1;
+		}
+		h3.output-heading {
+			grid-column: 5 / span 1;
+			grid-row: 3 / span 1;
 		}
 		#output-b64 {
 			grid-column: 5 / span 1;
-			grid-row: 1 / span 1;
+			grid-row: 4 / span 1;
 		}
 		.demo-references {
 			grid-column: 1 / span 1;

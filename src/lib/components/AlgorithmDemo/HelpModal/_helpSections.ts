@@ -1,4 +1,6 @@
 import Base64OutputEncoding from '$lib/components/AlgorithmDemo/HelpModal/Sections/Base64OutputEncoding.svelte';
+import Base64References1 from '$lib/components/AlgorithmDemo/HelpModal/Sections/Base64References1.svelte';
+import Base64References2 from '$lib/components/AlgorithmDemo/HelpModal/Sections/Base64References2.svelte';
 import Base64StandardAlphabet from '$lib/components/AlgorithmDemo/HelpModal/Sections/Base64StandardAlphabet.svelte';
 import Base64UrlAlphabet from '$lib/components/AlgorithmDemo/HelpModal/Sections/Base64UrlAlphabet.svelte';
 import KeyboardShortcuts from '$lib/components/AlgorithmDemo/HelpModal/Sections/KeyboardShortcuts.svelte';
@@ -28,6 +30,8 @@ const createEncodingHelpSections = (): HelpSection[] => [
 	{ id: getRandomHexString(4), title: 'Output Encoding', component: Base64OutputEncoding },
 	{ id: getRandomHexString(4), title: 'Navigational Buttons', component: NavButtons },
 	{ id: getRandomHexString(4), title: 'Keyboard Shortcuts', component: KeyboardShortcuts },
+	{ id: getRandomHexString(4), title: 'References', component: Base64References1 },
+	{ id: getRandomHexString(4), title: 'References (continued)', component: Base64References2 },
 ];
 
 export const encodingHelpSections = createEncodingHelpSections();

@@ -1,15 +1,10 @@
 <script lang="ts">
 	import { rotatingColors } from '$lib/constants';
-	import type { OutputChunk } from '$lib/types';
+	import type { OutputChunk, XStateMachineState } from '$lib/types';
 	import { getBase64CharIndexFromGroupId } from '$lib/util';
-	import type { EncodingContext, EncodingEvent, EncodingTypeState } from '$lib/xstate/b64Encode';
-	import type { Readable } from 'svelte/store';
 	import { slide } from 'svelte/transition';
-	import type { State, StateSchema, TypegenDisabled } from 'xstate';
 
-	export let state: Readable<
-		State<EncodingContext, EncodingEvent, StateSchema<EncodingContext>, EncodingTypeState, TypegenDisabled>
-	>;
+	export let state: XStateMachineState;
 	export let chunk: OutputChunk;
 	export let chunkIndex: number;
 
@@ -17,17 +12,23 @@
 	$: chunkColor = rotatingColors[chunkIndex % rotatingColors.length];
 	$: stateName = $state.toStrings().join(' ');
 	$: highlightChunk =
-		!stateName.includes('idle') && stateName.includes('createInputChunks') && $state.context.chunkIndex === chunkIndex;
+		!stateName.includes('idle') &&
+		((stateName.includes('createInputChunks') && $state.context.inputChunkIndex === chunkIndex) ||
+			(stateName.includes('createOutputChunks') && $state.context.outputChunkIndex === chunkIndex));
 	$: currentChunkColor = highlightChunk ? chunkColor : '--black1';
 
 	const getBase64CharColor = (groupId: string): string =>
 		rotatingColors[getBase64CharIndexFromGroupId(groupId) % rotatingColors.length];
 	const highlightBitGroup = (base64CharIndex: number, groupId: string): boolean =>
 		!stateName.includes('idle') &&
-		stateName.includes('encodeOutputText') &&
+		stateName.includes('encodeOutput') &&
 		base64CharIndex === getBase64CharIndexFromGroupId(groupId);
 	const getCurrentBitGroupColor = (base64CharIndex: number, groupId: string): string =>
 		highlightBitGroup(base64CharIndex, groupId) ? getBase64CharColor(groupId) : currentChunkColor;
+	const getCurrentBitGroupOutlineStyle = (base64CharIndex: number, groupId: string, isPad: boolean): string =>
+		isPad && highlightBitGroup(base64CharIndex, groupId)
+			? ` outline: 1px dotted var(${getCurrentBitGroupColor(base64CharIndex, groupId)})`
+			: '';
 </script>
 
 <div
@@ -51,7 +52,10 @@
 			data-bin={map.bin}
 			data-b64={map.b64}
 			class:mapping={highlightBitGroup($state.context.base64CharIndex, map.groupId)}
-			style="color: var({getCurrentBitGroupColor($state.context.base64CharIndex, map.groupId)});"
+			style="color: var({getCurrentBitGroupColor(
+				$state.context.base64CharIndex,
+				map.groupId,
+			)});{getCurrentBitGroupOutlineStyle($state.context.base64CharIndex, map.groupId, map.isPad)}"
 		>
 			{#if !map.isPad}
 				{#each map.bitGroups as bitGroup}

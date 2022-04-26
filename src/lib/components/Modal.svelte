@@ -6,6 +6,7 @@
 	export let title: string;
 	export let closed = true;
 	export let noHeader = false;
+	export let noFooter = false;
 	export const toggleModal = () => (closed = !closed);
 
 	$: modelLabel = `${modalId}-label`;
@@ -33,16 +34,20 @@
 		<div class="modal-content">
 			{#if !noHeader}
 				<div class="modal-header">
-					<h5 id={modelLabel}>{title}</h5>
+					{#if title}
+						<h5 id={modelLabel}>{title}</h5>
+					{/if}
 					<button type="button" class="btn-close" aria-label="Close" on:click={() => toggleModal()}><Close /></button>
 				</div>
 			{/if}
 			<div class="modal-body">
 				<slot />
 			</div>
-			<div class="modal-footer">
-				<button type="button" class="modal-button" on:click={() => toggleModal()}>Close</button>
-			</div>
+			{#if !noFooter}
+				<div class="modal-footer">
+					<button type="button" class="modal-button" on:click={() => toggleModal()}>Close</button>
+				</div>
+			{/if}
 		</div>
 	</div>
 </div>
@@ -74,10 +79,10 @@
 
 	.modal-dialog {
 		position: relative;
-		width: auto;
+		min-width: 314px;
 		max-width: 450px;
-		margin: 2rem auto;
-		padding: 1rem;
+		width: calc(100% - 4rem);
+		margin: 2rem auto 0 auto;
 		background-clip: padding-box;
 		background-color: var(--modal-dialog-bg-color);
 		border-radius: 6px;
@@ -94,13 +99,14 @@
 		color: currentColor;
 		width: 100%;
 		gap: 1rem;
+		border-radius: 6px;
 	}
 
 	.modal-header {
 		display: flex;
 		padding: 0;
 		flex-shrink: 0;
-		justify-content: space-between;
+		justify-content: flex-ed;
 		align-items: flex-end;
 		border-top-left-radius: 6px;
 		border-top-right-radius: 6px;
@@ -113,6 +119,7 @@
 		letter-spacing: 0.4px;
 		line-height: 1;
 		margin: 0;
+		flex: 1;
 	}
 
 	.btn-close {
@@ -122,12 +129,11 @@
 		background-color: inherit;
 		width: 1.5rem;
 		height: 1.5rem;
-		align-self: flex-start;
 		border-radius: 0;
 		border-style: none;
 		opacity: 0.75;
 		padding: 0;
-		margin: 0;
+		margin: 0 0 0 auto;
 	}
 
 	.btn-close:hover {
@@ -162,6 +168,10 @@
 	@media screen and (min-width: 730px) {
 		.modal-dialog {
 			max-width: 650px;
+			margin: 2rem auto 0 auto;
+		}
+		.modal-content {
+			border-radius: 0;
 		}
 	}
 </style>

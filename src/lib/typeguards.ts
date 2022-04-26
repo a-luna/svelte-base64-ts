@@ -1,11 +1,11 @@
 import type { Base64Encoding, ButtonColor, Encoding, NavAction, StringEncoding } from '$lib/types';
 import { BASE64_ENCODINGS, BUTTON_COLORS, NAV_ACTIONS, STRING_ENCODINGS } from '$lib/types';
 
-export function isBase64Encoding(encoding: Encoding): encoding is Base64Encoding {
+export function isBase64Encoding(encoding: string): encoding is Base64Encoding {
 	return BASE64_ENCODINGS.includes(encoding as Base64Encoding);
 }
 
-export function isStringEncoding(encoding: Encoding): encoding is StringEncoding {
+export function isStringEncoding(encoding: string): encoding is StringEncoding {
 	return STRING_ENCODINGS.includes(encoding as StringEncoding);
 }
 

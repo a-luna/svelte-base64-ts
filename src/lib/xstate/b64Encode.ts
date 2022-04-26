@@ -3,6 +3,7 @@ import { b64Encode } from '$lib/base64';
 import {
 	defaultBase64ByteMap,
 	defaultEncoderInput,
+	defaultEncoderInputChunk,
 	defaultEncoderOutput,
 	defaultHexByteMap,
 	defaultOutputChunk
@@ -12,6 +13,7 @@ import type {
 	Base64ByteMap,
 	Base64Encoding,
 	EncoderInput,
+	EncoderInputChunk,
 	EncoderOutput,
 	HexByteMap,
 	OutputChunk,
@@ -22,13 +24,20 @@ import { assign, createMachine } from 'xstate';
 export interface EncodingContext {
 	autoplay: boolean;
 	byteMaps: HexByteMap[];
+	updatedByteMaps: HexByteMap[];
 	byteIndex: number;
 	currentByte: HexByteMap;
 	remainingBytes: number;
-	chunkIndex: number;
-	currentChunk: OutputChunk;
-	remainingChunks: number;
+	updatedInputChunks: EncoderInputChunk[];
+	inputChunkIndex: number;
+	currentInputChunk: EncoderInputChunk;
+	remainingInputChunks: number;	
+	updatedOutputChunks: OutputChunk[];
+	outputChunkIndex: number;
+	currentOutputChunk: OutputChunk;
+	remainingOutputChunks: number;
 	base64Maps: Base64ByteMap[];
+	updatedBase64Maps: Base64ByteMap[];
 	base64CharIndex: number;
 	currentBase64Char: Base64ByteMap;
 	remainingBase64Chars: number;
@@ -53,22 +62,31 @@ export type EncodingTypeState =
 	| { value: 'inactive'; context: EncodingContext }
 	| { value: 'validateInputText'; context: EncodingContext }
 	| { value: 'inputTextError'; context: EncodingContext }
-	| { value: 'encodeInputText'; context: EncodingContext }
-	| { value: { encodeInputText: 'idle' }; context: EncodingContext }
-	| { value: { encodeInputText: 'autoPlayEncodeByte' }; context: EncodingContext }
-	| { value: { encodeInputText: 'encodeByte' }; context: EncodingContext }
-	| { value: { encodeInputText: 'encodingComplete' }; context: EncodingContext }
+	| { value: 'inputTextValidated'; context: EncodingContext }
+	| { value: 'encodeInput'; context: EncodingContext }
+	| { value: { encodeInput: 'idle' }; context: EncodingContext }
+	| { value: { encodeInput: 'autoPlayEncodeByte' }; context: EncodingContext }
+	| { value: { encodeInput: 'encodeByte' }; context: EncodingContext }
+	| { value: { encodeInput: 'encodingComplete' }; context: EncodingContext }
+	| { value: 'explainByteMapping'; context: EncodingContext }
 	| { value: 'createInputChunks'; context: EncodingContext }
 	| { value: { createInputChunks: 'idle' }; context: EncodingContext }
 	| { value: { createInputChunks: 'autoPlayCreateInputChunk' }; context: EncodingContext }
 	| { value: { createInputChunks: 'createInputChunk' }; context: EncodingContext }
+	| { value: { createInputChunks: 'explainLastPaddedChunk' }; context: EncodingContext }
+	| { value: { createInputChunks: 'explainPadCharacter' }; context: EncodingContext }
 	| { value: { createInputChunks: 'createLastPaddedChunk' }; context: EncodingContext }
 	| { value: { createInputChunks: 'createdAllInputChunks' }; context: EncodingContext }
-	| { value: 'encodeOutputText'; context: EncodingContext }
-	| { value: { encodeOutputText: 'idle' }; context: EncodingContext }
-	| { value: { encodeOutputText: 'autoPlayEncodeBase64' }; context: EncodingContext }
-	| { value: { encodeOutputText: 'encodeBase64' }; context: EncodingContext }
-	| { value: { encodeOutputText: 'encodingComplete' }; context: EncodingContext }
+	| { value: 'createOutputChunks'; context: EncodingContext }
+	| { value: { createOutputChunks: 'idle' }; context: EncodingContext }
+	| { value: { createOutputChunks: 'autoPlayCreateOutputChunk' }; context: EncodingContext }
+	| { value: { createOutputChunks: 'createOutputChunk' }; context: EncodingContext }
+	| { value: { createOutputChunks: 'createdAllOutputChunks' }; context: EncodingContext }
+	| { value: 'encodeOutput'; context: EncodingContext }
+	| { value: { encodeOutput: 'idle' }; context: EncodingContext }
+	| { value: { encodeOutput: 'autoPlayEncodeBase64' }; context: EncodingContext }
+	| { value: { encodeOutput: 'encodeBase64' }; context: EncodingContext }
+	| { value: { encodeOutput: 'encodingComplete' }; context: EncodingContext }
 	| { value: 'finished'; context: EncodingContext };
 
 export const encodingMachine = createMachine<EncodingContext, EncodingEvent, EncodingTypeState>(
@@ -84,11 +102,18 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 			byteMaps: [defaultHexByteMap],
 			byteIndex: 0,
 			currentByte: defaultHexByteMap,
+			updatedByteMaps: [],
 			remainingBytes: 0,
-			chunkIndex: 0,
-			currentChunk: defaultOutputChunk,
-			remainingChunks: 0,
+			updatedInputChunks: [],
+			inputChunkIndex: 0,
+			currentInputChunk: defaultEncoderInputChunk,
+			remainingInputChunks: 0,
+			updatedOutputChunks: [],
+			outputChunkIndex: 0,
+			currentOutputChunk: defaultOutputChunk,
+			remainingOutputChunks: 0,
 			base64Maps: [defaultBase64ByteMap],
+			updatedBase64Maps: [],
 			base64CharIndex: 0,
 			currentBase64Char: defaultBase64ByteMap,
 			remainingBase64Chars: 0,
@@ -97,23 +122,23 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 		},
 		states: {
 			inactive: {
-				entry: ['stopAutoPlay'],
+				entry: ['stopAutoPlay', 'resetContext'],
 				id: 'inactive',
 				on: {
 					VALIDATE_INPUT_AUTO: {
 						target: 'validateInputText',
-						actions: ['resetContext', 'validate', 'startAutoPlay'],
+						actions: ['validate', 'startAutoPlay'],
 					},
-					VALIDATE_INPUT: { target: 'validateInputText', actions: ['resetContext', 'validate'] },
-					UPDATE_INPUT_TEXT: { target: 'inactive', actions: ['resetContext', 'validate'] },
-					ENCODE_INPUT_TEXT: { target: 'skipDemoSteps', actions: ['resetContext', 'validate'] },
+					VALIDATE_INPUT: { target: 'validateInputText', actions: 'validate' },
+					UPDATE_INPUT_TEXT: { target: 'inactive', actions: 'validate' },
+					ENCODE_INPUT_TEXT: { target: 'skipDemoSteps', actions: 'validate' },
 					RESET: { target: 'inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
 				},
 			},
 			validateInputText: {
 				always: [
 					{ target: 'inputTextError', cond: 'inputTextIsInvalid' },
-					{ target: 'encodeInputText', actions: ['encode', 'generateBase64Maps', 'generateByteMaps'] },
+					{ target: 'inputTextValidated', actions: ['encode', 'generateBase64Maps', 'generateByteMaps'] },
 				],
 			},
 			skipDemoSteps: {
@@ -142,9 +167,27 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 					GO_TO_PREV_STEP: { target: 'inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
 				},
 			},
-			encodeInputText: {
+			inputTextValidated: {
+				id: 'inputTextValidated',
+				after: {
+					1000: { target: 'encodeInput.idle', cond: 'autoPlayEnabled' },
+				},
+				on: {
+					START_AUTO_PLAY: {
+						target: 'encodeInput.idle',
+						actions: 'startAutoPlay',
+						cond: 'autoPlayDisabled',
+					},
+					RESET: { target: 'inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
+					GO_TO_FIRST_STEP: { target: 'inactive', cond: 'autoPlayDisabled' },
+					GO_TO_PREV_STEP: { target: 'inactive', cond: 'autoPlayDisabled' },
+					GO_TO_NEXT_STEP: { target: 'encodeInput.idle', cond: 'autoPlayDisabled' },
+					GO_TO_LAST_STEP: { target: 'finished', cond: 'autoPlayDisabled' },
+				},
+			},
+			encodeInput: {
 				initial: 'idle',
-				id: 'encodeInputText',
+				id: 'encodeInput',
 				states: {
 					idle: {
 						entry: ['resetRemainingBytes'],
@@ -160,7 +203,7 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 							STOP_AUTO_PLAY: { actions: 'stopAutoPlay', cond: 'autoPlayEnabled' },
 							RESET: { target: '#inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
 							GO_TO_FIRST_STEP: { target: '#inactive', cond: 'autoPlayDisabled' },
-							GO_TO_PREV_STEP: { target: '#inactive', cond: 'autoPlayDisabled' },
+							GO_TO_PREV_STEP: { target: '#inputTextValidated', cond: 'autoPlayDisabled' },
 							GO_TO_NEXT_STEP: { target: 'encodeByte', cond: 'bytesRemaining' },
 							GO_TO_LAST_STEP: { target: '#finished', cond: 'autoPlayDisabled' },
 						},
@@ -191,7 +234,7 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 							GO_TO_FIRST_STEP: { target: '#inactive', cond: 'autoPlayDisabled' },
 							GO_TO_PREV_STEP: [
 								{ target: 'encodeByte', actions: 'mapPreviousByte', cond: 'hasPreviousByte' },
-								{ target: '#inactive', cond: 'allBytesRemaining' },
+								{ target: 'idle', cond: 'allBytesRemaining' },
 							],
 							GO_TO_NEXT_STEP: [
 								{ target: 'encodeByte', actions: 'mapNextByte', cond: 'bytesRemaining' },
@@ -204,14 +247,32 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 						type: 'final',
 					},
 				},
-				onDone: 'createInputChunks',
+				onDone: 'explainByteMapping',
+			},
+			explainByteMapping: {
+				id: 'explainByteMapping',
+				after: {
+					100: { target: 'createInputChunks.idle', cond: 'autoPlayEnabled' },
+				},
+				on: {
+					START_AUTO_PLAY: {
+						target: 'createInputChunks.idle',
+						actions: 'startAutoPlay',
+						cond: 'autoPlayDisabled',
+					},
+					RESET: { target: 'inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
+					GO_TO_FIRST_STEP: { target: 'inactive', cond: 'autoPlayDisabled' },
+					GO_TO_PREV_STEP: {  target: 'encodeInput.encodeByte', cond: 'autoPlayDisabled' },
+					GO_TO_NEXT_STEP: { target: 'createInputChunks.idle', cond: 'autoPlayDisabled' },
+					GO_TO_LAST_STEP: { target: 'finished', cond: 'autoPlayDisabled' },
+				},
 			},
 			createInputChunks: {
 				id: 'createInputChunks',
 				initial: 'idle',
 				states: {
 					idle: {
-						entry: ['resetRemainingChunks'],
+						entry: ['resetRemainingInputChunks'],
 						after: {
 							1000: { target: 'autoPlayCreateInputChunk', cond: 'autoPlayEnabled' },
 						},
@@ -225,35 +286,34 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 							RESET: { target: '#inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
 							GO_TO_FIRST_STEP: { target: '#inactive', cond: 'autoPlayDisabled' },
 							GO_TO_PREV_STEP: {
-								target: '#encodeInputText.encodeByte',
+								target: '#explainByteMapping',
 								actions: 'resetNoBytesRemaining',
 								cond: 'autoPlayDisabled',
 							},
-							GO_TO_NEXT_STEP: { target: 'createInputChunk', cond: 'autoPlayDisabled' },
+							GO_TO_NEXT_STEP: [
+								{ target: 'createLastPaddedChunk', cond: 'onlyOnePaddedChunk' },
+								{ target: 'createInputChunk', cond: 'autoPlayDisabled' },
+							],
 							GO_TO_LAST_STEP: { target: '#finished', cond: 'autoPlayDisabled' },
 						},
 					},
 					autoPlayCreateInputChunk: {
-						entry: ['getCurrentChunk'],
+						entry: ['getCurrentInputChunk'],
 						after: {
 							500: [
 								{
 									target: 'autoPlayCreateInputChunk',
-									actions: 'mapNextChunk',
+									actions: 'mapNextInputChunk',
 									cond: 'inputChunksRemaining',
 								},
-								{
-									target: 'createLastPaddedChunk',
-									actions: 'mapNextChunk',
-									cond: 'finalPaddedChunkRemaining',
-								},
-								{ target: 'createdAllInputChunks', cond: 'noChunksRemaining' },
+								{ target: 'explainLastPaddedChunk', actions: 'mapNextInputChunk', cond: 'finalPaddedChunkRemaining' },
+								{ target: 'createdAllInputChunks', cond: 'noInputChunksRemaining' },
 							],
 						},
 						on: { STOP_AUTO_PLAY: { target: 'createInputChunk', actions: 'stopAutoPlay', cond: 'autoPlayEnabled' } },
 					},
 					createInputChunk: {
-						entry: ['getCurrentChunk'],
+						entry: ['getCurrentInputChunk'],
 						on: {
 							START_AUTO_PLAY: {
 								target: 'autoPlayCreateInputChunk',
@@ -261,23 +321,63 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 								cond: 'autoPlayDisabled',
 							},
 							RESET: { target: '#inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
-							GO_TO_FIRST_STEP: { target: 'idle', cond: 'autoPlayDisabled' },
+							GO_TO_FIRST_STEP: { target: '#inactive', cond: 'autoPlayDisabled' },
 							GO_TO_PREV_STEP: [
-								{ target: 'createInputChunk', actions: 'mapPreviousChunk', cond: 'hasPreviousChunk' },
-								{ target: 'idle', cond: 'allChunksRemaining' },
+								{ target: 'createInputChunk', actions: 'mapPreviousInputChunk', cond: 'hasPreviousInputChunk' },
+								{ target: 'idle', cond: 'allInputChunksRemaining' },
 							],
 							GO_TO_NEXT_STEP: [
-								{ target: 'createInputChunk', actions: 'mapNextChunk', cond: 'inputChunksRemaining' },
-								{ target: 'createLastPaddedChunk', actions: 'mapNextChunk', cond: 'finalPaddedChunkRemaining' },
-								{ target: 'createdAllInputChunks', cond: 'noChunksRemaining' },
+								{ target: 'createInputChunk', actions: 'mapNextInputChunk', cond: 'inputChunksRemaining' },
+								{ target: 'explainLastPaddedChunk', actions: 'mapNextInputChunk', cond: 'finalPaddedChunkRemaining' },
+								{ target: 'createdAllInputChunks', cond: 'noInputChunksRemaining' },
 							],
 							GO_TO_LAST_STEP: { target: '#finished', cond: 'autoPlayDisabled' },
 						},
 					},
-					createLastPaddedChunk: {
-						entry: ['getCurrentChunk'],
+					explainLastPaddedChunk: {
+						entry: ['getCurrentInputChunk'],
 						after: {
-							500: { target: 'createdAllInputChunks', actions: 'mapNextChunk', cond: 'autoPlayEnabled' },
+							100: { target: 'explainPadCharacter', cond: 'autoPlayEnabled' },
+						},
+						on: {
+							START_AUTO_PLAY: {
+								target: 'explainPadCharacter',
+								actions: 'startAutoPlay',
+								cond: 'autoPlayDisabled',
+							},
+							RESET: { target: '#inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
+							GO_TO_FIRST_STEP: { target: '#inactive', cond: 'autoPlayDisabled' },
+							GO_TO_PREV_STEP: [
+								{ target: 'createInputChunk', actions: 'mapPreviousInputChunk', cond: 'hasPreviousInputChunk' },
+								{ target: 'idle', cond: 'allInputChunksRemaining' },
+							],
+							GO_TO_NEXT_STEP: { target: 'explainPadCharacter', cond: 'autoPlayDisabled' },
+							GO_TO_LAST_STEP: { target: '#finished', cond: 'autoPlayDisabled' },
+						},
+					},
+					explainPadCharacter: {
+						after: {
+							100: { target: 'createLastPaddedChunk', cond: 'autoPlayEnabled' },
+						},
+						on: {
+							START_AUTO_PLAY: {
+								target: 'createLastPaddedChunk',
+								actions: 'startAutoPlay',
+								cond: 'autoPlayDisabled',
+							},
+							RESET: { target: '#inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
+							GO_TO_FIRST_STEP: { target: '#inactive', cond: 'autoPlayDisabled' },
+							GO_TO_PREV_STEP: [
+								{ target: 'explainLastPaddedChunk', cond: 'hasPreviousInputChunk' },
+								{ target: 'idle', cond: 'allInputChunksRemaining' },
+							],
+							GO_TO_NEXT_STEP: { target: 'createLastPaddedChunk', cond: 'autoPlayDisabled' },
+							GO_TO_LAST_STEP: { target: '#finished', cond: 'autoPlayDisabled' },
+						},
+					},
+					createLastPaddedChunk: {						
+						after: {
+							500: { target: 'createdAllInputChunks', actions: 'mapNextInputChunk', cond: 'autoPlayEnabled' },
 						},
 						on: {
 							START_AUTO_PLAY: {
@@ -287,10 +387,10 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 							},
 							STOP_AUTO_PLAY: { actions: 'stopAutoPlay', cond: 'autoPlayEnabled' },
 							RESET: { target: '#inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
-							GO_TO_FIRST_STEP: { target: 'idle', cond: 'autoPlayDisabled' },
+							GO_TO_FIRST_STEP: { target: '#inactive', cond: 'autoPlayDisabled' },
 							GO_TO_PREV_STEP: [
-								{ target: 'createInputChunk', actions: 'mapPreviousChunk', cond: 'hasPreviousChunk' },
-								{ target: 'idle', cond: 'allChunksRemaining' },
+								{ target: 'explainLastPaddedChunk', cond: 'hasPreviousInputChunk' },
+								{ target: 'idle', cond: 'allInputChunksRemaining' },
 							],
 							GO_TO_NEXT_STEP: { target: 'createdAllInputChunks', cond: 'autoPlayDisabled' },
 							GO_TO_LAST_STEP: { target: '#finished', cond: 'autoPlayDisabled' },
@@ -300,9 +400,86 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 						type: 'final',
 					},
 				},
-				onDone: 'encodeOutputText',
+				onDone: 'createOutputChunks',
 			},
-			encodeOutputText: {
+
+			createOutputChunks: {
+				id: 'createOutputChunks',
+				initial: 'idle',
+				states: {
+					idle: {
+						entry: ['resetRemainingOutputChunks'],
+						after: {
+							1000: { target: 'autoPlayCreateOutputChunk', cond: 'autoPlayEnabled' },
+						},
+						on: {
+							START_AUTO_PLAY: {
+								target: 'autoPlayCreateOutputChunk',
+								actions: 'startAutoPlay',
+								cond: 'autoPlayDisabled',
+							},
+							STOP_AUTO_PLAY: { actions: 'stopAutoPlay', cond: 'autoPlayEnabled' },
+							RESET: { target: '#inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
+							GO_TO_FIRST_STEP: { target: '#inactive', cond: 'autoPlayDisabled' },
+							GO_TO_PREV_STEP: [
+								{
+									target: '#createInputChunks.createLastPaddedChunk',
+									actions: 'resetNoInputChunksRemaining',
+									cond: 'currentChunkIsPadded',
+								},
+								{
+									target: '#createInputChunks.createInputChunk',
+									actions: 'resetNoInputChunksRemaining',
+									cond: 'autoPlayDisabled',
+								},
+							],
+							GO_TO_NEXT_STEP: { target: 'createOutputChunk', cond: 'autoPlayDisabled' },
+							GO_TO_LAST_STEP: { target: '#finished', cond: 'autoPlayDisabled' },
+						},
+					},
+					autoPlayCreateOutputChunk: {
+						entry: ['getCurrentOutputChunk'],
+						after: {
+							500: [
+								{
+									target: 'autoPlayCreateOutputChunk',
+									actions: 'mapNextOutputChunk',
+									cond: 'outputChunksRemaining',
+								},
+								{ target: 'createdAllOutputChunks', cond: 'noOutputChunksRemaining' },
+							],
+						},
+						on: { STOP_AUTO_PLAY: { target: 'createOutputChunk', actions: 'stopAutoPlay', cond: 'autoPlayEnabled' } },
+					},
+					createOutputChunk: {
+						entry: ['getCurrentOutputChunk'],
+						on: {
+							START_AUTO_PLAY: {
+								target: 'autoPlayCreateOutputChunk',
+								actions: 'startAutoPlay',
+								cond: 'autoPlayDisabled',
+							},
+							RESET: { target: '#inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
+							GO_TO_FIRST_STEP: { target: '#inactive', cond: 'autoPlayDisabled' },
+							GO_TO_PREV_STEP: [
+								{ target: 'createOutputChunk', actions: 'mapPreviousOutputChunk', cond: 'hasPreviousOutputChunk' },
+								{ target: 'idle', cond: 'allOutputChunksRemaining' },
+							],
+							GO_TO_NEXT_STEP: [
+								{ target: 'createOutputChunk', actions: 'mapNextOutputChunk', cond: 'outputChunksRemaining' },
+								{ target: 'createdAllOutputChunks', cond: 'noOutputChunksRemaining' },
+							],
+							GO_TO_LAST_STEP: { target: '#finished', cond: 'autoPlayDisabled' },
+						},
+					},
+					createdAllOutputChunks: {
+						type: 'final',
+					},
+				},
+				onDone: 'encodeOutput',
+			},
+
+			encodeOutput: {
 				initial: 'idle',
 				states: {
 					idle: {
@@ -319,18 +496,11 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 							STOP_AUTO_PLAY: { actions: 'stopAutoPlay', cond: 'autoPlayEnabled' },
 							RESET: { target: '#inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
 							GO_TO_FIRST_STEP: { target: '#inactive', cond: 'autoPlayDisabled' },
-							GO_TO_PREV_STEP: [
-								{
-									target: '#createInputChunks.createLastPaddedChunk',
-									actions: 'resetNoChunksRemaining',
-									cond: 'currentChunkIsPadded',
-								},
-								{
-									target: '#createInputChunks.createInputChunk',
-									actions: 'resetNoChunksRemaining',
-									cond: 'autoPlayDisabled',
-								},
-							],
+							GO_TO_PREV_STEP: {
+								target: '#createOutputChunks.createOutputChunk',
+								actions: 'resetNoOutputChunksRemaining',
+								cond: 'autoPlayDisabled',
+							},
 							GO_TO_NEXT_STEP: { target: 'encodeBase64', cond: 'autoPlayDisabled' },
 							GO_TO_LAST_STEP: { target: '#finished', cond: 'autoPlayDisabled' },
 						},
@@ -378,13 +548,13 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 			},
 			finished: {
 				id: 'finished',
-				entry: ['stopAutoPlay'],
+				entry: ['stopAutoPlay', 'updateContextForLastStep'],
 				on: {
 					START_AUTO_PLAY: { target: 'validateInputText', actions: 'startAutoPlay', cond: 'autoPlayDisabled' },
 					RESET: { target: 'inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
 					GO_TO_FIRST_STEP: { target: 'inactive', cond: 'autoPlayDisabled' },
 					GO_TO_PREV_STEP: {
-						target: 'encodeOutputText.encodeBase64',
+						target: 'encodeOutput.encodeBase64',
 						actions: 'resetNoBase64CharsRemaining',
 						cond: 'autoPlayDisabled',
 					},
@@ -397,13 +567,20 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 			resetContext: assign({
 				autoplay: (_: EncodingContext) => false,
 				byteMaps: (_: EncodingContext) => [defaultHexByteMap],
+				updatedByteMaps: (_: EncodingContext) => [],
 				byteIndex: (_: EncodingContext) => 0,
 				currentByte: (_: EncodingContext) => defaultHexByteMap,
 				remainingBytes: (_: EncodingContext) => 0,
-				chunkIndex: (_: EncodingContext) => 0,
-				currentChunk: (_: EncodingContext) => defaultOutputChunk,
-				remainingChunks: (_: EncodingContext) => 0,
+				updatedInputChunks: (_: EncodingContext) => [],
+				inputChunkIndex: (_: EncodingContext) => 0,
+				currentInputChunk: (_: EncodingContext) => defaultEncoderInputChunk,
+				remainingInputChunks: (_: EncodingContext) => 0,
+				updatedOutputChunks:  (_: EncodingContext) => [],
+				outputChunkIndex:  (_: EncodingContext) => 0,
+				currentOutputChunk:  (_: EncodingContext) => defaultOutputChunk,
+				remainingOutputChunks:  (_: EncodingContext) => 0,
 				base64Maps: (_: EncodingContext) => [defaultBase64ByteMap],
+				updatedBase64Maps: (_: EncodingContext) => [],
 				base64CharIndex: (_: EncodingContext) => 0,
 				currentBase64Char: (_: EncodingContext) => defaultBase64ByteMap,
 				remainingBase64Chars: (_: EncodingContext) => 0,
@@ -426,8 +603,8 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 				},
 			}),
 			encode: assign({
-				chunkIndex: (_: EncodingContext) => 0,
-				remainingChunks: (context: EncodingContext) => context.input.totalChunks,
+				inputChunkIndex: (_: EncodingContext) => 0,
+				remainingInputChunks: (context: EncodingContext) => context.input.totalChunks,
 				output: (context: EncodingContext) => {
 					if (context.input.validationResult.success) {
 						return b64Encode(context.input);
@@ -436,13 +613,16 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 			}),
 			getCurrentByte: assign({
 				currentByte: (context: EncodingContext) => context.byteMaps[context.byteIndex],
+				updatedByteMaps: (context: EncodingContext) => context.byteMaps.slice(0, context.byteIndex + 1),
 			}),
 			generateByteMaps: assign({
 				byteMaps: (context: EncodingContext) =>
 					context.input.chunks.map((chunk) => chunk.inputMap.map((map) => map)).flat(),
+				updatedByteMaps: (_: EncodingContext) => [],
 			}),
 			resetRemainingBytes: assign({
 				byteIndex: (_: EncodingContext) => 0,
+				updatedByteMaps: (_: EncodingContext) => [],
 				currentByte: (_: EncodingContext) => defaultHexByteMap,
 				remainingBytes: (context: EncodingContext) => context.byteMaps.length - 1,
 			}),
@@ -458,35 +638,62 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 				byteIndex: (context: EncodingContext) => context.byteIndex - 1,
 				remainingBytes: (context: EncodingContext) => context.remainingBytes + 1,
 			}),
-			getCurrentChunk: assign({
-				currentChunk: (context: EncodingContext) => context.output.chunks[context.chunkIndex],
+			getCurrentInputChunk: assign({
+				currentInputChunk: (context: EncodingContext) => context.input.chunks[context.inputChunkIndex],
+				updatedInputChunks: (context: EncodingContext) => context.input.chunks.slice(0, context.inputChunkIndex + 1),
 			}),
-			resetRemainingChunks: assign({
-				chunkIndex: (_: EncodingContext) => 0,
-				currentChunk: (_: EncodingContext) => defaultOutputChunk,
-				remainingChunks: (context: EncodingContext) => context.input.totalChunks - 1,
+			resetRemainingInputChunks: assign({
+				updatedInputChunks: (_: EncodingContext) => [],
+				inputChunkIndex: (_: EncodingContext) => 0,
+				currentInputChunk: (_: EncodingContext) => defaultEncoderInputChunk,
+				remainingInputChunks: (context: EncodingContext) => context.input.totalChunks - 1,
 			}),
-			resetNoChunksRemaining: assign({
-				chunkIndex: (context: EncodingContext) => context.input.totalChunks - 1,
-				remainingChunks: (_: EncodingContext) => 0,
+			resetNoInputChunksRemaining: assign({
+				inputChunkIndex: (context: EncodingContext) => context.input.totalChunks - 1,
+				remainingInputChunks: (_: EncodingContext) => 0,
 			}),
-			mapNextChunk: assign({
-				chunkIndex: (context: EncodingContext) => context.chunkIndex + 1,
-				remainingChunks: (context: EncodingContext) => context.remainingChunks - 1,
+			mapNextInputChunk: assign({
+				inputChunkIndex: (context: EncodingContext) => context.inputChunkIndex + 1,
+				remainingInputChunks: (context: EncodingContext) => context.remainingInputChunks - 1,
 			}),
-			mapPreviousChunk: assign({
-				chunkIndex: (context: EncodingContext) => context.chunkIndex - 1,
-				remainingChunks: (context: EncodingContext) => context.remainingChunks + 1,
+			mapPreviousInputChunk: assign({
+				inputChunkIndex: (context: EncodingContext) => context.inputChunkIndex - 1,
+				remainingInputChunks: (context: EncodingContext) => context.remainingInputChunks + 1,
+			}),
+			getCurrentOutputChunk: assign({
+				currentOutputChunk: (context: EncodingContext) => context.output.chunks[context.outputChunkIndex],
+				updatedOutputChunks: (context: EncodingContext) => context.output.chunks.slice(0, context.outputChunkIndex + 1),
+			}),
+			resetRemainingOutputChunks: assign({
+				updatedOutputChunks: (_: EncodingContext) => [],
+				outputChunkIndex: (_: EncodingContext) => 0,
+				currentOutputChunk: (_: EncodingContext) => defaultOutputChunk,
+				remainingOutputChunks: (context: EncodingContext) => context.input.totalChunks - 1,
+			}),
+			resetNoOutputChunksRemaining: assign({
+				outputChunkIndex: (context: EncodingContext) => context.input.totalChunks - 1,
+				remainingOutputChunks: (_: EncodingContext) => 0,
+			}),
+			mapNextOutputChunk: assign({
+				outputChunkIndex: (context: EncodingContext) => context.outputChunkIndex + 1,
+				remainingOutputChunks: (context: EncodingContext) => context.remainingOutputChunks - 1,
+			}),
+			mapPreviousOutputChunk: assign({
+				outputChunkIndex: (context: EncodingContext) => context.outputChunkIndex - 1,
+				remainingOutputChunks: (context: EncodingContext) => context.remainingOutputChunks + 1,
 			}),
 			getCurrentBase64Char: assign({
 				currentBase64Char: (context: EncodingContext) => context.base64Maps[context.base64CharIndex],
+				updatedBase64Maps: (context: EncodingContext) => context.base64Maps.slice(0, context.base64CharIndex + 1),
 			}),
 			generateBase64Maps: assign({
 				base64Maps: (context: EncodingContext) =>
 					context.output.chunks.map((chunk) => chunk.base64Map.map((map) => map)).flat(),
+				updatedBase64Maps: (_: EncodingContext) => [],
 			}),
 			resetRemainingBase64Chars: assign({
 				base64CharIndex: (_: EncodingContext) => 0,
+				updatedBase64Maps: (_: EncodingContext) => [],
 				currentBase64Char: (_: EncodingContext) => defaultBase64ByteMap,
 				remainingBase64Chars: (context: EncodingContext) => context.base64Maps.length - 1,
 			}),
@@ -502,6 +709,21 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 				base64CharIndex: (context: EncodingContext) => context.base64CharIndex - 1,
 				remainingBase64Chars: (context: EncodingContext) => context.remainingBase64Chars + 1,
 			}),
+			updateContextForLastStep: assign({
+				updatedByteMaps: (context: EncodingContext) => context.byteMaps.slice(0),
+				updatedInputChunks: (context: EncodingContext) => context.input.chunks.slice(0),
+				updatedOutputChunks:  (context: EncodingContext) => context.output.chunks.slice(0),
+				updatedBase64Maps: (context: EncodingContext) => context.base64Maps.slice(0),
+				byteIndex: (context: EncodingContext) => context.byteMaps.length - 1,
+				inputChunkIndex: (context: EncodingContext) => context.input.chunks.length - 1,
+				outputChunkIndex: (context: EncodingContext) => context.output.chunks.length - 1,
+				base64CharIndex: (context: EncodingContext) => context.base64Maps.length - 1,
+				currentByte: (context: EncodingContext) => context.byteMaps[context.byteMaps.length - 1],
+				currentInputChunk: (context: EncodingContext) => context.input.chunks[context.input.chunks.length - 1],
+				currentOutputChunk: (context: EncodingContext) => context.output.chunks[context.output.chunks.length - 1],
+				currentBase64Char: (context: EncodingContext) => context.base64Maps[context.base64Maps.length - 1],
+				remainingInputChunks: (_: EncodingContext) => 0,
+			})
 		},
 		guards: {
 			autoPlayEnabled: (context: EncodingContext) => context.autoplay,
@@ -512,15 +734,18 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 			noBytesRemaining: (context: EncodingContext) => context.remainingBytes === 0,
 			allBytesRemaining: (context: EncodingContext) => context.remainingBytes + 1 === context.byteMaps.length,
 			hasPreviousByte: (context: EncodingContext) => context.byteIndex > 0,
-			inputChunksRemaining: (context: EncodingContext) =>
-				(context.remainingChunks > 0 && !context.input.lastChunkPadded) ||
-				(context.remainingChunks > 1 && context.input.lastChunkPadded) || false,
+			inputChunksRemaining: (context: EncodingContext) => context.input.lastChunkPadded ? context.remainingInputChunks > 1 : context.remainingInputChunks > 0,
 			finalPaddedChunkRemaining: (context: EncodingContext) =>
-				context.remainingChunks === 1 && context.input.lastChunkPadded || false,
-			noChunksRemaining: (context: EncodingContext) => context.remainingChunks === 0,
-			allChunksRemaining: (context: EncodingContext) => context.remainingChunks + 1 === context.input.totalChunks,
-			currentChunkIsPadded: (context: EncodingContext) => context.currentChunk.bytes.length !== 3,
-			hasPreviousChunk: (context: EncodingContext) => context.chunkIndex > 0,
+				context.remainingInputChunks === 1 && context.input.lastChunkPadded || false,
+			onlyOnePaddedChunk: (context: EncodingContext) => context.input.totalChunks === 1 && context.input.lastChunkPadded,
+			noInputChunksRemaining: (context: EncodingContext) => context.remainingInputChunks === 0,
+			allInputChunksRemaining: (context: EncodingContext) => context.remainingInputChunks + 1 === context.input.totalChunks,
+			currentChunkIsPadded: (context: EncodingContext) => context.currentInputChunk.bytes.length !== 3,
+			hasPreviousInputChunk: (context: EncodingContext) => context.inputChunkIndex > 0,
+			outputChunksRemaining: (context: EncodingContext) => context.remainingOutputChunks > 0,
+			noOutputChunksRemaining: (context: EncodingContext) => context.remainingOutputChunks === 0,
+			allOutputChunksRemaining: (context: EncodingContext) => context.remainingOutputChunks + 1 === context.input.totalChunks,
+			hasPreviousOutputChunk: (context: EncodingContext) => context.outputChunkIndex > 0,
 			base64CharsRemaining: (context: EncodingContext) => context.remainingBase64Chars > 0,
 			noBase64CharsRemaining: (context: EncodingContext) => context.remainingBase64Chars === 0,
 			allBase64CharsRemaining: (context: EncodingContext) =>

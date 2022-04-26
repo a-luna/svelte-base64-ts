@@ -18,7 +18,7 @@
 
 <style lang="postcss">
 	.encoding-wrapper {
-		height: 150px;
+		min-height: 150px;
 		display: flex;
 		flex-flow: row nowrap;
 		gap: 1rem;

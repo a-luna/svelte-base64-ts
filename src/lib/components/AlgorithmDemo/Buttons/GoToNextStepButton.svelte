@@ -1,21 +1,17 @@
 <script lang="ts">
 	import NextStep from '$lib/components/Icons/NextStep.svelte';
 	import { demoState } from '$lib/stores/demoState';
-	import type { NavAction } from '$lib/types';
-	import type { EncodingContext, EncodingEvent, EncodingTypeState } from '$lib/xstate/b64Encode';
+	import type { NavAction, XStateMachineState } from '$lib/types';
 	import { createEventDispatcher } from 'svelte';
-	import type { Readable } from 'svelte/store';
-	import type { State, StateSchema, TypegenDisabled } from 'xstate';
 
-	export let state: Readable<
-		State<EncodingContext, EncodingEvent, StateSchema<EncodingContext>, EncodingTypeState, TypegenDisabled>
-	>;
+	export let state: XStateMachineState;
 	const navButtonEventDispatcher = createEventDispatcher<{ navButtonEvent: { action: NavAction } }>();
 
 	$: autoplay = state ? $state.context.autoplay : false;
 	$: disabled = state ? !$state.can('GO_TO_NEXT_STEP') : false;
 	$: exceptionalState = state
-		? !$demoState.modalOpen && ($state.matches('inactive') || $state.matches('inputTextError'))
+		? (!$demoState.modalOpen && ($state.matches('inactive') || $state.matches('inputTextError'))) ||
+		  $state.matches('inputTextValidated')
 		: false;
 </script>
 
@@ -31,6 +27,10 @@
 </button>
 
 <style lang="postcss">
+	button {
+		grid-column: 6 / span 1;
+		grid-row: 2 / span 1;
+	}
 	.algo-nav-buttons button .icon.step-icon {
 		width: 11px;
 	}

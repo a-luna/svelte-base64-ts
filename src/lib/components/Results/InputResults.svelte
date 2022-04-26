@@ -18,6 +18,8 @@
 <style lang="postcss">
 	.results-in {
 		color: var(--pri-color);
+		grid-column: 1 / span 4;
+		grid-row: 4 / span 1;
 	}
 	#copyable-input-text {
 		font-family: 'Roboto Mono', monospace;

@@ -12,7 +12,12 @@
 	{#if $app.isAscii}
 		<AsciiLookupTable {asciiTableChunkSize} highlightHexByte={$state.highlightHexByte} fontSize={'0.8rem'} />
 	{/if}
-	<Base64LookupTable {base64TableChunkSize} highlightBase64={$state.highlightBase64} fontSize={'0.8rem'} />
+	<Base64LookupTable
+		base64Encoding={$app.base64Encoding}
+		{base64TableChunkSize}
+		highlightBase64={$state.highlightBase64}
+		fontSize={'0.8rem'}
+	/>
 </div>
 
 <style lang="postcss">

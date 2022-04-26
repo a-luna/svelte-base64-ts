@@ -16,7 +16,7 @@
 		font-family: menlo, monospace;
 	}
 	.author-text {
-		color: var(--nav-button-bg-color);
+		color: var(--nav-button-hover-bg-color);
 		border-right: 1px solid var(--nav-button-bg-color);
 		padding: 0 0.5rem 0 0;
 		font-size: 0.7rem;
@@ -27,6 +27,7 @@
 	.author-name,
 	.author-github {
 		color: var(--nav-button-active-bg-color);
+		font-weight: 700;
 	}
 	.author-github {
 		margin: 4px 0 0 0;
