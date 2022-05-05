@@ -79,7 +79,7 @@ export function describeOutputChunk(chunk: OutputChunk, chunkIndex: number, tota
     const totalPadBits = chunk.bytes.length === 1 ? 'four' : 'two';
     const necessaryLength = chunk.bytes.length === 1 ? 12 : 18;
     const inputChunkPadding = totalPadChars > 0 ? ` and ${totalPadBits} bits with value zero to pad the length to ${necessaryLength}` : '';
-    const chunkHexBytes = `created from bytes ${getChunkBytesHtml(chunk, chunkIndex)} from the input data`
+    const chunkHexBytes = `created from byte${chunk.bytes.length > 1 ? 's' : ''} ${getChunkBytesHtml(chunk, chunkIndex)} from the input data`
     const chunkB64Chars = `contains ${totalB64CharsVerbose} Base64 digits ${getChunkB64CharsHtml(chunk, totalB64Chars, chunkIndex)}`
     const outputChunkPadding = totalPadChars > 0 ? ` and ${totalPadCharsVerbose} pad character${totalPadChars > 1 ? 's' : ''}` : ``;
     return `The ${chunkNum} chunk (${getOutputChunkNumHtml(chunkIndex + 1, chunkIndex)}, ${chunkHexBytes}${inputChunkPadding}) ${chunkB64Chars}${outputChunkPadding}.`;

@@ -232,7 +232,7 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 									actions: 'mapNextByte',
 									cond: 'bytesRemaining',
 								},
-								{ target: 'encodingComplete', cond: 'noBytesRemaining' },
+								{ target: 'explainByteMapping', cond: 'noBytesRemaining' },
 							],
 						},
 						on: { STOP_AUTO_PLAY: { target: 'encodeByte', actions: 'stopAutoPlay', cond: 'autoPlayEnabled' } },
