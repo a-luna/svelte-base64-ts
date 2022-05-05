@@ -1,19 +1,42 @@
 <script lang="ts">
 	import StartAutoPlay from '$lib/components/Icons/StartAutoPlay.svelte';
-	import type { NavAction, XStateMachineState } from '$lib/types';
+	import type { XStateMachineState } from '$lib/types';
+	import type { EncodingEvent } from '$lib/xstate/b64Encode';
 	import { createEventDispatcher } from 'svelte';
 
 	export let state: XStateMachineState;
-	const navButtonEventDispatcher = createEventDispatcher<{ navButtonEvent: { action: NavAction } }>();
+	const navButtonEventDispatcher = createEventDispatcher<{ navButtonEvent: { action: EncodingEvent } }>();
+	const defaultAction: EncodingEvent = { type: 'RESUME_AUTO_PLAY' };
 
-	$: autoplay = state ? $state.context.autoplay : false;
+	const validActions: EncodingEvent[] = [
+		{
+			type: 'START_AUTOPLAY',
+			inputText: 'test',
+			inputEncoding: 'bin',
+			outputEncoding: 'base64url',
+		},
+		{ type: 'RESUME_AUTO_PLAY' },
+	];
+
+	$: enabled = validActions.some((action) => $state?.can(action) ?? false);
+
+	function getCorrectAction(): EncodingEvent {
+		return $state.matches('inactive')
+			? {
+					type: 'START_AUTOPLAY',
+					inputText: $state?.context.input.inputText,
+					inputEncoding: $state?.context.input.inputEncoding,
+					outputEncoding: $state?.context.input.outputEncoding,
+			  }
+			: { type: 'RESUME_AUTO_PLAY' };
+	}
 </script>
 
 <button
 	type="button"
 	title="Start Autoplay"
-	disabled={autoplay}
-	on:click={() => navButtonEventDispatcher('navButtonEvent', { action: 'START_AUTO_PLAY' })}
+	disabled={!enabled}
+	on:click={() => navButtonEventDispatcher('navButtonEvent', { action: getCorrectAction() })}
 >
 	<div class="icon play-icon">
 		<StartAutoPlay />

@@ -1,20 +1,21 @@
 <script lang="ts">
 	import FirstStep from '$lib/components/Icons/FirstStep.svelte';
-	import type { NavAction, XStateMachineState } from '$lib/types';
+	import type { XStateMachineState } from '$lib/types';
+	import type { EncodingEvent } from '$lib/xstate/b64Encode';
 	import { createEventDispatcher } from 'svelte';
 
 	export let state: XStateMachineState;
-	const navButtonEventDispatcher = createEventDispatcher<{ navButtonEvent: { action: NavAction } }>();
+	const navButtonEventDispatcher = createEventDispatcher<{ navButtonEvent: { action: EncodingEvent } }>();
 
-	$: autoplay = state ? $state.context.autoplay : false;
-	$: disabled = state ? !$state.can('GO_TO_FIRST_STEP') : false;
+	$: autoplay = $state?.context.autoplay ?? false;
+	$: disabled = !$state?.can('GO_TO_FIRST_STEP') ?? false;
 </script>
 
 <button
 	type="button"
 	title="Go To First Step"
 	disabled={autoplay || disabled}
-	on:click={() => navButtonEventDispatcher('navButtonEvent', { action: 'GO_TO_FIRST_STEP' })}
+	on:click={() => navButtonEventDispatcher('navButtonEvent', { action: { type: 'GO_TO_FIRST_STEP' } })}
 >
 	<div class="icon first-icon">
 		<FirstStep />

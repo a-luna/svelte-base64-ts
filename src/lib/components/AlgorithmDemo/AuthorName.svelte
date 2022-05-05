@@ -11,7 +11,7 @@
 	.author-name-wrapper {
 		display: flex;
 		justify-content: flex-end;
-		align-items: center;
+		align-items: flex-start;
 		gap: 0.5rem;
 		font-family: menlo, monospace;
 	}
@@ -19,7 +19,7 @@
 		color: var(--nav-button-hover-bg-color);
 		border-right: 1px solid var(--nav-button-bg-color);
 		padding: 0 0.5rem 0 0;
-		font-size: 0.7rem;
+		font-size: 0.75rem;
 	}
 	a {
 		text-decoration: none;
@@ -29,7 +29,7 @@
 		color: var(--nav-button-active-bg-color);
 		font-weight: 700;
 	}
-	.author-github {
+	/* .author-github {
 		margin: 4px 0 0 0;
-	}
+	} */
 </style>

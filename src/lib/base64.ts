@@ -13,7 +13,7 @@ import type {
 	EncoderOutput,
 	HexByteMap,
 	OutputChunk,
-	StringEncoding,
+	StringEncoding
 } from '$lib/types';
 import { asciiStringFromByteArray, hexStringFromByteArray, hexStringToByteArray } from '$lib/util';
 import { validateAsciiBytes } from '$lib/validation';
@@ -90,11 +90,11 @@ function encodeChunk(
 	};
 	return addBitGroupsToOutputChunk(outputChunk, chunkNumber);
 }
-
+ 
 export function b64Decode(decoderInput: DecoderInput): DecoderOutput {
 	const { inputText, inputEncoding } = decoderInput;
 	const hexMap = createHexMap(decoderInput.chunks);
-	const outputChunks = mapHexBytesToBase64Chunks(inputText, inputEncoding, hexMap, decoderInput.chunks);
+	const outputChunks = mapHexBytesToBase64Chunks(hexMap, decoderInput.chunks);
 	const hexString = outputChunks.map((chunk) => chunk.hex).join('');
 	const bytes = hexStringToByteArray(hexString);
 	const isASCII = validateAsciiBytes(bytes);
@@ -133,8 +133,6 @@ function createHexMap(inputChunks: DecoderInputChunk[]): HexByteMap[] {
 }
 
 function mapHexBytesToBase64Chunks(
-	encodedText: string,
-	base64Encoding: Base64Encoding,
 	hexMap: HexByteMap[],
 	inputChunks: DecoderInputChunk[],
 ): OutputChunk[] {

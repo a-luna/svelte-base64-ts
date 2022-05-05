@@ -1,5 +1,4 @@
 <script lang="ts">
-	import HelpTopicsDots from '$lib/components/AlgorithmDemo/HelpModal/HelpTopicsDots.svelte';
 	import { encodingHelpSections } from '$lib/components/AlgorithmDemo/HelpModal/_helpSections';
 	import ChevronLeft from '$lib/components/Icons/ChevronLeft.svelte';
 	import ChevronRight from '$lib/components/Icons/ChevronRight.svelte';
@@ -102,19 +101,13 @@
 						<div class="nav-icon"><ChevronLeft /></div>
 						<span class="nav-link">Prev</span>
 					</div>
-				{:else}
-					<div class="placeholder nav-prev" />
 				{/if}
-				{#if showContentsDropDown}
-					<HelpTopicsDots {sectionTitles} bind:index />
-				{/if}
+				<div class="placeholder" />
 				{#if index < encodingHelpSections.length - 1}
 					<div class="nav nav-next" on:click={() => next()}>
 						<span class="nav-link">Next</span>
 						<div class="nav-icon"><ChevronRight /></div>
 					</div>
-				{:else}
-					<div class="placeholder nav-next" />
 				{/if}
 			</div>
 		</div>
@@ -123,7 +116,7 @@
 
 <style lang="postcss">
 	.placeholder {
-		width: 46px;
+		flex: 1;
 	}
 	.mobile-help-docs-nav {
 		background-color: var(--modal-dialog-bg-color);

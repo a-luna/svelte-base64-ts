@@ -2,8 +2,10 @@
 	import AuthorName from '$lib/components/AlgorithmDemo/AuthorName.svelte';
 	import DemoText from '$lib/components/AlgorithmDemo/Base64EncodeDemo/DemoText.svelte';
 	import InputForm from '$lib/components/AlgorithmDemo/Base64EncodeDemo/InputForm/InputForm.svelte';
+	import InspectStateMachineButton from '$lib/components/AlgorithmDemo/Buttons/InspectStateMachineButton.svelte';
 	import EncodedInputByte from '$lib/components/AlgorithmDemo/EncodedInputByte.svelte';
 	import EncodedOutputByte from '$lib/components/AlgorithmDemo/EncodedOutputByte.svelte';
+	import EncoderHelpModal from '$lib/components/AlgorithmDemo/HelpModal/EncoderHelpModal.svelte';
 	import InputChunk from '$lib/components/AlgorithmDemo/InputChunk.svelte';
 	import OutputChunk from '$lib/components/AlgorithmDemo/OutputChunk.svelte';
 	import FormTitle from '$lib/components/FormTitle.svelte';
@@ -12,12 +14,14 @@
 	import { alert } from '$lib/stores/alert';
 	import { demoState } from '$lib/stores/demoState';
 	import { isBase64Encoding, isStringEncoding } from '$lib/typeguards';
-	import type { Base64Encoding, NavAction, StringEncoding } from '$lib/types';
+	import type { Base64Encoding, StringEncoding } from '$lib/types';
 	import { getChunkIndexFromBase64CharIndex, getChunkIndexFromByteIndex } from '$lib/util';
 	import type { EncodingContext, EncodingEvent, EncodingTypeState } from '$lib/xstate/b64Encode';
 	import { encodingMachine } from '$lib/xstate/b64Encode';
+	import { inspect } from '@xstate/inspect';
 	import { useMachine } from '@xstate/svelte';
 	import { fade } from 'svelte/transition';
+	import OutputBytePlaceholder from '../OutputBytePlaceholder.svelte';
 
 	// TODO: Create smart text snippets that explain process of converting inputText -> binary -> 24-bit chunks
 	// TODO: Create MapHexByteToBase64 component
@@ -30,8 +34,17 @@
 	let highlightBase64: string;
 	let pageWidth: number;
 	let stateName: string;
+	let helpModal: EncoderHelpModal;
 
-	const { state, send } = useMachine<EncodingContext, EncodingEvent, EncodingTypeState>(encodingMachine);
+	const { state, send } = useMachine<EncodingContext, EncodingEvent, EncodingTypeState>(encodingMachine, {
+		devTools: true,
+	});
+
+	function openHelpDocsModal() {
+		if (!$state.context.autoplay) {
+			helpModal.toggleModal();
+		}
+	}
 
 	$: showInputBytes =
 		$state.matches({ encodeInput: 'autoPlayEncodeByte' }) ||
@@ -59,12 +72,16 @@
 		$state.matches({ encodeOutput: 'autoPlayEncodeBase64' }) ||
 		$state.matches({ encodeOutput: 'encodeBase64' }) ||
 		$state.matches({ encodeOutput: 'encodingComplete' });
+	$: showOutputBytePlaceholders =
+		$state.matches({ createOutputChunks: 'autoPlayCreateOutputChunk' }) ||
+		$state.matches({ createOutputChunks: 'createOutputChunk' }) ||
+		$state.matches({ createOutputChunks: 'createdAllOutputChunks' });
 	$: showOutputBytes =
 		$state.matches({ encodeOutput: 'autoPlayEncodeBase64' }) ||
 		$state.matches({ encodeOutput: 'encodeBase64' }) ||
 		$state.matches({ encodeOutput: 'encodingComplete' });
 	$: stateName = $state.toStrings().join(' ');
-	$: if ($state.matches('inputTextError') && $state?.context?.input?.validationResult?.error?.message) {
+	$: if ($state.matches({ validateInputText: 'error' }) && $state?.context?.input?.validationResult?.error?.message) {
 		$alert = $state.context.input.validationResult.error.message;
 	}
 	$: if (stateName.includes('idle')) {
@@ -85,7 +102,7 @@
 
 	function updateInputText(input: string, stringEncoding: StringEncoding, base64Encoding: Base64Encoding) {
 		send({
-			type: 'UPDATE_INPUT_TEXT',
+			type: 'UPDATE_TEXT',
 			inputText: input,
 			inputEncoding: stringEncoding,
 			outputEncoding: base64Encoding,
@@ -95,7 +112,7 @@
 	function submitForm(input: string) {
 		if (isStringEncoding(inputTextEncoding) && isBase64Encoding(outputBase64Encoding)) {
 			send({
-				type: 'VALIDATE_INPUT',
+				type: 'VALIDATE_TEXT',
 				inputText: input,
 				inputEncoding: inputTextEncoding,
 				outputEncoding: outputBase64Encoding,
@@ -103,52 +120,46 @@
 		}
 	}
 
-	function getValidationEventType(action: NavAction): 'VALIDATE_INPUT' | 'VALIDATE_INPUT_AUTO' | 'ENCODE_INPUT_TEXT' {
-		const validationEventMap: {
-			state: string;
-			action: NavAction;
-			event: 'VALIDATE_INPUT' | 'VALIDATE_INPUT_AUTO' | 'ENCODE_INPUT_TEXT';
-		}[] = [
-			{ state: 'inactive', action: 'GO_TO_NEXT_STEP', event: 'VALIDATE_INPUT' },
-			{ state: 'inactive', action: 'GO_TO_LAST_STEP', event: 'ENCODE_INPUT_TEXT' },
-			{ state: 'inactive', action: 'START_AUTO_PLAY', event: 'VALIDATE_INPUT_AUTO' },
-			{ state: 'inputTextError', action: 'GO_TO_NEXT_STEP', event: 'VALIDATE_INPUT' },
-			{ state: 'inputTextError', action: 'GO_TO_LAST_STEP', event: 'ENCODE_INPUT_TEXT' },
-			{ state: 'inputTextError', action: 'START_AUTO_PLAY', event: 'VALIDATE_INPUT_AUTO' },
-		];
-		return validationEventMap.find((t) => t.state === $state.value && t.action === action)?.event;
-	}
-
 	function handleKeyPress(key: string) {
 		if (!$demoState.modalOpen) {
 			if (key === 'ArrowRight') {
-				sendEvent('GO_TO_NEXT_STEP');
+				if ($state.matches('inactive')) {
+					sendEvent({
+						type: 'VALIDATE_TEXT',
+						inputText,
+						inputEncoding: inputTextEncoding,
+						outputEncoding: outputBase64Encoding,
+					});
+				} else {
+					sendEvent({ type: 'GO_TO_NEXT_STEP' });
+				}
 			}
 			if (key === 'ArrowLeft') {
-				sendEvent('GO_TO_PREV_STEP');
+				sendEvent({ type: 'GO_TO_PREV_STEP' });
 			}
 			if (key === 'Space') {
 				if ($state.context.autoplay) {
-					sendEvent('STOP_AUTO_PLAY');
+					sendEvent({ type: 'STOP_AUTO_PLAY' });
 				} else {
-					sendEvent('START_AUTO_PLAY');
+					if ($state.matches('inactive')) {
+						sendEvent({
+							type: 'START_AUTOPLAY',
+							inputText,
+							inputEncoding: inputTextEncoding,
+							outputEncoding: outputBase64Encoding,
+						});
+					} else {
+						sendEvent({ type: 'RESUME_AUTO_PLAY' });
+					}
 				}
 			}
 		}
 	}
 
-	const handleNavButtonEvent = (e: CustomEvent<{ action: NavAction }>) => sendEvent(e.detail.action);
+	const handleNavButtonEvent = (e: CustomEvent<{ action: EncodingEvent }>) => send(e.detail.action);
 
-	function sendEvent(action: NavAction) {
-		const validationEventType = getValidationEventType(action);
-		if (validationEventType) {
-			send({
-				type: validationEventType,
-				inputText: inputText,
-				inputEncoding: inputTextEncoding,
-				outputEncoding: outputBase64Encoding,
-			});
-		} else if ($state.can(action)) {
+	function sendEvent(action: EncodingEvent) {
+		if ($state.can(action)) {
 			send(action);
 		}
 	}
@@ -170,78 +181,99 @@
 	bind:inputTextEncoding
 	bind:outputBase64Encoding
 	on:navButtonEvent={handleNavButtonEvent}
+	on:openHelpModal={() => openHelpDocsModal()}
 	on:submit={() => submitForm(inputText)}
 />
-<div class="demo-steps">
-	<div id="demo-text">
-		<DemoText {state} />
+<div id="demo-steps-wrapper">
+	<div class="demo-steps">
+		<InspectStateMachineButton on:click={() => inspect({ iframe: false })} />
+		<div id="demo-text">
+			<DemoText {state} />
+		</div>
+		{#if showInputBytes}
+			<h3 class="input-heading">Input</h3>
+			<div id="input-hex" class="encoded-bytes">
+				<div class="binary-chunks">
+					{#each $state.context.updatedByteMaps as byte, byteIndex}
+						<div
+							transition:fade={{ duration: 200 }}
+							class="encoded-byte"
+							data-chunk-id={getChunkIndexFromByteIndex(byteIndex) + 1}
+							data-byte-number={byteIndex + 1}
+							data-bin="{byte.bin_word1}{byte.bin_word2}"
+							data-hex="{byte.hex_word1}{byte.hex_word2}"
+							data-ascii={byte.ascii}
+							on:mouseenter={() => (highlightHexByte = byte.byte)}
+							on:mouseleave={() => (highlightHexByte = null)}
+						>
+							<EncodedInputByte {state} {byteIndex} {byte} />
+						</div>
+					{/each}
+				</div>
+			</div>
+		{/if}
+		{#if showInputChunks}
+			<div id="hex-b64-mapping" class="binary-chunks data-mapping">
+				{#each $state.context.updatedInputChunks as chunk, i}
+					<InputChunk {state} {chunk} chunkIndex={i} />
+				{/each}
+			</div>
+		{/if}
+		{#if showOutputChunks}
+			<div id="hex-b64-mapping" class="binary-chunks data-mapping">
+				{#each $state.context.updatedOutputChunks as chunk, i}
+					<InputChunk {state} chunk={$state.context.updatedInputChunks[i]} chunkIndex={i} />
+					<OutputChunk {state} {chunk} chunkIndex={i} />
+				{/each}
+			</div>
+		{/if}
+		{#if showOutputBytePlaceholders}
+			<h3 class="output-heading">Output</h3>
+			<div id="output-b64" class="encoded-bytes">
+				<div class="binary-chunks">
+					{#each $state.context.base64Maps as _, charIndex}
+						<div
+							transition:fade={{ duration: 200 }}
+							class="encoded-base64"
+							data-chunk-id={getChunkIndexFromBase64CharIndex(charIndex) + 1}
+							data-b64char-number={charIndex + 1}
+						>
+							<OutputBytePlaceholder {state} {charIndex} />
+						</div>
+					{/each}
+				</div>
+			</div>
+		{/if}
+		{#if showOutputBytes}
+			<h3 class="output-heading">Output</h3>
+			<div id="output-b64" class="encoded-bytes">
+				<div class="binary-chunks">
+					{#each $state.context.updatedBase64Maps as b64, charIndex}
+						<div
+							transition:fade={{ duration: 200 }}
+							class="encoded-base64"
+							data-chunk-id={getChunkIndexFromBase64CharIndex(charIndex) + 1}
+							data-b64char-number={charIndex + 1}
+							data-b64={b64.b64}
+							data-bin={b64.bin}
+							data-dec={b64.dec}
+							on:mouseenter={() => (highlightBase64 = b64.b64)}
+							on:mouseleave={() => (highlightBase64 = null)}
+						>
+							<EncodedOutputByte {state} {charIndex} {b64} />
+						</div>
+					{/each}
+				</div>
+			</div>
+		{/if}
 	</div>
-	{#if showInputBytes}
-		<h3 class="input-heading">Input</h3>
-		<div id="input-hex" class="encoded-bytes">
-			<div class="binary-chunks">
-				{#each $state.context.updatedByteMaps as byte, byteIndex}
-					<div
-						transition:fade={{ duration: 200 }}
-						class="encoded-byte"
-						data-chunk-id={getChunkIndexFromByteIndex(byteIndex) + 1}
-						data-byte-number={byteIndex + 1}
-						data-bin="{byte.bin_word1}{byte.bin_word2}"
-						data-hex="{byte.hex_word1}{byte.hex_word2}"
-						data-ascii={byte.ascii}
-						on:mouseenter={() => (highlightHexByte = byte.byte)}
-						on:mouseleave={() => (highlightHexByte = null)}
-					>
-						<EncodedInputByte {state} {byteIndex} {byte} />
-					</div>
-				{/each}
-			</div>
-		</div>
-	{/if}
-	{#if showInputChunks}
-		<div id="hex-b64-mapping" class="binary-chunks data-mapping">
-			{#each $state.context.updatedInputChunks as chunk, i}
-				<InputChunk {state} {chunk} chunkIndex={i} />
-			{/each}
-		</div>
-	{/if}
-	{#if showOutputChunks}
-		<div id="hex-b64-mapping" class="binary-chunks data-mapping">
-			{#each $state.context.updatedOutputChunks as chunk, i}
-				<InputChunk {state} chunk={$state.context.updatedInputChunks[i]} chunkIndex={i} />
-				<OutputChunk {state} {chunk} chunkIndex={i} />
-			{/each}
-		</div>
-	{/if}
-	{#if showOutputBytes}
-		<h3 class="output-heading">Output</h3>
-		<div id="output-b64" class="encoded-bytes">
-			<div class="binary-chunks">
-				{#each $state.context.updatedBase64Maps as b64, charIndex}
-					<div
-						transition:fade={{ duration: 200 }}
-						class="encoded-base64"
-						data-chunk-id={getChunkIndexFromBase64CharIndex(charIndex) + 1}
-						data-b64char-number={charIndex + 1}
-						data-b64={b64.b64}
-						data-bin={b64.bin}
-						data-dec={b64.dec}
-						on:mouseenter={() => (highlightBase64 = b64.b64)}
-						on:mouseleave={() => (highlightBase64 = null)}
-					>
-						<EncodedOutputByte {state} {charIndex} {b64} />
-					</div>
-				{/each}
-			</div>
-		</div>
-	{/if}
 </div>
 <div class="demo-references" style="flex: 1 0 {tableSectionHeight}">
 	{#if $state.matches('encodeInput') && $state.context.input.ascii}
 		<div transition:fade class="ascii-table">
 			<AsciiLookupTable asciiTableChunkSize={tableChunkSize} {highlightHexByte} fontSize={'0.65rem'} />
 		</div>
-	{:else if $state.matches('explainByteMapping') || $state.matches('encodeOutput')}
+	{:else if $state.matches({ encodeInput: 'explainByteMapping' }) || $state.matches('encodeOutput')}
 		<div transition:fade class="base64-table">
 			<Base64LookupTable
 				base64Encoding={outputBase64Encoding}
@@ -254,6 +286,7 @@
 		<div class="placeholder" style="width: 292px" />
 	{/if}
 </div>
+<EncoderHelpModal bind:this={helpModal} />
 
 <style lang="postcss">
 	.form-top-row {
@@ -262,7 +295,7 @@
 		grid-template-rows: auto auto;
 		align-items: baseline;
 		gap: 0.5rem;
-		margin: 0 0 1rem 0;
+		margin: 0 0 1.5rem 0;
 
 		grid-column: 1 / span 1;
 		grid-row: 1 / span 1;
@@ -277,22 +310,26 @@
 		grid-column: 2 / span 1;
 		grid-row: 2 / span 1;
 	}
-	.demo-steps {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		grid-template-rows: auto auto auto auto auto 1fr;
-		column-gap: 0.5rem;
+	#demo-steps-wrapper {
+		display: block;
 		background-color: var(--black2);
 		border-radius: 6px;
 		overflow: auto;
 		padding: 0.5rem 0.75rem;
 		transition: transform 0.75s ease-in-out;
 		margin: 1rem 0;
-
 		font-family: 'Roboto Mono', menlo, monospace;
 
 		grid-column: 1 / span 1;
 		grid-row: 3 / span 1;
+	}
+	.demo-steps {
+		position: relative;
+		z-index: 0;
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		grid-template-rows: auto auto auto auto auto 1fr;
+		column-gap: 0.5rem;
 	}
 	h3 {
 		font-size: 0.9rem;
@@ -305,6 +342,8 @@
 		display: flex;
 		flex-flow: column nowrap;
 		align-self: flex-start;
+		position: static;
+		z-index: 1;
 		margin: 0 0 0.5rem 0;
 
 		grid-column: 1 / span 2;
@@ -389,7 +428,11 @@
 			grid-column: 4 / span 1;
 			grid-row: 1 / span 1;
 		}
-		#demo-text {
+		#demo-steps-wrapper {
+			padding: 1rem;
+			margin: 0;
+			width: 666px;
+
 			grid-column: 1 / span 1;
 			grid-row: 3 / span 1;
 		}
@@ -398,12 +441,6 @@
 			grid-template-rows: auto auto auto auto;
 			align-items: flex-start;
 			column-gap: 0.5rem;
-			padding: 1rem;
-			margin: 0;
-			width: 666px;
-
-			grid-column: 1 / span 1;
-			grid-row: 3 / span 1;
 		}
 		h3 {
 			font-size: 1rem;

@@ -1,4 +1,3 @@
-/// <reference types="jest" />
 import { validateBase64Encoding, validateTextEncoding } from '$lib/validation';
 import { describe, expect, test } from 'vitest';
 

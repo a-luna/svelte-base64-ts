@@ -1,14 +1,16 @@
 import { rotatingColors } from '$lib/constants';
 import { getAsciiCharacterDescription } from '$lib/maps';
-import type { Base64ByteMap, Base64Encoding, EncoderInputChunk, StringEncoding } from "$lib/types";
+import type { Base64ByteMap, Base64Encoding, EncoderInputChunk, OutputChunk, StringEncoding } from "$lib/types";
 import { decimalToBinaryString, hexStringFromByte, stringToByteArray } from "$lib/util";
 
 const getSequentialColor = (byteIndex: number): string => rotatingColors[byteIndex % rotatingColors.length];
 const convertNumber = (num: number) => num === 1 ? '1st' : num === 2 ? '2nd' : num === 3 ? '3rd' : num > 20 && num.toString().slice(-1)[0] === '1' ? `${num}st` : num > 20 && num.toString().slice(-1)[0] === '2' ? `${num}nd` : num > 20 && num.toString().slice(-1)[0] === '3' ? `${num}rd` : `${num}th`
 const getByteNumHtml = (num: number, colorNum: number) => `<div class="byte-id" style="color: var(${getSequentialColor(colorNum)})"><span class="letter-H">H</span><span class="byte-number">${num}</span></div>`
-const getChunkNumHtml = (num: number, colorNum: number) => `<div class="chunk-id" style="color: var(${getSequentialColor(colorNum)});"><span class="chunk-label">IN</span> <span class="chunk-number">${num}</span></div>`
+const getInputChunkNumHtml = (num: number, colorNum: number) => `<div class="chunk-id" style="color: var(${getSequentialColor(colorNum)});"><span class="chunk-label">IN</span> <span class="chunk-number">${num}</span></div>`
+const getOutputChunkNumHtml = (num: number, colorNum: number) => `<div class="chunk-id" style="color: var(${getSequentialColor(colorNum)});"><span class="chunk-label">OUT</span> <span class="chunk-number">${num}</span></div>`
 const getB64CharNumHtml = (num: number, colorNum: number) => `<div class="b64Char-id" style="color: var(${getSequentialColor(colorNum)});"><span class="letter-B">B</span> <span class="b64Char-number">${num}</span></div>`
-const getChunkBytesHtml = (chunk: EncoderInputChunk, chunkIndex: number) => Array.from({ length: chunk.bytes.length }, (_, i) => getByteNumHtml(3*chunkIndex + i + 1, chunkIndex)).join(', ');
+const getChunkBytesHtml = (chunk: EncoderInputChunk|OutputChunk, chunkIndex: number) => Array.from({ length: chunk.bytes.length }, (_, i) => getByteNumHtml(3*chunkIndex + i + 1, chunkIndex)).join(', ');
+const getChunkB64CharsHtml = (chunk: OutputChunk, totalB64Chars: number, chunkIndex: number) => Array.from({ length: totalB64Chars }, (_, i) => getB64CharNumHtml(4*chunkIndex + i + 1, chunkIndex)).join(', ');
 
 export function getEncodeInputText_IdleDemoText(input: string, encoding: StringEncoding): string[] {
     const totalBytes = stringToByteArray(input, encoding).length;
@@ -41,7 +43,7 @@ export function describeInputChunk(chunk: EncoderInputChunk, chunkIndex: number,
     const padLength = chunk.bytes.length === 1 ? 'four' : 'two';
     const necessaryLength = chunk.bytes.length === 1 ? 12 : 18;
     const chunkPadding = chunk.isPadded ? ` and ${padLength} bits with value zero to pad the length to ${necessaryLength}` : '';
-    return `The ${chunkNum} chunk (${getChunkNumHtml(chunkIndex + 1, chunkIndex)}) ${chunkBytes}${chunkPadding}.`;
+    return `The ${chunkNum} chunk (${getInputChunkNumHtml(chunkIndex+  1, chunkIndex)}) ${chunkBytes}${chunkPadding}.`;
 }
 
 export function explainLastPaddedChunk(chunk: EncoderInputChunk, chunkIndex: number): string[] {
@@ -52,7 +54,7 @@ export function explainLastPaddedChunk(chunk: EncoderInputChunk, chunkIndex: num
     return [
         `There ${remainingBytes} of input data remaining. When the final chunk contains less than three bytes, special processing must be performed.`,
         `The chunk size of 24-bits was chosen because it is divisible by 6 (which is the number of bits required to store a Base64 digit). The solution is to add zeroes until the total number of bits is divisible by 6.`,
-        `The final chunk (${getChunkNumHtml(chunkIndex + 1, chunkIndex)}) contains ${totalBits} bits. If ${padLength} zeroes are added the length becomes ${necessaryLength} which is divisible by 6.`
+        `The final chunk (${getInputChunkNumHtml(chunkIndex + 1, chunkIndex)}) contains ${totalBits} bits. If ${padLength} zeroes are added the length becomes ${necessaryLength} which is divisible by 6.`
     ];
 }
 
@@ -68,14 +70,20 @@ export function explainPadCharacter(chunk: EncoderInputChunk): string[] {
     ]
 }
 
-// export function describeOutputChunk(chunk: OutputChunk, chunkIndex: number, totalChunks: number): string {
-//     const chunkNum = chunkIndex + 1 === totalChunks ? `${convertNumber(chunkIndex + 1)} and final` : convertNumber(chunkIndex + 1);
-//     const chunkB64Chars = `is comprised of Base64 digits ${}`
-// }
-
-// function getBase64DigitsHtml(chunk: OutputChunk, chunkIndex: number) {
-//     const padLength = chunk.bytes.length === 3 ? 0 : chunk.bytes.length === 2 ? ss
-// }
+export function describeOutputChunk(chunk: OutputChunk, chunkIndex: number, totalChunks: number): string {
+    const chunkNum = chunkIndex + 1 === totalChunks ? `${convertNumber(chunkIndex + 1)} and final` : convertNumber(chunkIndex + 1);
+    const totalB64Chars = chunk.base64Map.filter(map => !map.isPad).length;
+    const totalPadChars = chunk.base64Map.filter(map => map.isPad).length;
+    const totalB64CharsVerbose = totalB64Chars === 2 ? 'two' : totalB64Chars === 3 ? 'three' : 'four'
+    const totalPadCharsVerbose = totalPadChars === 2 ? 'two' : 'one'
+    const totalPadBits = chunk.bytes.length === 1 ? 'four' : 'two';
+    const necessaryLength = chunk.bytes.length === 1 ? 12 : 18;
+    const inputChunkPadding = totalPadChars > 0 ? ` and ${totalPadBits} bits with value zero to pad the length to ${necessaryLength}` : '';
+    const chunkHexBytes = `created from bytes ${getChunkBytesHtml(chunk, chunkIndex)} from the input data`
+    const chunkB64Chars = `contains ${totalB64CharsVerbose} Base64 digits ${getChunkB64CharsHtml(chunk, totalB64Chars, chunkIndex)}`
+    const outputChunkPadding = totalPadChars > 0 ? ` and ${totalPadCharsVerbose} pad character${totalPadChars > 1 ? 's' : ''}` : ``;
+    return `The ${chunkNum} chunk (${getOutputChunkNumHtml(chunkIndex + 1, chunkIndex)}, ${chunkHexBytes}${inputChunkPadding}) ${chunkB64Chars}${outputChunkPadding}.`;
+}
 
 export function describeBase64Char(base64: Base64ByteMap, base64CharIndex: number, encoding: Base64Encoding): string[] {
     const b64Alphabet = encoding === 'base64' ? 'standard Base64 alphabet' : 'URL-safe Base64 alphabet'; 

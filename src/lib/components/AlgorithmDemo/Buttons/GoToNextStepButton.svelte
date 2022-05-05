@@ -1,25 +1,43 @@
 <script lang="ts">
 	import NextStep from '$lib/components/Icons/NextStep.svelte';
 	import { demoState } from '$lib/stores/demoState';
-	import type { NavAction, XStateMachineState } from '$lib/types';
+	import type { XStateMachineState } from '$lib/types';
+	import type { EncodingEvent } from '$lib/xstate/b64Encode';
 	import { createEventDispatcher } from 'svelte';
 
 	export let state: XStateMachineState;
-	const navButtonEventDispatcher = createEventDispatcher<{ navButtonEvent: { action: NavAction } }>();
+	const navButtonEventDispatcher = createEventDispatcher<{ navButtonEvent: { action: EncodingEvent } }>();
 
-	$: autoplay = state ? $state.context.autoplay : false;
-	$: disabled = state ? !$state.can('GO_TO_NEXT_STEP') : false;
-	$: exceptionalState = state
-		? (!$demoState.modalOpen && ($state.matches('inactive') || $state.matches('inputTextError'))) ||
-		  $state.matches('inputTextValidated')
-		: false;
+	const validActions: EncodingEvent[] = [
+		{
+			type: 'VALIDATE_TEXT',
+			inputText: 'test',
+			inputEncoding: 'bin',
+			outputEncoding: 'base64url',
+		},
+		{ type: 'GO_TO_NEXT_STEP' },
+	];
+
+	$: enabled = validActions.some((action) => $state?.can(action) ?? false);
+	$: exceptionalState = (!$demoState.modalOpen && $state?.matches('inactive')) ?? false;
+
+	function getCorrectAction(): EncodingEvent {
+		return $state.matches('inactive')
+			? {
+					type: 'VALIDATE_TEXT',
+					inputText: $demoState.inputText,
+					inputEncoding: $state?.context.input.inputEncoding,
+					outputEncoding: $state?.context.input.outputEncoding,
+			  }
+			: { type: 'GO_TO_NEXT_STEP' };
+	}
 </script>
 
 <button
 	type="button"
 	title="Go To Next Step"
-	disabled={autoplay || (disabled && !exceptionalState)}
-	on:click={() => navButtonEventDispatcher('navButtonEvent', { action: 'GO_TO_NEXT_STEP' })}
+	disabled={!enabled && !exceptionalState}
+	on:click={() => navButtonEventDispatcher('navButtonEvent', { action: getCorrectAction() })}
 >
 	<div class="icon step-icon">
 		<NextStep />

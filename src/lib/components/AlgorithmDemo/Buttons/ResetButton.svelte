@@ -1,10 +1,11 @@
 <script lang="ts">
 	import Reset from '$lib/components/Icons/Reset.svelte';
-	import type { NavAction, XStateMachineState } from '$lib/types';
+	import type { XStateMachineState } from '$lib/types';
+	import type { EncodingEvent } from '$lib/xstate/b64Encode';
 	import { createEventDispatcher } from 'svelte';
 
 	export let state: XStateMachineState;
-	const navButtonEventDispatcher = createEventDispatcher<{ navButtonEvent: { action: NavAction } }>();
+	const navButtonEventDispatcher = createEventDispatcher<{ navButtonEvent: { action: EncodingEvent } }>();
 	const dispatch = createEventDispatcher();
 
 	$: disabled = state ? !$state.can('RESET') : false;
@@ -14,7 +15,7 @@
 	type="button"
 	title="Reset"
 	{disabled}
-	on:click={() => navButtonEventDispatcher('navButtonEvent', { action: 'RESET' })}
+	on:click={() => navButtonEventDispatcher('navButtonEvent', { action: { type: 'RESET' } })}
 	on:click={() => dispatch('reset')}
 >
 	<div class="icon reset-icon">

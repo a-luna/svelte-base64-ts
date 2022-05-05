@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { focusInput } from '$lib/util';
 	import { createEventDispatcher } from 'svelte';
 
 	export let style: string;
@@ -29,7 +28,6 @@
 	bind:this={inputTextElement}
 	bind:value={inputText}
 	on:keydown|stopPropagation={(e) => handleKeyPress(e.key)}
-	use:focusInput
 />
 
 <style lang="postcss">

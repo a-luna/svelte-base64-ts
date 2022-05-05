@@ -9,10 +9,11 @@
 	import type { XStateMachineState } from '$lib/types';
 
 	export let state: XStateMachineState;
+	let lastStepHovering = false;
 	let pageWidth: number;
 
 	$: showLabel = state
-		? !$state.context.autoplay && ($state.matches('inactive') || $state.matches('inputTextError'))
+		? !$state.context.autoplay && ($state.matches('inactive') || $state.matches({ validateInputText: 'error' }))
 		: false;
 	$: startAutoPlayLabel = pageWidth < 730 ? 'Start Autoplay' : 'Start/Stop Autoplay';
 </script>
@@ -44,9 +45,6 @@
 		<span class="form-label go-to-next-step-button-label">Next Step</span>
 	{/if}
 	<GoToNextStepButton {state} on:navButtonEvent />
-	{#if showLabel}
-		<span class="form-label go-to-last-step-button-label">Last Step</span>
-	{/if}
 	<GoToLastStepButton {state} on:navButtonEvent />
 </div>
 
@@ -109,9 +107,8 @@
 	@media screen and (min-width: 730px) {
 		.algo-nav-buttons {
 			grid-template-columns: repeat(7, minmax(67px, 1fr));
-			grid-template-rows: 12px 33px;
+			grid-template-rows: auto 33px;
 			align-items: center;
-			row-gap: 0.5rem;
 		}
 		.reset-button-label,
 		.start-autoplay-button-label,
@@ -119,7 +116,7 @@
 		.go-to-prev-step-button-label,
 		.go-to-next-step-button-label,
 		.go-to-last-step-button-label {
-			margin: 0;
+			margin: 0 0 0.5rem 0;
 		}
 		.start-autoplay-button-label {
 			justify-self: center;

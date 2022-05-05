@@ -1,4 +1,3 @@
-/// <reference types="jest" />
 import { validateDecoderInput, validateEncoderInput } from '$lib/dataPrep';
 import { describe, expect, test } from 'vitest';
 

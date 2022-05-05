@@ -1,23 +1,13 @@
 <script lang="ts">
 	import LinkedLabel from '$lib/components/AlgorithmDemo/Buttons/LinkedLabel.svelte';
 	import type { XStateMachineState } from '$lib/types';
-	import { createEventDispatcher } from 'svelte';
 
 	export let state: XStateMachineState;
-	export const openHelpModalEventDispatcher = createEventDispatcher<{ openHelpModal: Record<string, never> }>();
-
-	function openHelpDocsModal() {
-		if (!$state.context.autoplay) {
-			openHelpModalEventDispatcher('openHelpModal');
-		}
-	}
 </script>
 
-{#if !$state.matches('inactive') && !$state.matches('inputTextError')}
+{#if !$state.matches('inactive') && !$state.matches({ validateInputText: 'error' })}
 	<div class="help-docs-button-wrapper">
-		<LinkedLabel name="help-docs-button-input-form" tooltip="Open Help Docs" on:click={() => openHelpDocsModal()}>
-			Help Docs
-		</LinkedLabel>
+		<LinkedLabel name="help-docs-button-input-form" tooltip="Open Help Docs" on:click>Help Docs</LinkedLabel>
 	</div>
 {/if}
 

@@ -32,7 +32,8 @@
 			grid-template-columns: auto;
 			grid-template-rows: auto auto auto 1fr;
 			width: 700px;
-			gap: 1rem;
+			padding: 2rem;
+			column-gap: 1rem;
 		}
 	}
 </style>

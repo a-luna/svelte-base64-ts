@@ -1,10 +1,11 @@
 <script lang="ts">
 	import PreviousStep from '$lib/components/Icons/PreviousStep.svelte';
-	import type { NavAction, XStateMachineState } from '$lib/types';
+	import type { XStateMachineState } from '$lib/types';
+	import type { EncodingEvent } from '$lib/xstate/b64Encode';
 	import { createEventDispatcher } from 'svelte';
 
 	export let state: XStateMachineState;
-	const navButtonEventDispatcher = createEventDispatcher<{ navButtonEvent: { action: NavAction } }>();
+	const navButtonEventDispatcher = createEventDispatcher<{ navButtonEvent: { action: EncodingEvent } }>();
 
 	$: autoplay = state ? $state.context.autoplay : false;
 	$: disabled = state ? !$state.can('GO_TO_PREV_STEP') : false;
@@ -14,7 +15,7 @@
 	type="button"
 	title="Go To Previous Step"
 	disabled={autoplay || disabled}
-	on:click={() => navButtonEventDispatcher('navButtonEvent', { action: 'GO_TO_PREV_STEP' })}
+	on:click={() => navButtonEventDispatcher('navButtonEvent', { action: { type: 'GO_TO_PREV_STEP' } })}
 >
 	<div class="icon step-icon">
 		<PreviousStep />

@@ -1,10 +1,11 @@
 <script lang="ts">
 	import StopAutoPlay from '$lib/components/Icons/StopAutoPlay.svelte';
-	import type { NavAction, XStateMachineState } from '$lib/types';
+	import type { XStateMachineState } from '$lib/types';
+	import type { EncodingEvent } from '$lib/xstate/b64Encode';
 	import { createEventDispatcher } from 'svelte';
 
 	export let state: XStateMachineState;
-	const navButtonEventDispatcher = createEventDispatcher<{ navButtonEvent: { action: NavAction } }>();
+	const navButtonEventDispatcher = createEventDispatcher<{ navButtonEvent: { action: EncodingEvent } }>();
 
 	$: autoplay = state ? $state.context.autoplay : true;
 </script>
@@ -13,7 +14,7 @@
 	type="button"
 	title="Stop Autoplay"
 	disabled={!autoplay}
-	on:click={() => navButtonEventDispatcher('navButtonEvent', { action: 'STOP_AUTO_PLAY' })}
+	on:click={() => navButtonEventDispatcher('navButtonEvent', { action: { type: 'STOP_AUTO_PLAY' } })}
 >
 	<div class="icon">
 		<StopAutoPlay />

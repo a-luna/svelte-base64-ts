@@ -3,6 +3,7 @@
 		describeBase64Char,
 		describeInputByte,
 		describeInputChunk,
+		describeOutputChunk,
 		explainLastPaddedChunk,
 		explainPadCharacter,
 		getEncodeInputText_IdleDemoText,
@@ -55,7 +56,7 @@
 
 <svelte:window bind:innerWidth={pageWidth} />
 
-{#if $state.matches('inactive') || $state.matches('inputTextError')}
+{#if $state.matches('inactive') || $state.matches({ validateInputText: 'error' })}
 	<details bind:this={welcomeDetailsElement} on:toggle={() => toggleWelcomeDetails()} open>
 		<summary>Welcome!</summary>
 		{#if welcomeDetailsElement?.open}
@@ -114,7 +115,7 @@
 			</div>
 		{/if}
 	</details>
-{:else if $state.matches('inputTextValidated')}
+{:else if $state.matches({ validateInputText: 'success' })}
 	<p>
 		Nicely done! The value you provided looks, smells and tastes like a valid {encodingIn} string.
 	</p>
@@ -134,7 +135,7 @@
 			$state.context.input.inputEncoding,
 		)}
 	</p>
-{:else if $state.matches('explainByteMapping')}
+{:else if $state.matches({ encodeInput: 'explainByteMapping' })}
 	<p>The first step is complete: the input data has been converted to a sequence of 8-bit bytes.</p>
 	<p>
 		However, in Base64 encoding each value is stored as a 6-bit byte (see the table below which shows the complete
@@ -380,7 +381,14 @@
 			</div>
 		</div>
 	</div>
-	<!-- {:else if $state.matches( { createOutputChunks: 'autoPlayCreateOutputChunk' }, ) || $state.matches( { createOutputChunks: 'createOutputChunk' }, )} -->
+{:else if $state.matches( { createOutputChunks: 'autoPlayCreateOutputChunk' }, ) || $state.matches( { createOutputChunks: 'createOutputChunk' }, )}
+	<p>
+		{@html describeOutputChunk(
+			$state.context.currentOutputChunk,
+			$state.context.outputChunkIndex,
+			$state.context.input.totalChunks,
+		)}
+	</p>
 {:else if $state.matches({ encodeOutput: 'autoPlayEncodeBase64' }) || $state.matches({ encodeOutput: 'encodeBase64' })}
 	{#each describeBase64Char($state.context.currentBase64Char, $state.context.base64CharIndex, $state.context.output.outputEncoding) as text}
 		<p>
@@ -454,8 +462,14 @@
 		grid-column: 1 / span 1;
 		grid-row: 1 / span 1;
 	}
+	.input-value {
+		border: 1px solid var(--nav-button-bg-color);
+	}
 	.input-value .result-label {
 		color: var(--pri-color);
+	}
+	.output-value {
+		border: 1px solid var(--nav-button-stop-autoplay-bg-color);
 	}
 	.output-value .result-label {
 		color: var(--sec-color);
@@ -463,6 +477,7 @@
 	.result-value {
 		font-family: 'Roboto Mono', menlo, monospace;
 		color: var(--white3);
+		letter-spacing: 0.7px;
 		line-height: 1.4;
 
 		grid-column: 2 / span 1;
