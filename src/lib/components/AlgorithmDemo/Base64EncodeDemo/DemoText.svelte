@@ -132,6 +132,7 @@
 		{@html describeInputByte(
 			$state.context.currentByte.byte,
 			$state.context.byteIndex,
+			$state.context.byteMaps.length,
 			$state.context.input.inputEncoding,
 		)}
 	</p>
@@ -144,7 +145,7 @@
 	<p>
 		In order to reconcile the differing byte sizes, we need to find a number that is evenly divisible by both 8 and 6.
 	</p>
-{:else if $state.matches({ createInputChunks: 'idle' })}
+{:else if $state.matches({ createInputChunks: 'idle' }) || $state.matches({ createInputChunks: 'autoPlayIdle' })}
 	<p>
 		In mathematics, this value is called the <strong
 			><a href="https://en.wikipedia.org/wiki/Least_common_multiple">Least Common Multple</a></strong
@@ -168,7 +169,7 @@
 		)}
 	</p>
 {:else if $state.matches({ createInputChunks: 'explainLastPaddedChunk' })}
-	{#each explainLastPaddedChunk($state.context.currentInputChunk, $state.context.inputChunkIndex) as text}
+	{#each explainLastPaddedChunk($state.context.currentInputChunk, $state.context.inputChunkIndex, $state.context.input.totalChunks) as text}
 		<p>{@html text}</p>
 	{/each}
 	<InputChunk {state} chunk={$state.context.currentInputChunk} chunkIndex={$state.context.inputChunkIndex} />
@@ -178,8 +179,8 @@
 	{/each}
 {:else if $state.matches({ createOutputChunks: 'idle' })}
 	<p>
-		The next step is rather trival, for each input chunk of three 8-bit bytes (24 total bits), an output chunk with four
-		6-bit bytes is created from the same sequence of bits.
+		Next, for each chunk of input data with three 8-bit bytes (24 total bits), an output chunk with four 6-bit bytes is
+		created from the same sequence of bits.
 	</p>
 	<div id="byte-map-demo">
 		<div id="hex-b64-mapping" class="binary-chunks data-mapping">
@@ -381,14 +382,15 @@
 			</div>
 		</div>
 	</div>
+	{#if $state.context.input.lastChunkPadded}
+		<p>The last chunk will require special processing since it does not contain three 8-bit bytes.</p>
+	{/if}
 {:else if $state.matches( { createOutputChunks: 'autoPlayCreateOutputChunk' }, ) || $state.matches( { createOutputChunks: 'createOutputChunk' }, )}
-	<p>
-		{@html describeOutputChunk(
-			$state.context.currentOutputChunk,
-			$state.context.outputChunkIndex,
-			$state.context.input.totalChunks,
-		)}
-	</p>
+	{#each describeOutputChunk($state.context.currentOutputChunk, $state.context.outputChunkIndex, $state.context.input.totalChunks) as text}
+		<p>
+			{@html text}
+		</p>
+	{/each}
 {:else if $state.matches({ encodeOutput: 'autoPlayEncodeBase64' }) || $state.matches({ encodeOutput: 'encodeBase64' })}
 	{#each describeBase64Char($state.context.currentBase64Char, $state.context.base64CharIndex, $state.context.output.outputEncoding) as text}
 		<p>

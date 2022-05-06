@@ -2,7 +2,6 @@
 	import AuthorName from '$lib/components/AlgorithmDemo/AuthorName.svelte';
 	import DemoText from '$lib/components/AlgorithmDemo/Base64EncodeDemo/DemoText.svelte';
 	import InputForm from '$lib/components/AlgorithmDemo/Base64EncodeDemo/InputForm/InputForm.svelte';
-	import InspectStateMachineButton from '$lib/components/AlgorithmDemo/Buttons/InspectStateMachineButton.svelte';
 	import EncodedInputByte from '$lib/components/AlgorithmDemo/EncodedInputByte.svelte';
 	import EncodedOutputByte from '$lib/components/AlgorithmDemo/EncodedOutputByte.svelte';
 	import EncoderHelpModal from '$lib/components/AlgorithmDemo/HelpModal/EncoderHelpModal.svelte';
@@ -18,7 +17,6 @@
 	import { getChunkIndexFromBase64CharIndex, getChunkIndexFromByteIndex } from '$lib/util';
 	import type { EncodingContext, EncodingEvent, EncodingTypeState } from '$lib/xstate/b64Encode';
 	import { encodingMachine } from '$lib/xstate/b64Encode';
-	import { inspect } from '@xstate/inspect';
 	import { useMachine } from '@xstate/svelte';
 	import { fade } from 'svelte/transition';
 	import OutputBytePlaceholder from '../OutputBytePlaceholder.svelte';
@@ -33,12 +31,9 @@
 	let highlightHexByte: number;
 	let highlightBase64: string;
 	let pageWidth: number;
-	let stateName: string;
 	let helpModal: EncoderHelpModal;
 
-	const { state, send } = useMachine<EncodingContext, EncodingEvent, EncodingTypeState>(encodingMachine, {
-		devTools: true,
-	});
+	const { state, send } = useMachine<EncodingContext, EncodingEvent, EncodingTypeState>(encodingMachine);
 
 	function openHelpDocsModal() {
 		if (!$state.context.autoplay) {
@@ -46,6 +41,8 @@
 		}
 	}
 
+	$: updateInputText(inputText, inputTextEncoding, outputBase64Encoding);
+	$: console.log({ state: $state.value, context: $state.context });
 	$: showInputBytes =
 		$state.matches({ encodeInput: 'autoPlayEncodeByte' }) ||
 		$state.matches({ encodeInput: 'encodeByte' }) ||
@@ -80,11 +77,21 @@
 		$state.matches({ encodeOutput: 'autoPlayEncodeBase64' }) ||
 		$state.matches({ encodeOutput: 'encodeBase64' }) ||
 		$state.matches({ encodeOutput: 'encodingComplete' });
-	$: stateName = $state.toStrings().join(' ');
+	$: showAsciiTable =
+		($state.matches({ encodeInput: 'idle' }) ||
+			$state.matches({ encodeInput: 'autoPlayEncodeByte' }) ||
+			$state.matches({ encodeInput: 'encodeByte' })) &&
+		$state.context.input.ascii;
 	$: if ($state.matches({ validateInputText: 'error' }) && $state?.context?.input?.validationResult?.error?.message) {
 		$alert = $state.context.input.validationResult.error.message;
 	}
-	$: if (stateName.includes('idle')) {
+	$: if (
+		$state.matches({ encodeInput: 'idle' }) ||
+		$state.matches({ createInputChunks: 'idle' }) ||
+		$state.matches({ createInputChunks: 'autoPlayIdle' }) ||
+		$state.matches({ createOutputChunks: 'idle' }) ||
+		$state.matches({ encodeOutput: 'idle' })
+	) {
 		highlightHexByte = null;
 		highlightBase64 = null;
 	}
@@ -97,8 +104,6 @@
 	$: tableChunkSize = pageWidth < 730 ? 32 : 16;
 	$: tableSectionHeight = pageWidth < 730 ? 'auto' : '260px';
 	$: formTitleFontSize = pageWidth < 730 ? '1.65rem' : '1.8rem';
-	$: updateInputText(inputText, inputTextEncoding, outputBase64Encoding);
-	$: console.log({ state: $state.value, context: $state.context });
 
 	function updateInputText(input: string, stringEncoding: StringEncoding, base64Encoding: Base64Encoding) {
 		send({
@@ -119,6 +124,8 @@
 			});
 		}
 	}
+
+	const handleNavButtonEvent = (e: CustomEvent<{ action: EncodingEvent }>) => send(e.detail.action);
 
 	function handleKeyPress(key: string) {
 		if (!$demoState.modalOpen) {
@@ -156,8 +163,6 @@
 		}
 	}
 
-	const handleNavButtonEvent = (e: CustomEvent<{ action: EncodingEvent }>) => send(e.detail.action);
-
 	function sendEvent(action: EncodingEvent) {
 		if ($state.can(action)) {
 			send(action);
@@ -186,7 +191,7 @@
 />
 <div id="demo-steps-wrapper">
 	<div class="demo-steps">
-		<InspectStateMachineButton on:click={() => inspect({ iframe: false })} />
+		<!-- <InspectStateMachineButton on:click={() => inspect({ iframe: false })} /> -->
 		<div id="demo-text">
 			<DemoText {state} />
 		</div>
@@ -269,7 +274,7 @@
 	</div>
 </div>
 <div class="demo-references" style="flex: 1 0 {tableSectionHeight}">
-	{#if $state.matches('encodeInput') && $state.context.input.ascii}
+	{#if showAsciiTable}
 		<div transition:fade class="ascii-table">
 			<AsciiLookupTable asciiTableChunkSize={tableChunkSize} {highlightHexByte} fontSize={'0.65rem'} />
 		</div>
@@ -294,7 +299,7 @@
 		grid-template-columns: auto auto;
 		grid-template-rows: auto auto;
 		align-items: baseline;
-		gap: 0.5rem;
+		gap: 1rem;
 		margin: 0 0 1.5rem 0;
 
 		grid-column: 1 / span 1;
@@ -415,7 +420,8 @@
 		.form-top-row {
 			grid-template-columns: auto auto 1fr auto;
 			grid-template-rows: auto;
-			align-items: flex-start;
+			align-items: center;
+			margin: 0 0 2rem 0;
 			width: 698px;
 
 			grid-column: 1 / span 1;

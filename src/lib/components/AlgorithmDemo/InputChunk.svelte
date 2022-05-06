@@ -10,21 +10,22 @@
 
 	$: chunkNumber = chunkIndex + 1;
 	$: chunkColor = rotatingColors[chunkIndex % rotatingColors.length];
-	$: stateName = $state.toStrings().join(' ');
-	$: highlightChunk =
-		!stateName.includes('idle') &&
-		!$state.matches({ createInputChunks: 'explainLastPaddedChunk' }) &&
-		stateName.includes('createInputChunks') &&
-		$state.context.inputChunkIndex === chunkIndex;
+	$: chunkMappingInProgress =
+		$state.matches({ createInputChunks: 'autoPlayCreateInputChunk' }) ||
+		$state.matches({ createInputChunks: 'createInputChunk' }) ||
+		$state.matches({ createInputChunks: 'createLastPaddedChunk' });
+	$: highlightChunk = chunkMappingInProgress && $state.context.inputChunkIndex === chunkIndex;
 	$: finalBase64GroupId = chunk.inputMap.slice(-1)[0].bitGroups.slice(-1)[0].groupId;
 	$: highlightPadBits = chunk.isPadded && $state.matches({ createInputChunks: 'explainLastPaddedChunk' });
+	$: byteMappingInProgress =
+		$state.matches({ encodeInput: 'autoPlayEncodeByte' }) ||
+		$state.matches({ encodeInput: 'encodeByte' }) ||
+		$state.matches({ encodeInput: 'explainByteMapping' });
 
 	const getBase64CharColor = (groupId: string): string =>
 		rotatingColors[getBase64CharIndexFromGroupId(groupId) % rotatingColors.length];
 	const highlightBitGroup = (base64CharIndex: number, groupId: string): boolean =>
-		!stateName.includes('idle') &&
-		stateName.includes('encodeOutput') &&
-		base64CharIndex === getBase64CharIndexFromGroupId(groupId);
+		byteMappingInProgress && base64CharIndex === getBase64CharIndexFromGroupId(groupId);
 	const getCurrentBitGroupColor = (base64CharIndex: number, groupId: string, padding = false): string =>
 		highlightBitGroup(base64CharIndex, groupId)
 			? getBase64CharColor(groupId)

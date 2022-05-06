@@ -924,25 +924,9 @@ button {
 	cursor: pointer;
 }
 
-.algo-nav-buttons button {
-	border-top: 1px solid var(--nav-button-border-color);
-	border-bottom: 1px solid var(--nav-button-border-color);
-	border-right: none;
-	border-left: 0.5px solid var(--nav-button-border-color);
-	border-radius: 0;
-}
-
-.nav-buttons-help button,
-.modal button {
-	border: 1px solid var(--nav-button-border-color);
-	border-radius: 6px;
-}
-
-.modal-footer button {
-	font-size: 0.9rem;
-	font-weight: 500;
-	line-height: 1;
-	text-transform: uppercase;
+.base64-algo-demo button:hover {
+	color: var(--nav-button-hover-text-color);
+	background-color: var(--nav-button-hover-bg-color);
 }
 
 .base64-algo-demo button:focus,
@@ -950,6 +934,14 @@ button {
 .base64-algo-demo button:active:focus {
 	color: var(--nav-button-active-text-color);
 	background-color: var(--nav-button-active-bg-color);
+}
+
+.algo-nav-buttons button {
+	border-top: 1px solid var(--nav-button-border-color);
+	border-bottom: 1px solid var(--nav-button-border-color);
+	border-right: none;
+	border-left: 0.5px solid var(--nav-button-border-color);
+	border-radius: 0;
 }
 
 .algo-nav-buttons button:focus,
@@ -1102,6 +1094,19 @@ button {
 	border-left: 1px solid var(--nav-button-autoplay-disabled-border-color);
 }
 
+.nav-buttons-help button,
+.modal button {
+	border: 1px solid var(--nav-button-border-color);
+	border-radius: 6px;
+}
+
+.modal-footer button {
+	font-size: 0.9rem;
+	font-weight: 500;
+	line-height: 1;
+	text-transform: uppercase;
+}
+
 .base64-algo-demo .icon {
 	width: 11px;
 	margin: auto;
@@ -1132,7 +1137,7 @@ button {
 		font-size: 0.7rem;
 	}
 	#demo-text #byte-map-demo {
-		margin: 0.5rem 0 0 1.5rem;
+		margin: 0.5rem 0 0.5rem 1.5rem;
 	}
 	.byte-number,
 	.chunk-number,

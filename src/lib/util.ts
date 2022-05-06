@@ -84,20 +84,22 @@ export const getRandomHexString = (length: number): string =>
 		.map((n) => Number(n).toString(16))
 		.join('');
 
-export function parseGroupId(groupId: string): { chunkNumber: number; byteNumber: number; b64CharNumber: number } {
+export function parseGroupId(groupId: string): { chunkNumber: number; byteNumber: number; byteIndexWithinChunk: number; b64CharNumber: number; b64IndexWithinChunk: number } {
 	let match = HEX_BIT_GROUP_REGEX.exec(groupId);
 	if (match) {
 		const { chunk, byte } = match.groups;
 		const chunkNumber = parseInt(chunk) - 1;
-		const byteNumber = chunkNumber * 3 + (parseInt(byte) - 1);
-		return { chunkNumber, byteNumber, b64CharNumber: null };
+		const byteIndexWithinChunk = parseInt(byte) - 1
+		const byteNumber = chunkNumber * 3 + byteIndexWithinChunk;
+		return { chunkNumber, byteNumber, byteIndexWithinChunk, b64CharNumber: null, b64IndexWithinChunk: null };
 	}
 	match = B64_BIT_GROUP_REGEX.exec(groupId);
 	if (match) {
 		const { chunk, b64Char } = match.groups;
 		const chunkNumber = parseInt(chunk) - 1;
-		const b64CharNumber = chunkNumber * 4 + (parseInt(b64Char) - 1);
-		return { chunkNumber, byteNumber: null, b64CharNumber };
+		const b64IndexWithinChunk = parseInt(b64Char) - 1
+		const b64CharNumber = chunkNumber * 4 + b64IndexWithinChunk;
+		return { chunkNumber, byteNumber: null, byteIndexWithinChunk: null, b64CharNumber, b64IndexWithinChunk };
 	}
 }
 
@@ -111,9 +113,19 @@ export function getByteIndexFromGroupId(groupId: string): number {
 	return byteNumber ?? 0;
 }
 
+export function getByteIndexWithinChunkFromGroupId(groupId: string): number {
+	const { byteIndexWithinChunk } = parseGroupId(groupId);
+	return byteIndexWithinChunk ?? 0;
+}
+
 export function getBase64CharIndexFromGroupId(groupId: string): number {
 	const { b64CharNumber } = parseGroupId(groupId);
 	return b64CharNumber ?? 0;
+}
+
+export function getb64IndexWithinChunkFromGroupId(groupId: string): number {
+	const { b64IndexWithinChunk } = parseGroupId(groupId);
+	return b64IndexWithinChunk ?? 0;
 }
 
 export const getChunkIndexFromByteIndex = (byteIndex: number): number => (byteIndex / 3) | 0;

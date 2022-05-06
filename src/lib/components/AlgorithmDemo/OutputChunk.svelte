@@ -10,12 +10,21 @@
 
 	$: chunkNumber = chunkIndex + 1;
 	$: chunkColor = rotatingColors[chunkIndex % rotatingColors.length];
+	$: currentInputChunk = $state.context.inputChunkIndex;
+	$: currentOutputChunk = $state.context.outputChunkIndex;
 	$: stateName = $state.toStrings().join(' ');
-	$: highlightChunk =
-		!stateName.includes('idle') &&
-		((stateName.includes('createInputChunks') && $state.context.inputChunkIndex === chunkIndex) ||
-			(stateName.includes('createOutputChunks') && $state.context.outputChunkIndex === chunkIndex));
-	$: currentChunkColor = highlightChunk ? chunkColor : '--black1';
+	$: inputChunkMappingInProgress =
+		$state.matches({ createInputChunks: 'autoPlayCreateInputChunk' }) ||
+		$state.matches({ createInputChunks: 'createInputChunk' }) ||
+		$state.matches({ createInputChunks: 'createLastPaddedChunk' });
+	$: outputChunkMappingInProgress =
+		$state.matches({ createOutputChunks: 'autoPlayCreateOutputChunk' }) ||
+		$state.matches({ createOutputChunks: 'createOutputChunk' }) ||
+		$state.matches({ createOutputChunks: 'createdAllOutputChunks' });
+	$: currentInputChunkIsMapped = inputChunkMappingInProgress && currentInputChunk === chunkIndex;
+	$: currentOutputChunkIsMapped = outputChunkMappingInProgress && currentOutputChunk === chunkIndex;
+	$: currentChunkIsMapped = currentInputChunkIsMapped || currentOutputChunkIsMapped;
+	$: currentChunkColor = currentChunkIsMapped ? chunkColor : '--black1';
 
 	const getBase64CharColor = (groupId: string): string =>
 		rotatingColors[getBase64CharIndexFromGroupId(groupId) % rotatingColors.length];

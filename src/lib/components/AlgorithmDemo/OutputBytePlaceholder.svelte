@@ -11,9 +11,11 @@
 	$: chunkId = getChunkIndexFromBase64CharIndex(charIndex);
 	$: chunkNumber = chunkId + 1;
 	$: chunkColor = rotatingColors[chunkId % rotatingColors.length];
-	$: stateName = $state.toStrings().join(' ');
 	$: currentOutputChunk = $state.context.outputChunkIndex;
-	$: chunkMappingInProgress = !stateName.includes('idle') && $state.matches('createOutputChunks');
+	$: chunkMappingInProgress =
+		$state.matches({ createOutputChunks: 'autoPlayCreateOutputChunk' }) ||
+		$state.matches({ createOutputChunks: 'createOutputChunk' }) ||
+		$state.matches({ createOutputChunks: 'createdAllOutputChunks' });
 	$: currentChunkIsMapped = chunkMappingInProgress && currentOutputChunk === chunkId;
 	$: currentChunkColor = currentChunkIsMapped ? chunkColor : '--light-gray3';
 </script>

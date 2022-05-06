@@ -11,15 +11,20 @@
 	$: chunkNumber = chunkId + 1;
 	$: chunkColor = rotatingColors[chunkId % rotatingColors.length];
 	$: currentChunk = $state.context.inputChunkIndex;
-	$: stateName = $state.toStrings().join(' ');
-	$: chunkMappingInProgress = !stateName.includes('idle') && $state.matches('createInputChunks');
+	$: chunkMappingInProgress =
+		$state.matches({ createInputChunks: 'autoPlayCreateInputChunk' }) ||
+		$state.matches({ createInputChunks: 'createInputChunk' }) ||
+		$state.matches({ createInputChunks: 'createLastPaddedChunk' });
 	$: currentChunkIsMapped = chunkMappingInProgress && currentChunk === chunkId;
 	$: currentChunkColor = currentChunkIsMapped ? chunkColor : '--black1';
 
 	$: b64CharNumber = charIndex + 1;
 	$: b64CharColor = rotatingColors[charIndex % rotatingColors.length];
 	$: currentB64Char = $state.context.base64CharIndex;
-	$: b64MappingInProgress = !stateName.includes('idle') && stateName.includes('encodeOutput');
+	$: b64MappingInProgress =
+		$state.matches({ encodeOutput: 'autoPlayEncodeBase64' }) ||
+		$state.matches({ encodeOutput: 'encodeBase64' }) ||
+		$state.matches({ encodeOutput: 'encodingComplete' });
 	$: currentB64CharIsMapped = b64MappingInProgress && currentB64Char === charIndex;
 	$: currentB64CharColor = currentB64CharIsMapped ? b64CharColor : currentChunkColor;
 	$: currentB64CharIdColor = currentB64CharIsMapped

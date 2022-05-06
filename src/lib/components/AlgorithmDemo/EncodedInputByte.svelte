@@ -15,8 +15,14 @@
 	$: currentInputChunk = $state.context.inputChunkIndex;
 	$: currentOutputChunk = $state.context.outputChunkIndex;
 	$: stateName = $state.toStrings().join(' ');
-	$: inputChunkMappingInProgress = !stateName.includes('idle') && $state.matches('createInputChunks');
-	$: outputChunkMappingInProgress = !stateName.includes('idle') && $state.matches('createOutputChunks');
+	$: inputChunkMappingInProgress =
+		$state.matches({ createInputChunks: 'autoPlayCreateInputChunk' }) ||
+		$state.matches({ createInputChunks: 'createInputChunk' }) ||
+		$state.matches({ createInputChunks: 'createLastPaddedChunk' });
+	$: outputChunkMappingInProgress =
+		$state.matches({ createOutputChunks: 'autoPlayCreateOutputChunk' }) ||
+		$state.matches({ createOutputChunks: 'createOutputChunk' }) ||
+		$state.matches({ createOutputChunks: 'createdAllOutputChunks' });
 	$: currentInputChunkIsMapped = inputChunkMappingInProgress && currentInputChunk === chunkId;
 	$: currentOutputChunkIsMapped = outputChunkMappingInProgress && currentOutputChunk === chunkId;
 	$: currentChunkIsMapped = currentInputChunkIsMapped || currentOutputChunkIsMapped;
@@ -25,7 +31,10 @@
 	$: byteNumber = byteIndex + 1;
 	$: byteColor = rotatingColors[byteIndex % rotatingColors.length];
 	$: currentByte = $state.context.byteIndex;
-	$: byteMappingInProgress = !stateName.includes('idle') && $state.matches('encodeInput');
+	$: byteMappingInProgress =
+		$state.matches({ encodeInput: 'autoPlayEncodeByte' }) ||
+		$state.matches({ encodeInput: 'encodeByte' }) ||
+		$state.matches({ encodeInput: 'explainByteMapping' });
 	$: currentByteIsMapped = byteMappingInProgress && currentByte === byteIndex;
 	$: b64MappingInProgress = $state.matches('encodeOutput');
 	$: currentByteColor = currentByteIsMapped
@@ -42,9 +51,7 @@
 	const getBase64CharColor = (groupId: string): string =>
 		rotatingColors[getBase64CharIndexFromGroupId(groupId) % rotatingColors.length];
 	const highlightBitGroup = (base64CharIndex: number, groupId: string): boolean =>
-		!stateName.includes('idle') &&
-		stateName.includes('encodeOutput') &&
-		base64CharIndex === getBase64CharIndexFromGroupId(groupId);
+		b64MappingInProgress && base64CharIndex === getBase64CharIndexFromGroupId(groupId);
 	const getCurrentBitGroupColor = (base64CharIndex: number, groupId: string): string =>
 		highlightBitGroup(base64CharIndex, groupId) ? getBase64CharColor(groupId) : currentByteColor;
 </script>

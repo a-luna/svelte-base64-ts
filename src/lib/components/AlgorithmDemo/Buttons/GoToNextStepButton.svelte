@@ -18,14 +18,14 @@
 		{ type: 'GO_TO_NEXT_STEP' },
 	];
 
-	$: enabled = validActions.some((action) => $state?.can(action) ?? false);
+	$: enabled = !$demoState.modalOpen && validActions.some((action) => $state?.can(action));
 	$: exceptionalState = (!$demoState.modalOpen && $state?.matches('inactive')) ?? false;
 
 	function getCorrectAction(): EncodingEvent {
 		return $state.matches('inactive')
 			? {
 					type: 'VALIDATE_TEXT',
-					inputText: $demoState.inputText,
+					inputText: $state?.context.input.inputText,
 					inputEncoding: $state?.context.input.inputEncoding,
 					outputEncoding: $state?.context.input.outputEncoding,
 			  }

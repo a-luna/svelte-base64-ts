@@ -5,7 +5,6 @@
 	import SelectBase64Encoding from '$lib/components/AlgorithmDemo/SelectBase64Encoding.svelte';
 	import SelectStringEncoding from '$lib/components/AlgorithmDemo/SelectStringEncoding.svelte';
 	import InputTextBox from '$lib/components/InputTextBox.svelte';
-	import { demoState } from '$lib/stores/demoState';
 	import type { Base64Encoding, StringEncoding, XStateMachineState } from '$lib/types';
 	import { createEventDispatcher } from 'svelte';
 	import { slide } from 'svelte/transition';
@@ -18,7 +17,6 @@
 
 	$: inputTextBoxStyles = 'flex: 1;';
 	$: controlsDisabled = !$state.matches('inactive') && !$state.matches({ validateInputText: 'error' });
-	$: $demoState.inputText = inputText;
 	$: error =
 		inputText &&
 		!$state.matches('inactive') &&
@@ -151,7 +149,6 @@
 		.input-text {
 			grid-column: 1 / span 3;
 			grid-row: 2 / span 1;
-			margin: 0 0 1.5rem 0;
 		}
 		.input-encoding-label {
 			justify-self: center;
@@ -185,7 +182,6 @@
 		}
 		.open-help-docs {
 			font-size: 0.85rem;
-			margin: 1.5rem 0 0 0;
 
 			grid-column: 1 / span 3;
 			grid-row: 5 / span 1;

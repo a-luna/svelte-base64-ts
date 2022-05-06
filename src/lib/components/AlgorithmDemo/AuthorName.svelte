@@ -28,6 +28,7 @@
 	.author-github {
 		color: var(--nav-button-active-bg-color);
 		font-weight: 700;
+		height: 16px;
 	}
 	/* .author-github {
 		margin: 4px 0 0 0;

@@ -81,6 +81,8 @@ export type EncodingTypeState = {
 	} | 'createInputChunks' | {
 		createInputChunks: 'idle'
 	} | {
+		createInputChunks: 'autoPlayIdle'
+	} | {
 		createInputChunks: 'autoPlayCreateInputChunk'
 	} | {
 		createInputChunks: 'createInputChunk'
@@ -92,12 +94,12 @@ export type EncodingTypeState = {
 		createInputChunks: 'createLastPaddedChunk'
 	} | {
 		createInputChunks: 'createdAllInputChunks'
-	} | {
-		createOutputChunks: 'createOutputChunk'
 	} | 'createOutputChunks' | {
 		createOutputChunks: 'idle'
 	} | {
 		createOutputChunks: 'autoPlayCreateOutputChunk'
+	} | {
+		createOutputChunks: 'createOutputChunk'
 	} | {
 		createOutputChunks: 'createdAllOutputChunks'
 	} | 'encodeOutput' | {
@@ -270,10 +272,7 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 							},
 							RESET: { target: '#inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
 							GO_TO_FIRST_STEP: { target: '#inactive', cond: 'autoPlayDisabled' },
-							GO_TO_PREV_STEP: [
-								{ target: 'encodeByte', actions: 'mapPreviousByte', cond: 'hasPreviousByte' },
-								{ target: 'idle', cond: 'allBytesRemaining' },
-							],
+							GO_TO_PREV_STEP: { target: 'encodeByte' },
 							GO_TO_NEXT_STEP: { target: 'encodingComplete', cond: 'autoPlayDisabled' },
 							GO_TO_LAST_STEP: { target: 'encodingComplete', actions: 'setFlagSkipDemo', cond: 'autoPlayDisabled' },
 						},
@@ -294,28 +293,33 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 					idle: {
 						entry: ['resetRemainingInputChunks'],
 						after: {
-							1000: { target: 'autoPlayCreateInputChunk', cond: 'autoPlayEnabled' },
+							100: { target: 'autoPlayIdle', cond: 'autoPlayEnabled' }
 						},
 						on: {
-							RESUME_AUTO_PLAY: {
-								target: 'autoPlayCreateInputChunk',
-								actions: 'startAutoPlay',
-								cond: 'autoPlayDisabled',
-							},
-							STOP_AUTO_PLAY: { actions: 'stopAutoPlay', cond: 'autoPlayEnabled' },
-							RESET: { target: '#inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
-							GO_TO_FIRST_STEP: { target: '#inactive', cond: 'autoPlayDisabled' },
-							GO_TO_PREV_STEP: {
-								target: '#encodeInput.explainByteMapping',
-								actions: 'resetNoBytesRemaining',
-								cond: 'autoPlayDisabled',
-							},
+							RESUME_AUTO_PLAY: { target: 'autoPlayCreateInputChunk', actions: 'startAutoPlay' },
+							RESET: { target: '#inactive', actions: 'resetInput' },
+							GO_TO_FIRST_STEP: { target: '#inactive' },
+							GO_TO_PREV_STEP: { target: '#encodeInput.explainByteMapping', actions: 'resetNoBytesRemaining' },
 							GO_TO_NEXT_STEP: [
-								{ target: 'createLastPaddedChunk', cond: 'onlyOnePaddedChunk' },
+								{ target: 'explainLastPaddedChunk', cond: 'onlyOnePaddedChunk' },
 								{ target: 'createInputChunk', cond: 'autoPlayDisabled' },
 							],
-							GO_TO_LAST_STEP: { target: 'createdAllInputChunks', actions: 'setFlagSkipDemo', cond: 'autoPlayDisabled' },
+							GO_TO_LAST_STEP: { target: 'createdAllInputChunks', actions: 'setFlagSkipDemo' },
 						},
+					},
+					autoPlayIdle: {
+						after: {
+							1000: [
+								{ target: 'explainLastPaddedChunk', cond: 'onlyOnePaddedChunk' },
+								{ target: 'autoPlayCreateInputChunk' }
+							],
+						},
+						on: {
+							STOP_AUTO_PLAY: [
+								{ target: 'explainLastPaddedChunk', cond: 'onlyOnePaddedChunk' },
+								{ target: 'createInputChunk' },
+							],
+						}
 					},
 					autoPlayCreateInputChunk: {
 						entry: ['getCurrentInputChunk'],
@@ -387,10 +391,7 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 							},
 							RESET: { target: '#inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
 							GO_TO_FIRST_STEP: { target: '#inactive', cond: 'autoPlayDisabled' },
-							GO_TO_PREV_STEP: [
-								{ target: 'explainLastPaddedChunk', cond: 'hasPreviousInputChunk' },
-								{ target: 'idle', cond: 'allInputChunksRemaining' },
-							],
+							GO_TO_PREV_STEP: { target: 'explainLastPaddedChunk' },
 							GO_TO_NEXT_STEP: { target: 'createLastPaddedChunk', cond: 'autoPlayDisabled' },
 							GO_TO_LAST_STEP: { target: 'createdAllInputChunks', actions: 'setFlagSkipDemo', cond: 'autoPlayDisabled' },
 						},
@@ -409,7 +410,7 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 							RESET: { target: '#inactive', actions: 'resetInput', cond: 'autoPlayDisabled' },
 							GO_TO_FIRST_STEP: { target: '#inactive', cond: 'autoPlayDisabled' },
 							GO_TO_PREV_STEP: [
-								{ target: 'explainLastPaddedChunk', cond: 'hasPreviousInputChunk' },
+								{ target: 'explainPadCharacter', cond: 'lastChunkIsPadded' },
 								{ target: 'idle', cond: 'allInputChunksRemaining' },
 							],
 							GO_TO_NEXT_STEP: { target: 'createdAllInputChunks', cond: 'autoPlayDisabled' },
@@ -761,6 +762,7 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 			allBytesRemaining: (context: EncodingContext) => context.remainingBytes + 1 === context.byteMaps.length,
 			hasPreviousByte: (context: EncodingContext) => context.byteIndex > 0,
 			inputChunksRemaining: (context: EncodingContext) => context.input.lastChunkPadded ? context.remainingInputChunks > 1 : context.remainingInputChunks > 0,
+			lastChunkIsPadded: (context: EncodingContext) => context.input.lastChunkPadded,
 			finalPaddedChunkRemaining: (context: EncodingContext) =>
 				context.remainingInputChunks === 1 && context.input.lastChunkPadded || false,
 			onlyOnePaddedChunk: (context: EncodingContext) => context.input.totalChunks === 1 && context.input.lastChunkPadded,
