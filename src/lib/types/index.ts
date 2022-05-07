@@ -1,4 +1,4 @@
-export type { XStateMachineState, XStateSendEvent } from './alias';
+export type { B64EncodingMachineState, XStateSendEvent } from './alias';
 export type { AppSettings } from './AppSettings';
 export type { AppState } from './AppState';
 export type { AppStore } from './AppStore';

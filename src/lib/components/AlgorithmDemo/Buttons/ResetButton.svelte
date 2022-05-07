@@ -1,10 +1,10 @@
 <script lang="ts">
 	import Reset from '$lib/components/Icons/Reset.svelte';
-	import type { XStateMachineState } from '$lib/types';
+	import type { B64EncodingMachineState } from '$lib/types';
 	import type { EncodingEvent } from '$lib/xstate/b64Encode';
 	import { createEventDispatcher } from 'svelte';
 
-	export let state: XStateMachineState;
+	export let state: B64EncodingMachineState;
 	const navButtonEventDispatcher = createEventDispatcher<{ navButtonEvent: { action: EncodingEvent } }>();
 	const dispatch = createEventDispatcher();
 

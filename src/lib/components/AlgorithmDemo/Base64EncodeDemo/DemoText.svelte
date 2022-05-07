@@ -6,6 +6,7 @@
 		describeOutputChunk,
 		explainLastPaddedChunk,
 		explainPadCharacter,
+		getBase64AlphabetVerbose,
 		getEncodeInputText_IdleDemoText,
 	} from '$lib/components/AlgorithmDemo/Base64EncodeDemo/_demoText';
 	import LinkedLabel from '$lib/components/AlgorithmDemo/Buttons/LinkedLabel.svelte';
@@ -13,11 +14,11 @@
 	import ArrowKey from '$lib/components/Icons/KeyboardIcons/ArrowKey.svelte';
 	import { alert } from '$lib/stores/alert';
 	import { demoState } from '$lib/stores/demoState';
-	import type { StringEncoding, XStateMachineState } from '$lib/types';
+	import type { B64EncodingMachineState, StringEncoding } from '$lib/types';
 	import { copyToClipboard } from '$lib/util';
 	import { slide } from 'svelte/transition';
 
-	export let state: XStateMachineState;
+	export let state: B64EncodingMachineState;
 	const formatEncodingType = (encoding: StringEncoding): string => (encoding === 'bin' ? 'binary' : encoding);
 	let pageWidth: number;
 	let arrowSize: 'sm' | 'md' | 'lg';
@@ -391,6 +392,12 @@
 			{@html text}
 		</p>
 	{/each}
+{:else if $state.matches({ encodeOutput: 'idle' })}
+	<p>
+		The final step is to convert each 6-bit value to the corresponding Base64 digit. The table below shows the Base64
+		digit, decimal value and binary value for the entire {getBase64AlphabetVerbose($state.context.input.outputEncoding)}
+	</p>
+	<p>As each 6-bit value is converted to a Base64 digit, the mathing value in the table below will be highlighted.</p>
 {:else if $state.matches({ encodeOutput: 'autoPlayEncodeBase64' }) || $state.matches({ encodeOutput: 'encodeBase64' })}
 	{#each describeBase64Char($state.context.currentBase64Char, $state.context.base64CharIndex, $state.context.output.outputEncoding) as text}
 		<p>

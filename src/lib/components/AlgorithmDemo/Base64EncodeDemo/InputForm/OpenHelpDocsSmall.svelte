@@ -1,8 +1,8 @@
 <script lang="ts">
 	import LinkedLabel from '$lib/components/AlgorithmDemo/Buttons/LinkedLabel.svelte';
-	import type { XStateMachineState } from '$lib/types';
+	import type { B64EncodingMachineState } from '$lib/types';
 
-	export let state: XStateMachineState;
+	export let state: B64EncodingMachineState;
 </script>
 
 {#if !$state.matches('inactive') && !$state.matches({ validateInputText: 'error' })}

@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { rotatingColors } from '$lib/constants';
-	import type { HexByteMap, XStateMachineState } from '$lib/types';
+	import type { B64EncodingMachineState, HexByteMap } from '$lib/types';
 	import { getBase64CharIndexFromGroupId, getChunkIndexFromByteIndex } from '$lib/util';
 
 	export let byte: HexByteMap;
 	export let byteIndex: number;
-	export let state: XStateMachineState;
+	export let state: B64EncodingMachineState;
 	let stateName: string;
 	let currentByteColor: string;
 

@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { rotatingColors } from '$lib/constants';
-	import type { XStateMachineState } from '$lib/types';
+	import type { B64EncodingMachineState } from '$lib/types';
 	import { getChunkIndexFromBase64CharIndex } from '$lib/util';
 
 	export let charIndex: number;
-	export let state: XStateMachineState;
+	export let state: B64EncodingMachineState;
 
 	$: b64 = $state.context.base64Maps[charIndex];
 	$: b64CharNumber = charIndex + 1;

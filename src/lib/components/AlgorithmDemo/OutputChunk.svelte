@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { rotatingColors } from '$lib/constants';
-	import type { OutputChunk, XStateMachineState } from '$lib/types';
+	import type { B64EncodingMachineState, OutputChunk } from '$lib/types';
 	import { getBase64CharIndexFromGroupId } from '$lib/util';
 	import { slide } from 'svelte/transition';
 
-	export let state: XStateMachineState;
+	export let state: B64EncodingMachineState;
 	export let chunk: OutputChunk;
 	export let chunkIndex: number;
 

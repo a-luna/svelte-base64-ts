@@ -103,7 +103,7 @@
 	}
 	$: tableChunkSize = pageWidth < 730 ? 32 : 16;
 	$: tableSectionHeight = pageWidth < 730 ? 'auto' : '260px';
-	$: formTitleFontSize = pageWidth < 730 ? '1.65rem' : '1.8rem';
+	$: formTitleFontSize = pageWidth < 730 ? '1.6rem' : '1.8rem';
 
 	function updateInputText(input: string, stringEncoding: StringEncoding, base64Encoding: Base64Encoding) {
 		send({

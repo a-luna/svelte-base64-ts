@@ -158,7 +158,7 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 					VALIDATE_TEXT: { target: 'validateInputText' },
 					UPDATE_TEXT: { actions: 'validate' },
 					SKIP_DEMO: { target: 'validateInputText', actions: 'setFlagSkipDemo' },
-					RESET: { target: 'inactive', actions: 'resetInput' },
+					RESET: { target: 'inactive', actions: 'resetInput', cond: 'defaultSettingsChanged' },
 				},
 			},
 			validateInputText: {
@@ -753,6 +753,7 @@ export const encodingMachine = createMachine<EncodingContext, EncodingEvent, Enc
 			})
 		},
 		guards: {
+			defaultSettingsChanged: (context: EncodingContext) => context.input.inputText !== '' || context.input.inputEncoding !== 'ASCII' || context.input.outputEncoding !== 'base64',
 			autoPlayEnabled: (context: EncodingContext) => context.autoplay,
 			autoPlayDisabled: (context: EncodingContext) => !context.autoplay,
 			yesSkipDemo: (context: EncodingContext) => context.skipDemo,

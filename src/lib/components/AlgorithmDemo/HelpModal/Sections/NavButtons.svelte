@@ -6,9 +6,9 @@
 	import ResetButton from '$lib/components/AlgorithmDemo/Buttons/ResetButton.svelte';
 	import StartAutoPlayButton from '$lib/components/AlgorithmDemo/Buttons/StartAutoPlayButton.svelte';
 	import StopAutoPlayButton from '$lib/components/AlgorithmDemo/Buttons/StopAutoPlayButton.svelte';
-	import type { XStateMachineState } from '$lib/types';
+	import type { B64EncodingMachineState } from '$lib/types';
 
-	export let state: XStateMachineState;
+	export let state: B64EncodingMachineState;
 </script>
 
 <div class="nav-buttons-help help-module">

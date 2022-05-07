@@ -2,5 +2,5 @@ import type { EncodingContext, EncodingEvent, EncodingTypeState } from '$lib/xst
 import type { Readable } from 'svelte/store';
 import type { EventData, State, StateSchema, TypegenDisabled } from 'xstate';
 
-export type XStateMachineState = Readable<State<EncodingContext, EncodingEvent, StateSchema<EncodingContext>, EncodingTypeState, TypegenDisabled>>;
+export type B64EncodingMachineState = Readable<State<EncodingContext, EncodingEvent, StateSchema<EncodingContext>, EncodingTypeState, TypegenDisabled>>;
 export type XStateSendEvent = (event: EncodingEvent, payload?: EventData) => State<EncodingContext, EncodingEvent, StateSchema<EncodingContext>, EncodingTypeState, TypegenDisabled>;
