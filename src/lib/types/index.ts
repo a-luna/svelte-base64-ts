@@ -1,4 +1,4 @@
-export type { B64EncodingMachineState, XStateSendEvent } from './alias';
+export type { EncodingMachineStateStore, XStateSendEvent } from './alias';
 export type { AppSettings } from './AppSettings';
 export type { AppState } from './AppState';
 export type { AppStore } from './AppStore';
@@ -17,10 +17,9 @@ export type { EncoderInputChunk } from './EncoderInputChunk';
 export type { EncoderOutput } from './EncoderOutput';
 export type { HelpSection, HelpSectionMap } from './HelpSection';
 export type { HexByteMap } from './HexByteMap';
-export { HslColor } from './HslColor';
+export type { HslColor } from './HslColor';
 export { BASE64_ENCODINGS, BUTTON_COLORS, STRING_ENCODINGS } from './Literals';
 export type { AppMode, Base64Encoding, ButtonColor, Encoding, StringEncoding } from './Literals';
 export type { OutputChunk } from './OutputChunk';
 export type { Result } from './Result';
 export type { SelectMenuOption } from './SelectMenuOption';
-

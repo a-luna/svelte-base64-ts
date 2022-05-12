@@ -1,11 +1,11 @@
 <script lang="ts">
 	import LastStep from '$lib/components/Icons/LastStep.svelte';
-	import type { B64EncodingMachineState } from '$lib/types';
+	import type { EncodingMachineStateStore } from '$lib/types';
 	import type { EncodingEvent } from '$lib/xstate/b64Encode';
 	import { createEventDispatcher } from 'svelte';
 	import NavButton from './NavButton.svelte';
 
-	export let state: B64EncodingMachineState;
+	export let state: EncodingMachineStateStore;
 	const navButtonEventDispatcher = createEventDispatcher<{ navButtonEvent: { action: EncodingEvent } }>();
 
 	$: autoplay = $state?.context.autoplay ?? false;

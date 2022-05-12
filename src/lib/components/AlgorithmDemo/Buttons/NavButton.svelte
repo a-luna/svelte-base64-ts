@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { B64EncodingMachineState } from '$lib/types';
+	import type { EncodingMachineStateStore } from '$lib/types';
 	import { fade } from 'svelte/transition';
 
 	export let label: string = '';
@@ -10,7 +10,7 @@
 	export let disabled = false;
 	export let buttonGridStyle = '';
 	export let labelGridStyle = '';
-	export let state: B64EncodingMachineState;
+	export let state: EncodingMachineStateStore;
 	let hovering = false;
 
 	$: showLabel = state

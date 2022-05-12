@@ -1,4 +1,5 @@
 <script lang="ts">
+	import InputChunk from '$lib/components/AlgorithmDemo/Base64EncodeDemo/InputChunk.svelte';
 	import {
 		describeBase64Char,
 		describeInputByte,
@@ -10,41 +11,44 @@
 		getEncodeInputText_IdleDemoText,
 	} from '$lib/components/AlgorithmDemo/Base64EncodeDemo/_demoText';
 	import LinkedLabel from '$lib/components/AlgorithmDemo/Buttons/LinkedLabel.svelte';
-	import InputChunk from '$lib/components/AlgorithmDemo/InputChunk.svelte';
 	import ArrowKey from '$lib/components/Icons/KeyboardIcons/ArrowKey.svelte';
 	import { alert } from '$lib/stores/alert';
-	import { demoState } from '$lib/stores/demoState';
-	import type { B64EncodingMachineState, StringEncoding } from '$lib/types';
+	import type { EncodingMachineStateStore, StringEncoding } from '$lib/types';
 	import { copyToClipboard } from '$lib/util';
 	import { slide } from 'svelte/transition';
 
-	export let state: B64EncodingMachineState;
+	export let state: EncodingMachineStateStore;
 	const formatEncodingType = (encoding: StringEncoding): string => (encoding === 'bin' ? 'binary' : encoding);
 	let pageWidth: number;
 	let arrowSize: 'sm' | 'md' | 'lg';
 	let welcomeDetailsElement: HTMLDetailsElement;
 	let appNavDetailsElement: HTMLDetailsElement;
+	const wikiUrl = 'https://en.wikipedia.org/wiki/Least_common_multiple';
+	const lcmSolveUrl =
+		'https://www.calculatorsoup.com/calculators/math/lcm.php?input=8+6&data=multiples_method&action=solve';
 
 	$: encodingIn = formatEncodingType($state.context.input.inputEncoding);
 	$: arrowSize = pageWidth < 730 ? 'sm' : 'md';
-	$: $demoState.welcomeDetailsOpen = welcomeDetailsElement?.open ?? $demoState.welcomeDetailsOpen;
-	$: $demoState.appNavDetailsOpen = appNavDetailsElement?.open ?? $demoState.appNavDetailsOpen;
 	$: copyToClipboardButtonStyle = pageWidth < 730 ? 'font-weight: 700; align-self: flex-end;' : 'font-weight: 700;';
+	$: finalBase64CharNumber = $state.context.input.lastChunkPadded
+		? $state.context.byteMaps.length % 3 === 1
+			? $state.context.base64Maps.length - 2
+			: $state.context.base64Maps.length - 1
+		: 0;
+	$: finalInputChunkSize = $state.context.input.chunks.slice(-1)[0].bytes.length;
+	$: finalInputChunkSizeVerbose = finalInputChunkSize === 2 ? 'two 8-bit bytes' : 'one 8-bit byte';
+	$: finalChunkBase64 = $state.context.output.chunks.slice(-1)[0].base64;
 
 	function toggleWelcomeDetails() {
 		if (welcomeDetailsElement.open) {
 			appNavDetailsElement.open = false;
-			$demoState.appNavDetailsOpen = false;
 		}
-		$demoState.welcomeDetailsOpen = welcomeDetailsElement.open;
 	}
 
 	function toggleAppNavDetails() {
 		if (appNavDetailsElement.open) {
 			welcomeDetailsElement.open = false;
-			$demoState.welcomeDetailsOpen = false;
 		}
-		$demoState.appNavDetailsOpen = appNavDetailsElement.open;
 	}
 
 	async function handleCopyButtonClicked(colorString: string) {
@@ -120,11 +124,11 @@
 	<p>
 		Nicely done! The value you provided looks, smells and tastes like a valid {encodingIn} string.
 	</p>
-	<p>
-		The first step in the Base64 encoding process is to convert the input data to binary (i.e, a string consisting of
-		only <code>0</code> and <code>1</code> characters).
-	</p>
 {:else if $state.matches({ encodeInput: 'idle' })}
+	<p>
+		<strong>The first step in the Base64 encoding process is to convert the input data to binary</strong> (i.e, a string
+		consisting of only <code>0</code> and <code>1</code> characters).
+	</p>
 	{#each getEncodeInputText_IdleDemoText($state.context.input.inputText, $state.context.input.inputEncoding) as text}
 		<p>{@html text}</p>
 	{/each}
@@ -138,25 +142,27 @@
 		)}
 	</p>
 {:else if $state.matches({ encodeInput: 'explainByteMapping' })}
-	<p>The first step is complete: the input data has been converted to a sequence of 8-bit bytes.</p>
+	<p>The first step is complete: <strong>the input data has been converted to a sequence of 8-bit bytes.</strong></p>
 	<p>
-		However, in Base64 encoding each value is stored as a 6-bit byte (see the table below which shows the complete
-		Base64 alphabet with corresponding decimal and binary values).
+		However, <strong>in Base64 encoding each value is stored as a 6-bit byte</strong> (see the table below which shows the
+		complete Base64 alphabet with corresponding decimal and binary values).
 	</p>
 	<p>
-		In order to reconcile the differing byte sizes, we need to find a number that is evenly divisible by both 8 and 6.
+		<strong>
+			In order to reconcile the differing byte sizes, we need to find a number that is evenly divisible by both 8 and 6.
+		</strong>
 	</p>
 {:else if $state.matches({ createInputChunks: 'idle' }) || $state.matches({ createInputChunks: 'autoPlayIdle' })}
 	<p>
-		In mathematics, this value is called the <strong
-			><a href="https://en.wikipedia.org/wiki/Least_common_multiple">Least Common Multple</a></strong
-		>
-		or <strong>LCM</strong>. The
-		<strong>LCM</strong> of 8 and 6 is 24.
+		In mathematics, this value is called the <strong><a href={wikiUrl} target="_blank">Least Common Multple</a></strong>
+		or <strong>LCM</strong>. The <strong>LCM</strong> of 8 and 6 is 24.
+		<span class="external-link"><a href={lcmSolveUrl} target="_blank">(click here for a step-by-step proof)</a></span>
 	</p>
 	<p>
-		What can we do with this information? Three 8-bit bytes of input data (3x8 = 24 bits) can be represented by four
-		6-bit Base64 digits (4x6 = 24 bits).
+		What can we do with this information?
+		<strong>
+			Three 8-bit bytes of input data (3x8 = 24 bits) can be represented by four 6-bit Base64 digits (4x6 = 24 bits).
+		</strong>
 	</p>
 	<p>
 		Therefore, if we separate the input data into chunks of three bytes, each chunk can be encoded as four Base64 digts.
@@ -384,7 +390,9 @@
 		</div>
 	</div>
 	{#if $state.context.input.lastChunkPadded}
-		<p>The last chunk will require special processing since it does not contain three 8-bit bytes.</p>
+		<p>
+			The last chunk will require special processing since it only contains {finalInputChunkSizeVerbose}.
+		</p>
 	{/if}
 {:else if $state.matches( { createOutputChunks: 'autoPlayCreateOutputChunk' }, ) || $state.matches( { createOutputChunks: 'createOutputChunk' }, )}
 	{#each describeOutputChunk($state.context.currentOutputChunk, $state.context.outputChunkIndex, $state.context.input.totalChunks) as text}
@@ -394,12 +402,14 @@
 	{/each}
 {:else if $state.matches({ encodeOutput: 'idle' })}
 	<p>
-		The final step is to convert each 6-bit value to the corresponding Base64 digit. The table below shows the Base64
-		digit, decimal value and binary value for the entire {getBase64AlphabetVerbose($state.context.input.outputEncoding)}
+		The final step is to convert each 6-bit value to the corresponding Base64 digit. The table below shows all 64 digits
+		in the {getBase64AlphabetVerbose($state.context.input.outputEncoding)} and their decimal and binary values.
 	</p>
-	<p>As each 6-bit value is converted to a Base64 digit, the mathing value in the table below will be highlighted.</p>
+	<p>
+		As each 6-bit value is converted to a Base64 digit, the corresponding row in the table below will be highlighted.
+	</p>
 {:else if $state.matches({ encodeOutput: 'autoPlayEncodeBase64' }) || $state.matches({ encodeOutput: 'encodeBase64' })}
-	{#each describeBase64Char($state.context.currentBase64Char, $state.context.base64CharIndex, $state.context.output.outputEncoding) as text}
+	{#each describeBase64Char($state.context.currentBase64Char, $state.context.base64CharIndex, finalBase64CharNumber, $state.context.output.outputEncoding, finalChunkBase64) as text}
 		<p>
 			{@html text}
 		</p>
@@ -500,6 +510,9 @@
 	}
 	.output-value .encoding-type {
 		color: var(--nav-button-autoplay-bg-color);
+	}
+	.external-link {
+		font-size: 0.7rem;
 	}
 	@media screen and (min-width: 730px) {
 		.demo-results {

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Alert from '$lib/components/Alert.svelte';
 	import MainForm from '$lib/components/AlgorithmDemo/MainForm.svelte';
-	import { demoState } from '$lib/stores/demoState';
+	import { demoStateOld } from '$lib/stores/demoState';
 </script>
 
 <svelte:head>
@@ -9,7 +9,7 @@
 </svelte:head>
 
 <Alert />
-<main class:encode={$demoState.mode === 'encode'} class:decode={$demoState.mode === 'decode'}>
+<main class:encode={$demoStateOld.mode === 'encode'} class:decode={$demoStateOld.mode === 'decode'}>
 	<MainForm />
 </main>
 

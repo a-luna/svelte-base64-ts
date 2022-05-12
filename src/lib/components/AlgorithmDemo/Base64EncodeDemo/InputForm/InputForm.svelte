@@ -5,10 +5,10 @@
 	import SelectBase64Encoding from '$lib/components/AlgorithmDemo/SelectBase64Encoding.svelte';
 	import SelectStringEncoding from '$lib/components/AlgorithmDemo/SelectStringEncoding.svelte';
 	import InputTextBox from '$lib/components/InputTextBox.svelte';
-	import type { B64EncodingMachineState, Base64Encoding, StringEncoding } from '$lib/types';
+	import type { Base64Encoding, EncodingMachineStateStore, StringEncoding } from '$lib/types';
 	import { createEventDispatcher } from 'svelte';
 
-	export let state: B64EncodingMachineState;
+	export let state: EncodingMachineStateStore;
 	export let inputText: string;
 	export let inputTextEncoding: StringEncoding = 'ASCII';
 	export let outputBase64Encoding: Base64Encoding = 'base64';

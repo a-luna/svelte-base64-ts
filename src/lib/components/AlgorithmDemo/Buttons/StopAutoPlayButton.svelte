@@ -1,10 +1,10 @@
 <script lang="ts">
 	import StopAutoPlay from '$lib/components/Icons/StopAutoPlay.svelte';
-	import type { B64EncodingMachineState } from '$lib/types';
+	import type { EncodingMachineStateStore } from '$lib/types';
 	import type { EncodingEvent } from '$lib/xstate/b64Encode';
 	import { createEventDispatcher } from 'svelte';
 
-	export let state: B64EncodingMachineState;
+	export let state: EncodingMachineStateStore;
 	const navButtonEventDispatcher = createEventDispatcher<{ navButtonEvent: { action: EncodingEvent } }>();
 
 	$: autoplay = state ? $state.context.autoplay : true;

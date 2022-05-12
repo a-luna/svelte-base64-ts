@@ -1,21 +1,22 @@
 <script lang="ts">
+	import { Hsl, parseHslColorFromString } from '$lib/hsl';
 	import type { ButtonColor } from '$lib/types';
-	import { HslColor } from '$lib/types';
 	import { getCSSPropValue } from '$lib/util';
 
 	export let size: 'xs' | 'sm' | 'md' | 'lg' = 'sm';
 	export let color: ButtonColor = 'blue';
 	export let disabled = false;
-	let bgColor: HslColor;
+	let bgColor: Hsl;
 	let edgeGradient = '';
 
 	$: fontSize = size === 'xs' ? '0.75rem' : size === 'sm' ? '1rem' : size === 'md' ? '1.2rem' : '1.4rem';
 	$: fgColorCssPropName = disabled ? '--button-disabled-text-color' : `--fg-color-on-${color}`;
 	$: bgColorCssPropName = disabled ? '--button-disabled-bg-color' : `--bg-color-${color}`;
 	$: if (typeof window !== 'undefined')
-		bgColor = HslColor.fromString(getCSSPropValue(document.body, bgColorCssPropName));
+		bgColor = parseHslColorFromString(getCSSPropValue(document.body, bgColorCssPropName));
 	$: if (bgColor)
 		edgeGradient = `linear-gradient(to left, hsl(${bgColor.hue}deg ${bgColor.saturation}% 16%) 0%, hsl(${bgColor.hue}deg ${bgColor.saturation}% 32%) 8%, hsl(${bgColor.hue}deg ${bgColor.saturation}% 32%) 92%, hsl(${bgColor.hue}deg ${bgColor.saturation}% 16%) 100%)`;
+	$: if (typeof window !== 'undefined') console.log({ s: getCSSPropValue(document.body, bgColorCssPropName) });
 </script>
 
 <button {disabled} class="pushable" style="font-size: {fontSize};" on:click>

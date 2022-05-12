@@ -13,6 +13,7 @@ import {
 	asciiStringFromByteArray,
 	byteArrayToBinaryStringArray,
 	divmod,
+	// escapeUtf8String,
 	hexStringFromByteArray,
 	stringToByteArray,
 } from '$lib/util';
@@ -58,7 +59,7 @@ function createEncoderInput(
 			binary,
 			isPadded,
 			padLength: isPadded ? padLength : 0,
-			inputMap: createEncoderInputChunk(bytes, inputEncoding, ascii, byteStrings),
+			inputMap: createHexByteMapsForChunk(bytes, inputEncoding, ascii, byteStrings),
 		};
 	});
 	return { ...encoderInput, chunks: inputChunks };
@@ -72,6 +73,8 @@ function getEncodingParameters(
 ): EncoderInput {
 	const bytes = stringToByteArray(inputText, inputEncoding);
 	const ascii = inputEncoding === 'ASCII' ? inputText : '';
+	// const utf8 = inputEncoding === 'UTF-8' ? inputText : '';
+	// const utf8Escaped = inputEncoding === 'UTF-8' ? escapeUtf8String(inputText) : '';
 	const binary = inputEncoding === 'bin' ? inputText : byteArrayToBinaryStringArray(bytes).join('');
 	const hex = hexStringFromByteArray(bytes, true, ' ');
 	const hexBytes = hex.split(' ');
@@ -88,6 +91,8 @@ function getEncodingParameters(
 		hexBytes,
 		hex,
 		ascii,
+		// utf8,
+		// utf8Escaped,
 		binary,
 		totalChunks,
 		lastChunkPadded,
@@ -102,7 +107,7 @@ function padBinaryString(input: string, divisor: number): string {
 	return input;
 }
 
-export function createEncoderInputChunk(
+export function createHexByteMapsForChunk(
 	inputBytes: number[],
 	encoding: StringEncoding,
 	ascii: string,

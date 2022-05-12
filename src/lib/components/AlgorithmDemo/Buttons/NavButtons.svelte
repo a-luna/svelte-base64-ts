@@ -6,10 +6,9 @@
 	import ResetButton from '$lib/components/AlgorithmDemo/Buttons/ResetButton.svelte';
 	import StartAutoPlayButton from '$lib/components/AlgorithmDemo/Buttons/StartAutoPlayButton.svelte';
 	import StopAutoPlayButton from '$lib/components/AlgorithmDemo/Buttons/StopAutoPlayButton.svelte';
-	import type { B64EncodingMachineState } from '$lib/types';
+	import type { EncodingMachineStateStore } from '$lib/types';
 
-	export let state: B64EncodingMachineState;
-	let lastStepHovering = false;
+	export let state: EncodingMachineStateStore;
 	let pageWidth: number;
 
 	$: showLabel = state

@@ -3,7 +3,7 @@
 	import ChevronLeft from '$lib/components/Icons/ChevronLeft.svelte';
 	import ChevronRight from '$lib/components/Icons/ChevronRight.svelte';
 	import Modal from '$lib/components/Modal.svelte';
-	import { demoState } from '$lib/stores/demoState';
+	import { demoStateOld } from '$lib/stores/demoState';
 	import { slide } from 'svelte/transition';
 	import CloseModalButton from '../Buttons/CloseModalButton.svelte';
 	import ShowHelpTopicsButton from '../Buttons/ShowHelpTopicsButton.svelte';
@@ -14,11 +14,9 @@
 	let pageWidth: number;
 	let helpTopicsExpanded = false;
 
-	$: $demoState.modalOpen = !closed;
+	$: $demoStateOld.modalOpen = !closed;
 	$: title = pageWidth < 730 ? 'Base64 Encoding Help Docs' : '';
 	$: showContentsPanel = pageWidth >= 730;
-	$: showContentsDropDown = pageWidth < 730;
-	$: sectionTitles = encodingHelpSections.map((section) => section.title);
 	$: displayedSectionTitle = helpTopicsExpanded ? 'Help Topics' : encodingHelpSections[index].title;
 
 	export function toggleModal() {
@@ -120,5 +118,6 @@
 	}
 	.mobile-help-docs-nav {
 		background-color: var(--modal-dialog-bg-color);
+		border-bottom: 1px solid var(--help-docs-border-color);
 	}
 </style>

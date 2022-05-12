@@ -31,7 +31,7 @@ function createAppStateStore(mode: AppMode): AppState {
 		settings = getDefaultAppSettings(mode, true);
 		return validateInput(settings);
 	}
-
+                      
 	function changeInputText(input: string, settings: AppSettings): AppSettings {
 		if (settings.mode === 'encode') {
 			settings.encoderInput.inputText = input;

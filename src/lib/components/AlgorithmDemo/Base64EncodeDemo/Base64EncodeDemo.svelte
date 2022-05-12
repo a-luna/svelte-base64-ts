@@ -1,30 +1,31 @@
 <script lang="ts">
 	import AuthorName from '$lib/components/AlgorithmDemo/AuthorName.svelte';
 	import DemoText from '$lib/components/AlgorithmDemo/Base64EncodeDemo/DemoText.svelte';
+	import InputByte from '$lib/components/AlgorithmDemo/Base64EncodeDemo/InputByte.svelte';
+	import InputChunk from '$lib/components/AlgorithmDemo/Base64EncodeDemo/InputChunk.svelte';
 	import InputForm from '$lib/components/AlgorithmDemo/Base64EncodeDemo/InputForm/InputForm.svelte';
-	import EncodedInputByte from '$lib/components/AlgorithmDemo/EncodedInputByte.svelte';
-	import EncodedOutputByte from '$lib/components/AlgorithmDemo/EncodedOutputByte.svelte';
+	import OutputByte from '$lib/components/AlgorithmDemo/Base64EncodeDemo/OutputByte.svelte';
+	import OutputBytePlaceholder from '$lib/components/AlgorithmDemo/Base64EncodeDemo/OutputBytePlaceholder.svelte';
+	import OutputChunk from '$lib/components/AlgorithmDemo/Base64EncodeDemo/OutputChunk.svelte';
 	import EncoderHelpModal from '$lib/components/AlgorithmDemo/HelpModal/EncoderHelpModal.svelte';
-	import InputChunk from '$lib/components/AlgorithmDemo/InputChunk.svelte';
-	import OutputChunk from '$lib/components/AlgorithmDemo/OutputChunk.svelte';
 	import FormTitle from '$lib/components/FormTitle.svelte';
 	import AsciiLookupTable from '$lib/components/LookupTables/AsciiLookupTable.svelte';
 	import Base64LookupTable from '$lib/components/LookupTables/Base64LookupTable.svelte';
 	import { alert } from '$lib/stores/alert';
-	import { demoState } from '$lib/stores/demoState';
+	import { demoStateOld } from '$lib/stores/demoState';
 	import { isBase64Encoding, isStringEncoding } from '$lib/typeguards';
-	import type { Base64Encoding, StringEncoding } from '$lib/types';
+	import type { Base64Encoding, EncodingMachineStateStore, StringEncoding, XStateSendEvent } from '$lib/types';
 	import { getChunkIndexFromBase64CharIndex, getChunkIndexFromByteIndex } from '$lib/util';
-	import type { EncodingContext, EncodingEvent, EncodingTypeState } from '$lib/xstate/b64Encode';
-	import { encodingMachine } from '$lib/xstate/b64Encode';
-	import { useMachine } from '@xstate/svelte';
+	import type { EncodingEvent } from '$lib/xstate/b64Encode';
+	import { getContext } from 'svelte';
 	import { fade } from 'svelte/transition';
-	import OutputBytePlaceholder from '../OutputBytePlaceholder.svelte';
 
 	// TODO: Create smart text snippets that explain process of converting inputText -> binary -> 24-bit chunks
 	// TODO: Create MapHexByteToBase64 component
 	// TODO: Create state machine for b64Decode process
 
+	export let state: EncodingMachineStateStore;
+	export let send: XStateSendEvent;
 	let inputText = '';
 	let inputTextEncoding: StringEncoding = 'ASCII';
 	let outputBase64Encoding: Base64Encoding = 'base64';
@@ -32,8 +33,7 @@
 	let highlightBase64: string;
 	let pageWidth: number;
 	let helpModal: EncoderHelpModal;
-
-	const { state, send } = useMachine<EncodingContext, EncodingEvent, EncodingTypeState>(encodingMachine);
+	let { demoState } = getContext('demo');
 
 	function openHelpDocsModal() {
 		if (!$state.context.autoplay) {
@@ -43,46 +43,7 @@
 
 	$: updateInputText(inputText, inputTextEncoding, outputBase64Encoding);
 	$: console.log({ state: $state.value, context: $state.context });
-	$: showInputBytes =
-		$state.matches({ encodeInput: 'autoPlayEncodeByte' }) ||
-		$state.matches({ encodeInput: 'encodeByte' }) ||
-		$state.matches({ encodeInput: 'encodingComplete' }) ||
-		$state.matches({ createInputChunks: 'autoPlayCreateInputChunk' }) ||
-		$state.matches({ createInputChunks: 'createInputChunk' }) ||
-		$state.matches({ createInputChunks: 'createLastPaddedChunk' }) ||
-		$state.matches({ createInputChunks: 'createdAllInputChunks' }) ||
-		$state.matches({ createOutputChunks: 'autoPlayCreateOutputChunk' }) ||
-		$state.matches({ createOutputChunks: 'createOutputChunk' }) ||
-		$state.matches({ createOutputChunks: 'createdAllOutputChunks' }) ||
-		$state.matches({ encodeOutput: 'autoPlayEncodeBase64' }) ||
-		$state.matches({ encodeOutput: 'encodeBase64' }) ||
-		$state.matches({ encodeOutput: 'encodingComplete' });
-	$: showInputChunks =
-		$state.matches({ createInputChunks: 'autoPlayCreateInputChunk' }) ||
-		$state.matches({ createInputChunks: 'createInputChunk' }) ||
-		$state.matches({ createInputChunks: 'createLastPaddedChunk' }) ||
-		$state.matches({ createInputChunks: 'createdAllInputChunks' });
-	$: showOutputChunks =
-		$state.matches({ createOutputChunks: 'autoPlayCreateOutputChunk' }) ||
-		$state.matches({ createOutputChunks: 'createOutputChunk' }) ||
-		$state.matches({ createOutputChunks: 'createdAllOutputChunks' }) ||
-		$state.matches({ encodeOutput: 'autoPlayEncodeBase64' }) ||
-		$state.matches({ encodeOutput: 'encodeBase64' }) ||
-		$state.matches({ encodeOutput: 'encodingComplete' });
-	$: showOutputBytePlaceholders =
-		$state.matches({ createOutputChunks: 'autoPlayCreateOutputChunk' }) ||
-		$state.matches({ createOutputChunks: 'createOutputChunk' }) ||
-		$state.matches({ createOutputChunks: 'createdAllOutputChunks' });
-	$: showOutputBytes =
-		$state.matches({ encodeOutput: 'autoPlayEncodeBase64' }) ||
-		$state.matches({ encodeOutput: 'encodeBase64' }) ||
-		$state.matches({ encodeOutput: 'encodingComplete' });
-	$: showAsciiTable =
-		($state.matches({ encodeInput: 'idle' }) ||
-			$state.matches({ encodeInput: 'autoPlayEncodeByte' }) ||
-			$state.matches({ encodeInput: 'encodeByte' })) &&
-		$state.context.input.ascii;
-	$: if ($state.matches({ validateInputText: 'error' }) && $state?.context?.input?.validationResult?.error?.message) {
+	$: if ($demoState.errorOccurred) {
 		$alert = $state.context.input.validationResult.error.message;
 	}
 	$: if (
@@ -128,7 +89,7 @@
 	const handleNavButtonEvent = (e: CustomEvent<{ action: EncodingEvent }>) => send(e.detail.action);
 
 	function handleKeyPress(key: string) {
-		if (!$demoState.modalOpen) {
+		if (!$demoStateOld.modalOpen) {
 			if (key === 'ArrowRight') {
 				if ($state.matches('inactive')) {
 					sendEvent({
@@ -195,7 +156,7 @@
 		<div id="demo-text">
 			<DemoText {state} />
 		</div>
-		{#if showInputBytes}
+		{#if $demoState.showInputBytes}
 			<h3 class="input-heading">Input</h3>
 			<div id="input-hex" class="encoded-bytes">
 				<div class="binary-chunks">
@@ -211,20 +172,20 @@
 							on:mouseenter={() => (highlightHexByte = byte.byte)}
 							on:mouseleave={() => (highlightHexByte = null)}
 						>
-							<EncodedInputByte {state} {byteIndex} {byte} />
+							<InputByte {state} {byteIndex} {byte} />
 						</div>
 					{/each}
 				</div>
 			</div>
 		{/if}
-		{#if showInputChunks}
+		{#if $demoState.showInputChunks}
 			<div id="hex-b64-mapping" class="binary-chunks data-mapping">
 				{#each $state.context.updatedInputChunks as chunk, i}
 					<InputChunk {state} {chunk} chunkIndex={i} />
 				{/each}
 			</div>
 		{/if}
-		{#if showOutputChunks}
+		{#if $demoState.showOutputChunks}
 			<div id="hex-b64-mapping" class="binary-chunks data-mapping">
 				{#each $state.context.updatedOutputChunks as chunk, i}
 					<InputChunk {state} chunk={$state.context.updatedInputChunks[i]} chunkIndex={i} />
@@ -232,7 +193,7 @@
 				{/each}
 			</div>
 		{/if}
-		{#if showOutputBytePlaceholders}
+		{#if $demoState.showOutputBytePlaceholders}
 			<h3 class="output-heading">Output</h3>
 			<div id="output-b64" class="encoded-bytes">
 				<div class="binary-chunks">
@@ -249,7 +210,7 @@
 				</div>
 			</div>
 		{/if}
-		{#if showOutputBytes}
+		{#if $demoState.showOutputBytes}
 			<h3 class="output-heading">Output</h3>
 			<div id="output-b64" class="encoded-bytes">
 				<div class="binary-chunks">
@@ -265,7 +226,7 @@
 							on:mouseenter={() => (highlightBase64 = b64.b64)}
 							on:mouseleave={() => (highlightBase64 = null)}
 						>
-							<EncodedOutputByte {state} {charIndex} {b64} />
+							<OutputByte {state} {charIndex} {b64} />
 						</div>
 					{/each}
 				</div>
@@ -274,11 +235,11 @@
 	</div>
 </div>
 <div class="demo-references" style="flex: 1 0 {tableSectionHeight}">
-	{#if showAsciiTable}
+	{#if $demoState.showAsciiTable}
 		<div transition:fade class="ascii-table">
 			<AsciiLookupTable asciiTableChunkSize={tableChunkSize} {highlightHexByte} fontSize={'0.65rem'} />
 		</div>
-	{:else if $state.matches({ encodeInput: 'explainByteMapping' }) || $state.matches('encodeOutput')}
+	{:else if $demoState.showBase64Table}
 		<div transition:fade class="base64-table">
 			<Base64LookupTable
 				base64Encoding={outputBase64Encoding}
@@ -436,7 +397,6 @@
 		}
 		#demo-steps-wrapper {
 			padding: 1rem;
-			margin: 0;
 			width: 666px;
 
 			grid-column: 1 / span 1;

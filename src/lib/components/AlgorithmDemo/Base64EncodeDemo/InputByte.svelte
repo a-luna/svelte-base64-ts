@@ -1,12 +1,11 @@
 <script lang="ts">
 	import { rotatingColors } from '$lib/constants';
-	import type { B64EncodingMachineState, HexByteMap } from '$lib/types';
+	import type { EncodingMachineStateStore, HexByteMap } from '$lib/types';
 	import { getBase64CharIndexFromGroupId, getChunkIndexFromByteIndex } from '$lib/util';
 
 	export let byte: HexByteMap;
 	export let byteIndex: number;
-	export let state: B64EncodingMachineState;
-	let stateName: string;
+	export let state: EncodingMachineStateStore;
 	let currentByteColor: string;
 
 	$: chunkId = getChunkIndexFromByteIndex(byteIndex);
@@ -14,7 +13,6 @@
 	$: chunkColor = rotatingColors[chunkId % rotatingColors.length];
 	$: currentInputChunk = $state.context.inputChunkIndex;
 	$: currentOutputChunk = $state.context.outputChunkIndex;
-	$: stateName = $state.toStrings().join(' ');
 	$: inputChunkMappingInProgress =
 		$state.matches({ createInputChunks: 'autoPlayCreateInputChunk' }) ||
 		$state.matches({ createInputChunks: 'createInputChunk' }) ||

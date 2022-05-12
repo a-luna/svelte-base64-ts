@@ -1,3 +1,4 @@
+import { unescape } from '$lib/htmlEscape';
 import type { Result, StringEncoding } from '$lib/types';
 import { validateAsciiBytes } from '$lib/validation';
 
@@ -6,7 +7,7 @@ export const B64_BIT_GROUP_REGEX = /base64-chunk-(?<chunk>\d+)-digit-(?<b64Char>
 
 export const divmod = (x: number, y: number): [number, number] => [(x / y) | 0, x % y];
 
-export const asciiStringToByteArray = (s: string): number[] => Array.from(s, (_, i) => s.charCodeAt(i));
+export const genericStringToByteArray = (s: string): number[] => Array.from(s, (_, i) => s.charCodeAt(i));
 
 export const hexStringToByteArray = (hex: string): number[] =>
 	Array.from({ length: hex.length / 2 }, (_, i) => parseInt(hex.slice(i * 2, i * 2 + 2), 16));
@@ -14,12 +15,16 @@ export const hexStringToByteArray = (hex: string): number[] =>
 export const binaryStringToByteArray = (bin: string): number[] =>
 	Array.from({ length: bin.length / 8 }, (_, i) => parseInt(bin.slice(i * 8, i * 8 + 8), 2));
 
+export const utf8StringToByteArray = (s: string): number[] => genericStringToByteArray(unescape(encodeURIComponent(s)));
+
 export const stringToByteArray = (s: string, encoding: StringEncoding): number[] =>
-	encoding === 'ASCII'
-		? asciiStringToByteArray(s)
-		: encoding === 'hex'
-			? hexStringToByteArray(s)
-			: binaryStringToByteArray(s);
+	encoding === 'hex'
+		? hexStringToByteArray(s)
+		: encoding === 'bin'
+		? binaryStringToByteArray(s)
+		: encoding === 'UTF-8'
+		? utf8StringToByteArray(s)
+		: genericStringToByteArray(s);
 
 export const asciiStringFromByteArray = (byteArray: number[]): string =>
 	validateAsciiBytes(byteArray) ? Array.from(byteArray, (x) => String.fromCharCode(x)).join('') : '';
@@ -28,9 +33,7 @@ export const asciiStringFromHexString = (hexString: string): string =>
 	asciiStringFromByteArray(hexStringToByteArray(hexString));
 
 export const hexStringFromByte = (byte: number, upperCase = true): string =>
-	upperCase 
-		? byte.toString(16).toUpperCase().padStart(2, '0') 
-		: byte.toString(16).padStart(2, '0');
+	upperCase ? byte.toString(16).toUpperCase().padStart(2, '0') : byte.toString(16).padStart(2, '0');
 
 export const hexStringFromByteArray = (byteArray: number[], upperCase = false, separator = ''): string =>
 	byteArray.map((byte) => hexStringFromByte(byte, upperCase)).join(separator);
@@ -40,6 +43,12 @@ export const byteArrayToBinaryStringArray = (byteArray: number[]): string[] =>
 
 export const decimalToBinaryString = (val: number): string =>
 	`${'0'.repeat(8 - val.toString(2).length)}${val.toString(2)}`;
+
+export const utf8StringFromByteArray = (byteArray: number[]): string =>
+	Array.from(byteArray, (x) => String.fromCharCode(x)).join('');
+
+export const escapeUtf8String = (utf8String: string): string =>
+	Array.from(utf8StringToByteArray(utf8String), (x) => String.fromCharCode(x)).join('');
 
 export function chunkify<T>(args: { inputList: T[]; chunkSize: number }): T[][] {
 	const { inputList, chunkSize } = args;
@@ -84,12 +93,18 @@ export const getRandomHexString = (length: number): string =>
 		.map((n) => Number(n).toString(16))
 		.join('');
 
-export function parseGroupId(groupId: string): { chunkNumber: number; byteNumber: number; byteIndexWithinChunk: number; b64CharNumber: number; b64IndexWithinChunk: number } {
+export function parseGroupId(groupId: string): {
+	chunkNumber: number;
+	byteNumber: number;
+	byteIndexWithinChunk: number;
+	b64CharNumber: number;
+	b64IndexWithinChunk: number;
+} {
 	let match = HEX_BIT_GROUP_REGEX.exec(groupId);
 	if (match) {
 		const { chunk, byte } = match.groups;
 		const chunkNumber = parseInt(chunk) - 1;
-		const byteIndexWithinChunk = parseInt(byte) - 1
+		const byteIndexWithinChunk = parseInt(byte) - 1;
 		const byteNumber = chunkNumber * 3 + byteIndexWithinChunk;
 		return { chunkNumber, byteNumber, byteIndexWithinChunk, b64CharNumber: null, b64IndexWithinChunk: null };
 	}
@@ -97,7 +112,7 @@ export function parseGroupId(groupId: string): { chunkNumber: number; byteNumber
 	if (match) {
 		const { chunk, b64Char } = match.groups;
 		const chunkNumber = parseInt(chunk) - 1;
-		const b64IndexWithinChunk = parseInt(b64Char) - 1
+		const b64IndexWithinChunk = parseInt(b64Char) - 1;
 		const b64CharNumber = chunkNumber * 4 + b64IndexWithinChunk;
 		return { chunkNumber, byteNumber: null, byteIndexWithinChunk: null, b64CharNumber, b64IndexWithinChunk };
 	}
@@ -131,15 +146,17 @@ export function getb64IndexWithinChunkFromGroupId(groupId: string): number {
 export const getChunkIndexFromByteIndex = (byteIndex: number): number => (byteIndex / 3) | 0;
 export const getChunkIndexFromBase64CharIndex = (charIndex: number): number => (charIndex / 4) | 0;
 
-export const capitalizeWords = (input: string): string => input.split(' ').map((word) =>
-	`${word.slice(0,1)?.toUpperCase()}${word.slice(1)}`).join(' ');
-
+export const capitalizeWords = (input: string): string =>
+	input
+		.split(' ')
+		.map((word) => `${word.slice(0, 1)?.toUpperCase()}${word.slice(1)}`)
+		.join(' ');
 
 export async function copyToClipboard(text: string): Promise<Result> {
 	if (typeof window !== 'undefined') {
 		try {
 			await navigator.clipboard.writeText(text);
-			return { success: true }
+			return { success: true };
 		} catch {
 			return { success: false, error: Error('Error! Failed to copy text to clipboard.') };
 		}

@@ -10,15 +10,14 @@
 
 	const options: SelectMenuOption[] = [
 		{ label: 'ASCII', value: 'ASCII', optionNumber: 1, active: false },
-		{ label: 'hex', value: 'hex', optionNumber: 2, active: false },
-		{ label: 'bin', value: 'bin', optionNumber: 3, active: false },
+		// { label: 'UTF-8', value: 'UTF-8', optionNumber: 2, active: false },
+		{ label: 'hex', value: 'hex', optionNumber: 3, active: false },
+		{ label: 'bin', value: 'bin', optionNumber: 4, active: false },
 	];
 	const menuId = 'select-string-encoding';
 	const menuLabel = '';
 
-	function handleStringEncodingChanged(stringEncoding: StringEncoding) {
-		value = stringEncoding;
-	}
+	const handleStringEncodingChanged = (stringEncoding: StringEncoding) => (value = stringEncoding);
 </script>
 
 <Select
