@@ -1,4 +1,9 @@
-export type { EncodingMachineStateStore, XStateSendEvent } from './alias';
+export type {
+	EncodingMachineStateStore,
+	EncodingStateToEventMap,
+	NavButtonEventDispatcher,
+	XStateSendEvent,
+} from './alias';
 export type { AppSettings } from './AppSettings';
 export type { AppState } from './AppState';
 export type { AppStore } from './AppStore';

@@ -13,11 +13,15 @@
 	import LinkedLabel from '$lib/components/AlgorithmDemo/Buttons/LinkedLabel.svelte';
 	import ArrowKey from '$lib/components/Icons/KeyboardIcons/ArrowKey.svelte';
 	import { alert } from '$lib/stores/alert';
-	import type { EncodingMachineStateStore, StringEncoding } from '$lib/types';
+	import type { DemoState, EncodingMachineStateStore, StringEncoding } from '$lib/types';
 	import { copyToClipboard } from '$lib/util';
+	import { getContext } from 'svelte';
+	import type { Writable } from 'svelte/store';
 	import { slide } from 'svelte/transition';
 
-	export let state: EncodingMachineStateStore;
+	let state: EncodingMachineStateStore;
+	let demoUIState: Writable<DemoState>;
+	({ state, demoUIState } = getContext('demo'));
 	const formatEncodingType = (encoding: StringEncoding): string => (encoding === 'bin' ? 'binary' : encoding);
 	let pageWidth: number;
 	let arrowSize: 'sm' | 'md' | 'lg';
@@ -49,6 +53,7 @@
 		if (appNavDetailsElement.open) {
 			welcomeDetailsElement.open = false;
 		}
+		$demoUIState.appNavDetailsOpen = appNavDetailsElement.open;
 	}
 
 	async function handleCopyButtonClicked(colorString: string) {

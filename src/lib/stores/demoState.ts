@@ -2,9 +2,10 @@ import type { DemoState, EncodingMachineStateStore } from '$lib/types';
 import type { DemoStore } from '$lib/types/DemoStore';
 import { derived, writable, type Readable } from 'svelte/store';
 
-export const demoStateOld = writable<DemoState>({
+export const demoUIState = writable<DemoState>({
 	mode: 'encode',
 	modalOpen: false,
+	appNavDetailsOpen: false,
 });
 
 export function createDemoStateStore(state: EncodingMachineStateStore): Readable<DemoStore> {

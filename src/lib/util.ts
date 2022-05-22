@@ -62,16 +62,14 @@ export function chunkify<T>(args: { inputList: T[]; chunkSize: number }): T[][] 
 export const getCSSPropValue = (element: HTMLElement, propName: string): string =>
 	getComputedStyle(element).getPropertyValue(propName);
 
-export const focusInput = (inputElement: HTMLInputElement) => inputElement.focus();
-
-export function clickOutside(node: HTMLElement, { enabled: initialEnabled, cb }) {
+export function clickOutside(node: HTMLElement, { enabled: initialEnabled, cb }: { enabled: boolean; cb: () => void }) {
 	const handleOutsideClick = ({ target }) => {
 		if (!node.contains(target)) {
 			cb();
 		}
 	};
 
-	function update({ enabled }) {
+	function update({ enabled }: { enabled: boolean }) {
 		if (enabled) {
 			window.addEventListener('click', handleOutsideClick);
 		} else {
@@ -79,7 +77,7 @@ export function clickOutside(node: HTMLElement, { enabled: initialEnabled, cb })
 		}
 	}
 
-	update(initialEnabled);
+	update({ enabled: initialEnabled });
 	return {
 		update,
 		destroy() {
@@ -94,38 +92,50 @@ export const getRandomHexString = (length: number): string =>
 		.join('');
 
 export function parseGroupId(groupId: string): {
-	chunkNumber: number;
-	byteNumber: number;
+	chunkIndex: number;
+	byteIndex: number;
 	byteIndexWithinChunk: number;
-	b64CharNumber: number;
+	b64CharIndex: number;
 	b64IndexWithinChunk: number;
 } {
 	let match = HEX_BIT_GROUP_REGEX.exec(groupId);
 	if (match) {
 		const { chunk, byte } = match.groups;
-		const chunkNumber = parseInt(chunk) - 1;
+		const chunkIndex = parseInt(chunk) - 1;
 		const byteIndexWithinChunk = parseInt(byte) - 1;
-		const byteNumber = chunkNumber * 3 + byteIndexWithinChunk;
-		return { chunkNumber, byteNumber, byteIndexWithinChunk, b64CharNumber: null, b64IndexWithinChunk: null };
+		const byteIndex = chunkIndex * 3 + byteIndexWithinChunk;
+		return {
+			chunkIndex,
+			byteIndex,
+			byteIndexWithinChunk,
+			b64CharIndex: null,
+			b64IndexWithinChunk: null,
+		};
 	}
 	match = B64_BIT_GROUP_REGEX.exec(groupId);
 	if (match) {
 		const { chunk, b64Char } = match.groups;
-		const chunkNumber = parseInt(chunk) - 1;
+		const chunkIndex = parseInt(chunk) - 1;
 		const b64IndexWithinChunk = parseInt(b64Char) - 1;
-		const b64CharNumber = chunkNumber * 4 + b64IndexWithinChunk;
-		return { chunkNumber, byteNumber: null, byteIndexWithinChunk: null, b64CharNumber, b64IndexWithinChunk };
+		const b64CharIndex = chunkIndex * 4 + b64IndexWithinChunk;
+		return {
+			chunkIndex,
+			byteIndex: null,
+			byteIndexWithinChunk: null,
+			b64CharIndex,
+			b64IndexWithinChunk,
+		};
 	}
 }
 
 export function getChunkIndexFromGroupId(groupId: string): number {
-	const { chunkNumber } = parseGroupId(groupId);
-	return chunkNumber ?? 0;
+	const { chunkIndex } = parseGroupId(groupId);
+	return chunkIndex ?? 0;
 }
 
 export function getByteIndexFromGroupId(groupId: string): number {
-	const { byteNumber } = parseGroupId(groupId);
-	return byteNumber ?? 0;
+	const { byteIndex } = parseGroupId(groupId);
+	return byteIndex ?? 0;
 }
 
 export function getByteIndexWithinChunkFromGroupId(groupId: string): number {
@@ -134,8 +144,8 @@ export function getByteIndexWithinChunkFromGroupId(groupId: string): number {
 }
 
 export function getBase64CharIndexFromGroupId(groupId: string): number {
-	const { b64CharNumber } = parseGroupId(groupId);
-	return b64CharNumber ?? 0;
+	const { b64CharIndex } = parseGroupId(groupId);
+	return b64CharIndex ?? 0;
 }
 
 export function getb64IndexWithinChunkFromGroupId(groupId: string): number {

@@ -3,18 +3,22 @@
 	import ChevronLeft from '$lib/components/Icons/ChevronLeft.svelte';
 	import ChevronRight from '$lib/components/Icons/ChevronRight.svelte';
 	import Modal from '$lib/components/Modal.svelte';
-	import { demoStateOld } from '$lib/stores/demoState';
+	import type { DemoState } from '$lib/types';
+	import { getContext } from 'svelte';
+	import type { Writable } from 'svelte/store';
 	import { slide } from 'svelte/transition';
 	import CloseModalButton from '../Buttons/CloseModalButton.svelte';
 	import ShowHelpTopicsButton from '../Buttons/ShowHelpTopicsButton.svelte';
 
-	let index = 0;
+	export let index = 0;
+	let demoUIState: Writable<DemoState>;
 	let modal: Modal;
 	let closed: boolean;
 	let pageWidth: number;
 	let helpTopicsExpanded = false;
+	({ demoUIState } = getContext('demo'));
 
-	$: $demoStateOld.modalOpen = !closed;
+	$: $demoUIState.modalOpen = !closed;
 	$: title = pageWidth < 730 ? 'Base64 Encoding Help Docs' : '';
 	$: showContentsPanel = pageWidth >= 730;
 	$: displayedSectionTitle = helpTopicsExpanded ? 'Help Topics' : encodingHelpSections[index].title;

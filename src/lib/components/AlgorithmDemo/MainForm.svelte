@@ -1,26 +1,39 @@
 <script lang="ts">
 	import Base64EncodeDemo from '$lib/components/AlgorithmDemo/Base64EncodeDemo/Base64EncodeDemo.svelte';
-	import { createDemoStateStore, demoStateOld } from '$lib/stores/demoState';
-	import type { EncodingContext, EncodingEvent, EncodingTypeState } from '$lib/xstate/b64Encode';
-	import { encodingMachine } from '$lib/xstate/b64Encode';
+	import { createDemoStateStore } from '$lib/stores/demoState';
+	import type { DemoState } from '$lib/types';
+	import type { EncodingContext, EncodingEvent, EncodingTypeStates } from '$lib/xstate/b64Encode';
+	import { encodingMachineConfig, encodingMachineOptions } from '$lib/xstate/b64Encode';
 	import { useMachine } from '@xstate/svelte';
-	import { setContext } from 'svelte';
+	import { createEventDispatcher, setContext } from 'svelte';
+	import type { Writable } from 'svelte/store';
+	import { createMachine } from 'xstate';
 
-	const { state, send } = useMachine<EncodingContext, EncodingEvent, EncodingTypeState>(encodingMachine);
+	export let demoUIState: Writable<DemoState>;
+	const encodingMachine = createMachine<EncodingContext, EncodingEvent, EncodingTypeStates>(
+		encodingMachineConfig,
+		encodingMachineOptions,
+	);
+	const { state, send } = useMachine<EncodingContext, EncodingEvent, EncodingTypeStates>(encodingMachine);
 	const demoState = createDemoStateStore(state);
-	setContext('demo', { demoState });
+	const navButtonEventDispatcher = createEventDispatcher<{ navButtonEvent: { action: EncodingEvent } }>();
+	setContext('demo', { state, demoState, demoUIState, send, navButtonEventDispatcher });
 	let pageWidth: number;
 
 	$: height = pageWidth < 730 ? 'auto' : '100vh';
 	$: gridStyles =
-		pageWidth < 730 ? 'auto auto auto 1fr' : $state.matches('inactive') ? 'auto auto 1fr auto' : 'auto auto 1fr 265px';
+		pageWidth < 730
+			? 'auto auto auto 1fr'
+			: $state.matches('inactive') || $state.matches('finished') || $state.matches({ validateInputText: 'error' })
+			? 'auto auto 1fr auto'
+			: 'auto auto 1fr 265px';
 </script>
 
 <svelte:window bind:innerWidth={pageWidth} />
 
 <div class="base64-algo-demo" style="height: {height}; grid-template-rows: {gridStyles};">
-	{#if $demoStateOld.mode === 'encode'}
-		<Base64EncodeDemo {state} {send} />
+	{#if $demoUIState.mode === 'encode'}
+		<Base64EncodeDemo />
 		<!-- {:else if $demoState === 'decode'} -->
 	{/if}
 </div>

@@ -23,6 +23,7 @@
 	type="text"
 	spellcheck="false"
 	class:error
+	data-text-id="input-text"
 	{style}
 	{disabled}
 	bind:this={inputTextElement}

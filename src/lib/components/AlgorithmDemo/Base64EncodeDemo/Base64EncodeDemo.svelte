@@ -12,20 +12,29 @@
 	import AsciiLookupTable from '$lib/components/LookupTables/AsciiLookupTable.svelte';
 	import Base64LookupTable from '$lib/components/LookupTables/Base64LookupTable.svelte';
 	import { alert } from '$lib/stores/alert';
-	import { demoStateOld } from '$lib/stores/demoState';
 	import { isBase64Encoding, isStringEncoding } from '$lib/typeguards';
-	import type { Base64Encoding, EncodingMachineStateStore, StringEncoding, XStateSendEvent } from '$lib/types';
+	import type {
+		Base64Encoding,
+		DemoState,
+		EncodingMachineStateStore,
+		StringEncoding,
+		XStateSendEvent,
+	} from '$lib/types';
+	import type { DemoStore } from '$lib/types/DemoStore';
 	import { getChunkIndexFromBase64CharIndex, getChunkIndexFromByteIndex } from '$lib/util';
 	import type { EncodingEvent } from '$lib/xstate/b64Encode';
 	import { getContext } from 'svelte';
+	import type { Readable, Writable } from 'svelte/store';
 	import { fade } from 'svelte/transition';
 
 	// TODO: Create smart text snippets that explain process of converting inputText -> binary -> 24-bit chunks
 	// TODO: Create MapHexByteToBase64 component
 	// TODO: Create state machine for b64Decode process
 
-	export let state: EncodingMachineStateStore;
-	export let send: XStateSendEvent;
+	let state: EncodingMachineStateStore;
+	let send: XStateSendEvent;
+	let demoState: Readable<DemoStore>;
+	let demoUIState: Writable<DemoState>;
 	let inputText = '';
 	let inputTextEncoding: StringEncoding = 'ASCII';
 	let outputBase64Encoding: Base64Encoding = 'base64';
@@ -33,7 +42,7 @@
 	let highlightBase64: string;
 	let pageWidth: number;
 	let helpModal: EncoderHelpModal;
-	let { demoState } = getContext('demo');
+	({ state, demoState, demoUIState, send } = getContext('demo'));
 
 	function openHelpDocsModal() {
 		if (!$state.context.autoplay) {
@@ -41,7 +50,7 @@
 		}
 	}
 
-	$: updateInputText(inputText, inputTextEncoding, outputBase64Encoding);
+	$: if (inputText) updateInputText(inputText, inputTextEncoding, outputBase64Encoding);
 	$: console.log({ state: $state.value, context: $state.context });
 	$: if ($demoState.errorOccurred) {
 		$alert = $state.context.input.validationResult.error.message;
@@ -64,10 +73,10 @@
 	}
 	$: tableChunkSize = pageWidth < 730 ? 32 : 16;
 	$: tableSectionHeight = pageWidth < 730 ? 'auto' : '260px';
-	$: formTitleFontSize = pageWidth < 730 ? '1.6rem' : '1.8rem';
+	$: formTitleFontSize = pageWidth < 730 ? '1.6rem' : '1.9rem';
 
 	function updateInputText(input: string, stringEncoding: StringEncoding, base64Encoding: Base64Encoding) {
-		send({
+		sendEvent({
 			type: 'UPDATE_TEXT',
 			inputText: input,
 			inputEncoding: stringEncoding,
@@ -77,7 +86,7 @@
 
 	function submitForm(input: string) {
 		if (isStringEncoding(inputTextEncoding) && isBase64Encoding(outputBase64Encoding)) {
-			send({
+			sendEvent({
 				type: 'VALIDATE_TEXT',
 				inputText: input,
 				inputEncoding: inputTextEncoding,
@@ -86,10 +95,10 @@
 		}
 	}
 
-	const handleNavButtonEvent = (e: CustomEvent<{ action: EncodingEvent }>) => send(e.detail.action);
+	const handleNavButtonEvent = (e: CustomEvent<{ action: EncodingEvent }>) => sendEvent(e.detail.action);
 
 	function handleKeyPress(key: string) {
-		if (!$demoStateOld.modalOpen) {
+		if (!$demoUIState.modalOpen) {
 			if (key === 'ArrowRight') {
 				if ($state.matches('inactive')) {
 					sendEvent({
@@ -154,7 +163,7 @@
 	<div class="demo-steps">
 		<!-- <InspectStateMachineButton on:click={() => inspect({ iframe: false })} /> -->
 		<div id="demo-text">
-			<DemoText {state} />
+			<DemoText />
 		</div>
 		{#if $demoState.showInputBytes}
 			<h3 class="input-heading">Input</h3>

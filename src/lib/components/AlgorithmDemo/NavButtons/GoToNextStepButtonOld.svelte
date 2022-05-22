@@ -1,12 +1,14 @@
 <script lang="ts">
 	import NextStep from '$lib/components/Icons/NextStep.svelte';
-	import { demoStateOld } from '$lib/stores/demoState';
-	import type { EncodingMachineStateStore } from '$lib/types';
+	import type { DemoState, EncodingMachineStateStore, NavButtonEventDispatcher } from '$lib/types';
 	import type { EncodingEvent } from '$lib/xstate/b64Encode';
-	import { createEventDispatcher } from 'svelte';
+	import { getContext } from 'svelte';
+	import type { Writable } from 'svelte/store';
 
-	export let state: EncodingMachineStateStore;
-	const navButtonEventDispatcher = createEventDispatcher<{ navButtonEvent: { action: EncodingEvent } }>();
+	let state: EncodingMachineStateStore;
+	let demoUIState: Writable<DemoState>;
+	let navButtonEventDispatcher: NavButtonEventDispatcher;
+	({ state, demoUIState, navButtonEventDispatcher } = getContext('demo'));
 
 	const validActions: EncodingEvent[] = [
 		{
@@ -18,8 +20,8 @@
 		{ type: 'GO_TO_NEXT_STEP' },
 	];
 
-	$: enabled = !$demoStateOld.modalOpen && validActions.some((action) => $state?.can(action));
-	$: exceptionalState = (!$demoStateOld.modalOpen && $state?.matches('inactive')) ?? false;
+	$: enabled = !$demoUIState.modalOpen && validActions.some((action) => $state?.can(action));
+	$: exceptionalState = (!$demoUIState.modalOpen && $state?.matches('inactive')) ?? false;
 
 	function getCorrectAction(): EncodingEvent {
 		return $state.matches('inactive')

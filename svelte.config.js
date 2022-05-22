@@ -1,5 +1,10 @@
 import adapter from '@sveltejs/adapter-static';
+import path from 'path';
 import preprocess from 'svelte-preprocess';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -16,6 +21,15 @@ const config = {
 		adapter: adapter(),
 
 		vite: {
+			resolve: {
+				alias: {
+					'core-js/modules': path.resolve(
+						__dirname,
+						'..',
+						'node_modules/core-js/modules'
+					),
+				}
+			},
 			ssr: {
 				noExternal: [],
 			},

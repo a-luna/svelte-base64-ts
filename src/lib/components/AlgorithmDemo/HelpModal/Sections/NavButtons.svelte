@@ -1,25 +1,22 @@
 <script lang="ts">
-	import GoToFirstStepButton from '$lib/components/AlgorithmDemo/Buttons/GoToFirstStepButton.svelte';
-	import GoToLastStepButton from '$lib/components/AlgorithmDemo/Buttons/GoToLastStepButton.svelte';
-	import GoToNextStepButton from '$lib/components/AlgorithmDemo/Buttons/GoToNextStepButton.svelte';
-	import GoToPreviousStepButton from '$lib/components/AlgorithmDemo/Buttons/GoToPreviousStepButton.svelte';
-	import ResetButton from '$lib/components/AlgorithmDemo/Buttons/ResetButton.svelte';
-	import StartAutoPlayButton from '$lib/components/AlgorithmDemo/Buttons/StartAutoPlayButton.svelte';
-	import StopAutoPlayButton from '$lib/components/AlgorithmDemo/Buttons/StopAutoPlayButton.svelte';
-	import type { EncodingMachineStateStore } from '$lib/types';
-
-	export let state: EncodingMachineStateStore;
+	import GoToFirstStepButton from '$lib/components/AlgorithmDemo/NavButtons/GoToFirstStepButton.svelte';
+	import GoToLastStepButton from '$lib/components/AlgorithmDemo/NavButtons/GoToLastStepButton.svelte';
+	import GoToNextStepButton from '$lib/components/AlgorithmDemo/NavButtons/GoToNextStepButton.svelte';
+	import GoToPreviousStepButton from '$lib/components/AlgorithmDemo/NavButtons/GoToPreviousStepButton.svelte';
+	import ResetButton from '$lib/components/AlgorithmDemo/NavButtons/ResetButton.svelte';
+	import StartAutoPlayButton from '$lib/components/AlgorithmDemo/NavButtons/StartAutoPlayButton.svelte';
+	import StopAutoPlayButton from '$lib/components/AlgorithmDemo/NavButtons/StopAutoPlayButton.svelte';
 </script>
 
 <div class="nav-buttons-help help-module">
 	<div class="nav-buttons-wrapper">
-		<div class="help-row reset"><ResetButton {state} /><span>Reset form</span></div>
-		<div class="help-row start"><StartAutoPlayButton {state} /><span>Start auto-play</span></div>
-		<div class="help-row stop"><StopAutoPlayButton {state} /><span>Stop auto-play</span></div>
-		<div class="help-row first"><GoToFirstStepButton {state} /><span>Go to first step</span></div>
-		<div class="help-row prev"><GoToPreviousStepButton {state} /><span>Go to previous step</span></div>
-		<div class="help-row next"><GoToNextStepButton {state} /><span>Go to next step</span></div>
-		<div class="help-row last"><GoToLastStepButton {state} /><span>Go to last step</span></div>
+		<div class="help-row reset"><ResetButton /><span>Reset form</span></div>
+		<div class="help-row start"><StartAutoPlayButton /><span>Start auto-play</span></div>
+		<div class="help-row stop"><StopAutoPlayButton /><span>Stop auto-play</span></div>
+		<div class="help-row first"><GoToFirstStepButton /><span>Go to first step</span></div>
+		<div class="help-row prev"><GoToPreviousStepButton /><span>Go to previous step</span></div>
+		<div class="help-row next"><GoToNextStepButton /><span>Go to next step</span></div>
+		<div class="help-row last"><GoToLastStepButton /><span>Go to last step</span></div>
 	</div>
 </div>
 

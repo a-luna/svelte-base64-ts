@@ -1,7 +1,7 @@
 <script lang="ts">
 	import OpenHelpDocsLarge from '$lib/components/AlgorithmDemo/Base64EncodeDemo/InputForm/OpenHelpDocsLarge.svelte';
 	import OpenHelpDocsSmall from '$lib/components/AlgorithmDemo/Base64EncodeDemo/InputForm/OpenHelpDocsSmall.svelte';
-	import NavButtons from '$lib/components/AlgorithmDemo/Buttons/NavButtons.svelte';
+	import NavButtons from '$lib/components/AlgorithmDemo/NavButtons/NavButtons.svelte';
 	import SelectBase64Encoding from '$lib/components/AlgorithmDemo/SelectBase64Encoding.svelte';
 	import SelectStringEncoding from '$lib/components/AlgorithmDemo/SelectStringEncoding.svelte';
 	import InputTextBox from '$lib/components/InputTextBox.svelte';
@@ -21,11 +21,12 @@
 		!$state.matches('inactive') &&
 		inputText === $state.context.input.inputText &&
 		!$state.context.input.validationResult.success;
-
-	function resetForm() {
+	$: if ($state.context.resetForm) {
+		console.log({ log: 'reset triggered', inputText, inputTextEncoding, outputBase64Encoding });
 		inputText = '';
 		inputTextEncoding = 'ASCII';
 		outputBase64Encoding = 'base64';
+		console.log({ log: 'reset performed', inputText, inputTextEncoding, outputBase64Encoding });
 	}
 
 	function openHelpDocsModal() {
@@ -50,7 +51,7 @@
 		<SelectBase64Encoding bind:value={outputBase64Encoding} disabled={controlsDisabled} />
 	</div>
 	<div class="nav-buttons">
-		<NavButtons {state} on:reset={() => resetForm()} on:navButtonEvent />
+		<NavButtons />
 	</div>
 	<OpenHelpDocsLarge {state} on:click={() => openHelpDocsModal()} />
 </div>
