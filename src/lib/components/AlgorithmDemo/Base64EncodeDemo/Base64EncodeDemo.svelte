@@ -1,48 +1,43 @@
 <script lang="ts">
 	import AuthorName from '$lib/components/AlgorithmDemo/AuthorName.svelte';
+	import DemoResults from '$lib/components/AlgorithmDemo/Base64EncodeDemo/DemoResults.svelte';
 	import DemoText from '$lib/components/AlgorithmDemo/Base64EncodeDemo/DemoText.svelte';
-	import InputByte from '$lib/components/AlgorithmDemo/Base64EncodeDemo/InputByte.svelte';
-	import InputChunk from '$lib/components/AlgorithmDemo/Base64EncodeDemo/InputChunk.svelte';
 	import InputForm from '$lib/components/AlgorithmDemo/Base64EncodeDemo/InputForm/InputForm.svelte';
-	import OutputByte from '$lib/components/AlgorithmDemo/Base64EncodeDemo/OutputByte.svelte';
-	import OutputBytePlaceholder from '$lib/components/AlgorithmDemo/Base64EncodeDemo/OutputBytePlaceholder.svelte';
-	import OutputChunk from '$lib/components/AlgorithmDemo/Base64EncodeDemo/OutputChunk.svelte';
 	import EncoderHelpModal from '$lib/components/AlgorithmDemo/HelpModal/EncoderHelpModal.svelte';
 	import FormTitle from '$lib/components/FormTitle.svelte';
 	import AsciiLookupTable from '$lib/components/LookupTables/AsciiLookupTable.svelte';
 	import Base64LookupTable from '$lib/components/LookupTables/Base64LookupTable.svelte';
+	import { defaultEncoderInput } from '$lib/constants';
 	import { alert } from '$lib/stores/alert';
 	import { isBase64Encoding, isStringEncoding } from '$lib/typeguards';
 	import type {
 		Base64Encoding,
 		DemoState,
 		EncodingMachineStateStore,
+		EventLogStore,
 		StringEncoding,
 		XStateSendEvent,
 	} from '$lib/types';
 	import type { DemoStore } from '$lib/types/DemoStore';
-	import { getChunkIndexFromBase64CharIndex, getChunkIndexFromByteIndex } from '$lib/util';
 	import type { EncodingEvent } from '$lib/xstate/b64Encode';
 	import { getContext } from 'svelte';
 	import type { Readable, Writable } from 'svelte/store';
 	import { fade } from 'svelte/transition';
 
-	// TODO: Create smart text snippets that explain process of converting inputText -> binary -> 24-bit chunks
-	// TODO: Create MapHexByteToBase64 component
-	// TODO: Create state machine for b64Decode process
-
 	let state: EncodingMachineStateStore;
-	let send: XStateSendEvent;
 	let demoState: Readable<DemoStore>;
 	let demoUIState: Writable<DemoState>;
-	let inputText = '';
-	let inputTextEncoding: StringEncoding = 'ASCII';
-	let outputBase64Encoding: Base64Encoding = 'base64';
+	let eventLog: EventLogStore;
+	let send: XStateSendEvent;
+	({ state, demoState, demoUIState, eventLog, send } = getContext('demo'));
+
+	let inputText = defaultEncoderInput.inputText;
+	let inputTextEncoding: StringEncoding = defaultEncoderInput.inputEncoding;
+	let outputBase64Encoding: Base64Encoding = defaultEncoderInput.outputEncoding;
 	let highlightHexByte: number;
 	let highlightBase64: string;
 	let pageWidth: number;
 	let helpModal: EncoderHelpModal;
-	({ state, demoState, demoUIState, send } = getContext('demo'));
 
 	function openHelpDocsModal() {
 		if (!$state.context.autoplay) {
@@ -50,8 +45,13 @@
 		}
 	}
 
+	$: machineState =
+		$state.matches('inactive') || $state.matches('finished') ? $state.value : Object.keys($state.value)[0];
+	$: machineSubState =
+		$state.matches('inactive') || $state.matches('finished') ? 'none' : Object.values($state.value)[0];
 	$: if (inputText) updateInputText(inputText, inputTextEncoding, outputBase64Encoding);
-	$: console.log({ state: $state.value, context: $state.context });
+	// $: console.log({ state: $state.value, context: $state.context });
+	// $: console.log({ state: `${machineState}${machineSubState !== 'none' ? `-${machineSubState}` : ``}` });
 	$: if ($demoState.errorOccurred) {
 		$alert = $state.context.input.validationResult.error.message;
 	}
@@ -70,6 +70,12 @@
 	}
 	$: if ($state.matches({ encodeOutput: 'autoPlayEncodeBase64' }) || $state.matches({ encodeOutput: 'encodeBase64' })) {
 		highlightBase64 = $state.context.currentBase64Char.b64;
+	}
+	$: if ($state.context.resetForm) {
+		inputText = defaultEncoderInput.inputText;
+		inputTextEncoding = defaultEncoderInput.inputEncoding;
+		outputBase64Encoding = defaultEncoderInput.outputEncoding;
+		eventLog.clear();
 	}
 	$: tableChunkSize = pageWidth < 730 ? 32 : 16;
 	$: tableSectionHeight = pageWidth < 730 ? 'auto' : '260px';
@@ -95,10 +101,25 @@
 		}
 	}
 
-	const handleNavButtonEvent = (e: CustomEvent<{ action: EncodingEvent }>) => sendEvent(e.detail.action);
-
 	function handleKeyPress(key: string) {
 		if (!$demoUIState.modalOpen) {
+			if (key === 'KeyA') {
+				console.log({ $eventLog });
+			}
+			if (key === 'KeyC') {
+				console.log({ context: $state.context });
+			}
+			if (key === 'KeyE') {
+				const events = $eventLog.filter((e) => !Object.prototype.hasOwnProperty.call(e, 'state'));
+				console.log({ events });
+			}
+			if (key === 'KeyL') {
+				eventLog.clear();
+				console.log({ $eventLog });
+			}
+			if (key === 'KeyS') {
+				console.log({ state: $state.value });
+			}
 			if (key === 'ArrowRight') {
 				if ($state.matches('inactive')) {
 					sendEvent({
@@ -136,6 +157,7 @@
 	function sendEvent(action: EncodingEvent) {
 		if ($state.can(action)) {
 			send(action);
+			eventLog.add(action);
 		}
 	}
 </script>
@@ -151,96 +173,19 @@
 	</div>
 </div>
 <InputForm
-	{state}
 	bind:inputText
 	bind:inputTextEncoding
 	bind:outputBase64Encoding
-	on:navButtonEvent={handleNavButtonEvent}
 	on:openHelpModal={() => openHelpDocsModal()}
 	on:submit={() => submitForm(inputText)}
 />
 <div id="demo-steps-wrapper">
-	<div class="demo-steps">
+	<div class="demo-steps" data-testid="demo-steps">
 		<!-- <InspectStateMachineButton on:click={() => inspect({ iframe: false })} /> -->
-		<div id="demo-text">
+		<div id="demo-text" data-state={machineState} data-sub-state={machineSubState}>
 			<DemoText />
 		</div>
-		{#if $demoState.showInputBytes}
-			<h3 class="input-heading">Input</h3>
-			<div id="input-hex" class="encoded-bytes">
-				<div class="binary-chunks">
-					{#each $state.context.updatedByteMaps as byte, byteIndex}
-						<div
-							transition:fade={{ duration: 200 }}
-							class="encoded-byte"
-							data-chunk-id={getChunkIndexFromByteIndex(byteIndex) + 1}
-							data-byte-number={byteIndex + 1}
-							data-bin="{byte.bin_word1}{byte.bin_word2}"
-							data-hex="{byte.hex_word1}{byte.hex_word2}"
-							data-ascii={byte.ascii}
-							on:mouseenter={() => (highlightHexByte = byte.byte)}
-							on:mouseleave={() => (highlightHexByte = null)}
-						>
-							<InputByte {state} {byteIndex} {byte} />
-						</div>
-					{/each}
-				</div>
-			</div>
-		{/if}
-		{#if $demoState.showInputChunks}
-			<div id="hex-b64-mapping" class="binary-chunks data-mapping">
-				{#each $state.context.updatedInputChunks as chunk, i}
-					<InputChunk {state} {chunk} chunkIndex={i} />
-				{/each}
-			</div>
-		{/if}
-		{#if $demoState.showOutputChunks}
-			<div id="hex-b64-mapping" class="binary-chunks data-mapping">
-				{#each $state.context.updatedOutputChunks as chunk, i}
-					<InputChunk {state} chunk={$state.context.updatedInputChunks[i]} chunkIndex={i} />
-					<OutputChunk {state} {chunk} chunkIndex={i} />
-				{/each}
-			</div>
-		{/if}
-		{#if $demoState.showOutputBytePlaceholders}
-			<h3 class="output-heading">Output</h3>
-			<div id="output-b64" class="encoded-bytes">
-				<div class="binary-chunks">
-					{#each $state.context.base64Maps as _, charIndex}
-						<div
-							transition:fade={{ duration: 200 }}
-							class="encoded-base64"
-							data-chunk-id={getChunkIndexFromBase64CharIndex(charIndex) + 1}
-							data-b64char-number={charIndex + 1}
-						>
-							<OutputBytePlaceholder {state} {charIndex} />
-						</div>
-					{/each}
-				</div>
-			</div>
-		{/if}
-		{#if $demoState.showOutputBytes}
-			<h3 class="output-heading">Output</h3>
-			<div id="output-b64" class="encoded-bytes">
-				<div class="binary-chunks">
-					{#each $state.context.updatedBase64Maps as b64, charIndex}
-						<div
-							transition:fade={{ duration: 200 }}
-							class="encoded-base64"
-							data-chunk-id={getChunkIndexFromBase64CharIndex(charIndex) + 1}
-							data-b64char-number={charIndex + 1}
-							data-b64={b64.b64}
-							data-bin={b64.bin}
-							data-dec={b64.dec}
-							on:mouseenter={() => (highlightBase64 = b64.b64)}
-							on:mouseleave={() => (highlightBase64 = null)}
-						>
-							<OutputByte {state} {charIndex} {b64} />
-						</div>
-					{/each}
-				</div>
-			</div>
-		{/if}
+		<DemoResults bind:highlightHexByte bind:highlightBase64 />
 	</div>
 </div>
 <div class="demo-references" style="flex: 1 0 {tableSectionHeight}">
@@ -306,13 +251,6 @@
 		grid-template-rows: auto auto auto auto auto 1fr;
 		column-gap: 0.5rem;
 	}
-	h3 {
-		font-size: 0.9rem;
-		margin: 0;
-		text-decoration: underline;
-		text-align: center;
-		margin: 0.5rem 0;
-	}
 	#demo-text {
 		display: flex;
 		flex-flow: column nowrap;
@@ -323,48 +261,6 @@
 
 		grid-column: 1 / span 2;
 		grid-row: 2 / span 1;
-	}
-	h3.input-heading {
-		color: var(--pri-color);
-
-		grid-column: 1 / span 1;
-		grid-row: 4 / span 1;
-	}
-	#input-hex {
-		justify-self: center;
-
-		grid-column: 1 / span 1;
-		grid-row: 5 / span 1;
-	}
-	#hex-b64-mapping {
-		margin: 0 0 0.5rem 0;
-
-		grid-column: 1 / span 2;
-		grid-row: 3 / span 1;
-	}
-	h3.output-heading {
-		color: var(--sec-color);
-
-		grid-column: 2 / span 1;
-		grid-row: 4 / span 1;
-	}
-	#output-b64 {
-		justify-self: center;
-
-		grid-column: 2 / span 1;
-		grid-row: 5 / span 1;
-	}
-	.binary-chunks {
-		display: flex;
-		flex-flow: column nowrap;
-		flex: 0 1 auto;
-	}
-	.encoded-bytes {
-		display: flex;
-		flex-flow: column nowrap;
-		flex: 0 1 auto;
-		justify-self: flex-start;
-		gap: 1.5rem;
 	}
 	.demo-references {
 		padding: 0.25rem;
@@ -417,32 +313,9 @@
 			align-items: flex-start;
 			column-gap: 0.5rem;
 		}
-		h3 {
-			font-size: 1rem;
-		}
 		#demo-text {
 			grid-column: 1 / span 5;
 			grid-row: 2 / span 1;
-		}
-		h3.input-heading {
-			grid-column: 1 / span 1;
-			grid-row: 3 / span 1;
-		}
-		#input-hex {
-			grid-column: 1 / span 1;
-			grid-row: 4 / span 1;
-		}
-		#hex-b64-mapping {
-			grid-column: 3 / span 1;
-			grid-row: 4 / span 1;
-		}
-		h3.output-heading {
-			grid-column: 5 / span 1;
-			grid-row: 3 / span 1;
-		}
-		#output-b64 {
-			grid-column: 5 / span 1;
-			grid-row: 4 / span 1;
 		}
 		.demo-references {
 			grid-column: 1 / span 1;

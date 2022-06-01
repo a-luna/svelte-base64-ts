@@ -2,11 +2,16 @@
 	import { rotatingColors } from '$lib/constants';
 	import type { Base64ByteMap, EncodingMachineStateStore } from '$lib/types';
 	import { getChunkIndexFromBase64CharIndex } from '$lib/util';
+	import { getContext } from 'svelte';
 
 	export let charIndex: number;
 	export let b64: Base64ByteMap;
-	export let state: EncodingMachineStateStore;
+	let state: EncodingMachineStateStore;
+	({ state } = getContext('demo'));
 
+	$: b64CharNumber = charIndex + 1;
+	$: byteDisplayChar = b64.isPad ? '&nbsp;' : 'B';
+	$: byteDisplayNumber = b64.isPad ? '&nbsp;' : `${b64CharNumber}`;
 	$: chunkId = getChunkIndexFromBase64CharIndex(charIndex);
 	$: chunkNumber = chunkId + 1;
 	$: chunkColor = rotatingColors[chunkId % rotatingColors.length];
@@ -18,7 +23,6 @@
 	$: currentChunkIsMapped = chunkMappingInProgress && currentChunk === chunkId;
 	$: currentChunkColor = currentChunkIsMapped ? chunkColor : '--black1';
 
-	$: b64CharNumber = charIndex + 1;
 	$: b64CharColor = rotatingColors[charIndex % rotatingColors.length];
 	$: currentB64Char = $state.context.base64CharIndex;
 	$: b64MappingInProgress =
@@ -39,8 +43,8 @@
 </script>
 
 <div class="b64Char-id" data-b64char-number={b64CharNumber} style="color: var({currentB64CharIdColor});">
-	<span class="letter-B">B</span>
-	<span class="b64Char-number">{b64CharNumber}</span>
+	<span class="letter-B">{@html byteDisplayChar}</span>
+	<span class="b64Char-number">{@html byteDisplayNumber}</span>
 </div>
 <span class="base64" data-b64={b64.b64}>{b64.b64}</span>
 <span class="dec" data-dec={b64.isPad ? 'null' : b64.dec}>{@html getBase64DecimalValue()}</span>

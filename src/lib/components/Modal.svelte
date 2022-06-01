@@ -150,7 +150,6 @@
 
 	.modal-body {
 		position: relative;
-		border-radius: 6px;
 	}
 
 	.modal-footer {

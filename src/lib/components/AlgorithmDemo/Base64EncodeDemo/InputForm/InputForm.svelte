@@ -6,13 +6,14 @@
 	import SelectStringEncoding from '$lib/components/AlgorithmDemo/SelectStringEncoding.svelte';
 	import InputTextBox from '$lib/components/InputTextBox.svelte';
 	import type { Base64Encoding, EncodingMachineStateStore, StringEncoding } from '$lib/types';
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, getContext } from 'svelte';
 
-	export let state: EncodingMachineStateStore;
 	export let inputText: string;
 	export let inputTextEncoding: StringEncoding = 'ASCII';
 	export let outputBase64Encoding: Base64Encoding = 'base64';
 	const openHelpModalEventDispatcher = createEventDispatcher<{ openHelpModal: Record<string, never> }>();
+	let state: EncodingMachineStateStore;
+	({ state } = getContext('demo'));
 
 	$: inputTextBoxStyles = 'flex: 1;';
 	$: controlsDisabled = !$state.matches('inactive') && !$state.matches({ validateInputText: 'error' });
@@ -21,13 +22,6 @@
 		!$state.matches('inactive') &&
 		inputText === $state.context.input.inputText &&
 		!$state.context.input.validationResult.success;
-	$: if ($state.context.resetForm) {
-		console.log({ log: 'reset triggered', inputText, inputTextEncoding, outputBase64Encoding });
-		inputText = '';
-		inputTextEncoding = 'ASCII';
-		outputBase64Encoding = 'base64';
-		console.log({ log: 'reset performed', inputText, inputTextEncoding, outputBase64Encoding });
-	}
 
 	function openHelpDocsModal() {
 		if (!$state.context.autoplay) {
@@ -38,7 +32,7 @@
 
 <div class="input-form">
 	<span class="input-text-label form-label">Input Text/Data</span>
-	<OpenHelpDocsSmall {state} on:click={() => openHelpDocsModal()} />
+	<OpenHelpDocsSmall on:click={() => openHelpDocsModal()} />
 	<div class="input-text">
 		<InputTextBox bind:inputText disabled={controlsDisabled} {error} style={inputTextBoxStyles} on:submit />
 	</div>
@@ -53,7 +47,7 @@
 	<div class="nav-buttons">
 		<NavButtons />
 	</div>
-	<OpenHelpDocsLarge {state} on:click={() => openHelpDocsModal()} />
+	<OpenHelpDocsLarge on:click={() => openHelpDocsModal()} />
 </div>
 
 <style lang="postcss">

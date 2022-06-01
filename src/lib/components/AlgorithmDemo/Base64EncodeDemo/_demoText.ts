@@ -29,32 +29,47 @@ const getB64CharNumHtml = (num: number, colorNum: number) =>
 	`<div class="b64Char-id" style="color: var(${getSequentialColor(
 		colorNum,
 	)});"><span class="letter-B">B</span> <span class="b64Char-number">${num}</span></div>`;
-const getChunkBytesHtml = (chunk: EncoderInputChunk | OutputChunk, chunkIndex: number) =>
-	Array.from({ length: chunk.bytes.length }, (_, i) => getByteNumHtml(3 * chunkIndex + i + 1, chunkIndex)).join(', ');
+const getChunkBytesHtml = (chunk: EncoderInputChunk | OutputChunk, chunkIndex: number): string[] =>
+	Array.from({ length: chunk.bytes.length }, (_, i) => getByteNumHtml(3 * chunkIndex + i + 1, chunkIndex));
 const getChunkB64CharsHtml = (totalB64Chars: number, chunkIndex: number) =>
 	Array.from({ length: totalB64Chars }, (_, i) => getB64CharNumHtml(4 * chunkIndex + i + 1, chunkIndex)).join(', ');
-const getChunkPadCharsHtml = (totalPadChars: number, totalB64Chars: number, chunkIndex: number) =>
-	Array.from({ length: totalPadChars }, (_, i) =>
-		getB64CharNumHtml(4 * chunkIndex + i + totalB64Chars + 1, chunkIndex),
-	).join(', ');
 
 export const getBase64AlphabetVerbose = (encoding: Base64Encoding) =>
 	encoding === 'base64' ? 'standard Base64 alphabet' : 'URL-safe Base64 alphabet';
 
+export const getInactive_WelcomeDemoText = (): string[] => [
+	'Welcome to the <strong>Base64 Algorithm Demo</strong> app! Enter a string value in the text box above to get started.',
+	'If necessary, update the <strong>Text Encoding</strong> setting (ASCII, hex or binary) based on the type of data your string contains.',
+	'The <strong>Output Encoding</strong> setting controls which Base64 alphabet is used to generate the encoded data: either the standard Base64 alphabet (<code>base64</code>) or the URL-safe variant (<code>base64url</code>).',
+	'When ready, click the <strong>Next Step</strong> button.',
+];
+
+export const getInactive_AppNavDemoText = (): string[] => [
+	'If you are only interested in the final Base64-encoded value, at any time you can jump to the end of the demonstration using the <strong>Last Step</strong> button.',
+	'Both <strong>First Step</strong> and <strong>Reset</strong> buttons return to the first step of the demo, the only difference being that <strong>Reset</strong> also changes the form values back to their initial state.',
+	'If you would rather watch the demo proceed automatically step-by-step, press the <strong>Start Autoplay</strong> button.',
+	'You can stop autoplaying and return to manually stepping through the demo with the <strong>Stop Autoplay</strong> button (You can also start/stop autoplay using the <kbd>Space</kbd> bar).',
+];
+
 export function getEncodeInputText_IdleDemoText(input: string, encoding: StringEncoding): string[] {
 	const totalBytes = stringToByteArray(input, encoding).length;
+	let demoText: string[] = [];
 	if (encoding === 'ASCII') {
-		return [
+		demoText = [
 			'<strong>Each ASCII character is stored as an 8-bit byte</strong>. The table below shows the complete set of printable ASCII characters and their hex and binary values.',
 			`The input data contains ${totalBytes} ASCII characters. <strong>As each character is converted to an 8-bit value, the corresponding row in the table below will be highlighted.</strong>`,
 		];
-	}
-	if (encoding === 'hex') {
-		return [
+	} else if (encoding === 'hex') {
+		demoText = [
 			`<strong>Each pair of hex digits represents a single 8-bit byte</strong>. The hex string you provided contains a total of ${totalBytes} bytes.`,
 		];
+	} else if (encoding === 'bin') {
+		demoText = [`The provided binary string contains ${totalBytes} bytes.`];
 	}
-	return [`The provided binary string contains ${totalBytes} bytes.`];
+	return [
+		'<strong>The first step in the Base64 encoding process is to convert the input data to binary</strong> (i.e, a string consisting of only <code>0</code> and <code>1</code> characters).',
+		...demoText,
+	];
 }
 
 export function describeInputByte(
@@ -81,10 +96,15 @@ export function describeInputByte(
 export function describeInputChunk(chunk: EncoderInputChunk, chunkIndex: number, totalChunks: number): string {
 	const chunkNum =
 		chunkIndex + 1 === totalChunks ? `${convertNumber(chunkIndex + 1)} and final` : convertNumber(chunkIndex + 1);
+	const chunkBytesHtmlList = getChunkBytesHtml(chunk, chunkIndex);
+	const chunkBytesHtml =
+		chunk.bytes.length === 1
+			? chunkBytesHtmlList[0]
+			: chunk.bytes.length === 2
+			? chunkBytesHtmlList.join(' and ')
+			: chunkBytesHtmlList.join(', ');
 	const chunkBytes =
-		chunk.bytes.length > 1
-			? `is comprised of bytes ${getChunkBytesHtml(chunk, chunkIndex)}`
-			: `contains a single byte, ${getChunkBytesHtml(chunk, chunkIndex)}`;
+		chunk.bytes.length > 1 ? `is comprised of bytes ${chunkBytesHtml}` : `contains a single byte, ${chunkBytesHtml}`;
 	const padLength = chunk.bytes.length === 1 ? 'four' : 'two';
 	const necessaryLength = chunk.bytes.length === 1 ? 12 : 18;
 	const chunkPadding = chunk.isPadded
@@ -130,10 +150,14 @@ export function describeOutputChunk(chunk: OutputChunk, chunkIndex: number, tota
 	const totalB64CharsVerbose = totalB64Chars === 2 ? 'two' : totalB64Chars === 3 ? 'three' : 'four';
 	const totalPadCharsVerbose = totalPadChars === 2 ? 'two' : 'one';
 	const totalPadBits = chunk.bytes.length === 1 ? 'four' : 'two';
-	const chunkHexBytes = `byte${chunk.bytes.length > 1 ? 's' : ''} ${getChunkBytesHtml(
-		chunk,
-		chunkIndex,
-	)} of the input data`;
+	const chunkHexBytesHtmlList = getChunkBytesHtml(chunk, chunkIndex);
+	const chunkHexBytesHtml =
+		chunk.bytes.length === 1
+			? chunkHexBytesHtmlList[0]
+			: chunk.bytes.length === 2
+			? chunkHexBytesHtmlList.join(' and ')
+			: chunkHexBytesHtmlList.join(', ');
+	const chunkHexBytes = `byte${chunk.bytes.length > 1 ? 's' : ''} ${chunkHexBytesHtml} of the input data`;
 	const chunkB64Chars = `contains ${totalB64CharsVerbose} Base64 digits ${getChunkB64CharsHtml(
 		totalB64Chars,
 		chunkIndex,
@@ -141,11 +165,8 @@ export function describeOutputChunk(chunk: OutputChunk, chunkIndex: number, tota
 	const chunkBitLength = chunk.bytes.length === 3 ? '24' : chunk.bytes.length === 2 ? 'first 16' : 'first 8';
 	const paddedChunkBitLength = chunk.bytes.length === 3 ? 24 : chunk.bytes.length === 2 ? 18 : 12;
 	const outputChunkNumHtml = getOutputChunkNumHtml(chunkIndex + 1, chunkIndex);
-	const chunkPadCharHtml = getChunkPadCharsHtml(totalPadChars, totalB64Chars, chunkIndex);
 	const outputChunkPadding =
-		totalPadChars > 0
-			? ` and ${totalPadCharsVerbose} pad character${totalPadChars > 1 ? 's' : ''} ${chunkPadCharHtml}`
-			: '';
+		totalPadChars > 0 ? ` and ${totalPadCharsVerbose} pad character${totalPadChars > 1 ? 's' : ''}` : '';
 	const inputChunkPadding =
 		totalPadChars > 0
 			? ` and the final ${totalPadBits} bits with value zero are added to pad the length to ${paddedChunkBitLength}`
@@ -171,9 +192,12 @@ export function describeBase64Char(
 	const preamble = `The ${b64CharNum} Base64 digit (${getB64CharNumHtml(base64CharIndex + 1, base64CharIndex)})`;
 	const base64CharDescription1 = `has binary value <code>${base64.bin}</code> (decimal value: <code>${base64.dec}</code>).`;
 	const base64CharDescription2 = `The Base64 digit with decimal value equal to <code>${base64.dec}</code> in the ${b64Alphabet} is <code>${base64.b64}</code>.`;
-	const base64PadDescription = `is the special padding character, <code>=</code>, which ensures that the final chunk contains four Base64 digits (<code>${finalChunkBase64}</code>).`;
+	const totalPadChars = finalChunkBase64.split('').filter((c) => c === '=').length;
+	const totalPadCharsVerbose = totalPadChars === 2 ? 'two instances' : 'one instance';
+	const isAre = totalPadChars > 1 ? 'are' : 'is';
+	const base64PadDescription = `To ensure that the final chunk contains four Base64 digits, ${totalPadCharsVerbose} of the special padding character (<code>=</code>) ${isAre} added after the final Base64 digit (<code>${finalChunkBase64}</code>).`;
 	return base64.isPad
-		? [`${preamble}, ${base64PadDescription}`]
+		? [base64PadDescription]
 		: [`${preamble}, ${base64CharDescription1}`, describeBitSourceForB64Char(base64), base64CharDescription2];
 }
 

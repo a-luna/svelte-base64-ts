@@ -9,6 +9,8 @@
 		explainPadCharacter,
 		getBase64AlphabetVerbose,
 		getEncodeInputText_IdleDemoText,
+		getInactive_AppNavDemoText,
+		getInactive_WelcomeDemoText,
 	} from '$lib/components/AlgorithmDemo/Base64EncodeDemo/_demoText';
 	import LinkedLabel from '$lib/components/AlgorithmDemo/Buttons/LinkedLabel.svelte';
 	import ArrowKey from '$lib/components/Icons/KeyboardIcons/ArrowKey.svelte';
@@ -71,21 +73,9 @@
 		<summary>Welcome!</summary>
 		{#if welcomeDetailsElement?.open}
 			<div transition:slide class="details-content">
-				<p>
-					Welcome to the <strong>Base64 Algorithm Demo</strong> app! Enter a string value in the text box above to get started.
-				</p>
-				<p>
-					If necessary, update the <strong>Text Encoding</strong> setting (ASCII, hex or binary) based on the type of data
-					your string contains.
-				</p>
-				<p>
-					The <strong>Output Encoding</strong> setting controls which Base64 alphabet is used to generate the encoded
-					data: either the standard Base64 alphabet (<code>base64</code>) or the URL-safe variant (<code>base64url</code
-					>).
-				</p>
-				<p>
-					When ready, click the <strong>Next Step</strong> button.
-				</p>
+				{#each getInactive_WelcomeDemoText() as text}
+					<p>{@html text}</p>
+				{/each}
 			</div>
 		{/if}
 	</details>
@@ -94,34 +84,13 @@
 		{#if appNavDetailsElement?.open}
 			<div transition:slide class="details-content">
 				<p>
-					You can proceed through the encoding process step-by-step (forward or backward) using the <strong
-						>Prev. Step</strong
-					>
-					and <strong>Next Step</strong> buttons (<ArrowKey arrow="left" size={arrowSize} /> and <ArrowKey
-						arrow="right"
-						size={arrowSize}
-					/> arrow keys will perform the same function).
+					You can proceed through the encoding process step-by-step (forward or backward) using the
+					<strong>Prev. Step</strong> and <strong>Next Step</strong> buttons (<ArrowKey arrow="left" size={arrowSize} />
+					and <ArrowKey arrow="right" size={arrowSize} /> arrow keys will perform the same function).
 				</p>
-				<p>
-					If you are only interested in the final Base64-encoded value, at any time you can jump to the end of the
-					demonstration using the <strong>Last Step</strong> button.
-				</p>
-				<p>
-					Both <strong>First Step</strong> and <strong>Reset</strong> buttons return to the first step of the demo, the
-					only difference being that <strong>Reset</strong> also changes the form values back to their initial state.
-				</p>
-				<p>
-					If you would rather watch the demo proceed automatically step-by-step, press the <strong
-						>Start Autoplay</strong
-					>
-					button.
-				</p>
-				<p>
-					You can stop autoplaying and return to manually stepping through the demo with the <strong
-						>Stop Autoplay</strong
-					>
-					button. (You can also start/stop autoplay using the <kbd>Space</kbd> bar)
-				</p>
+				{#each getInactive_AppNavDemoText() as text}
+					<p>{@html text}</p>
+				{/each}
 			</div>
 		{/if}
 	</details>
@@ -130,10 +99,6 @@
 		Nicely done! The value you provided looks, smells and tastes like a valid {encodingIn} string.
 	</p>
 {:else if $state.matches({ encodeInput: 'idle' })}
-	<p>
-		<strong>The first step in the Base64 encoding process is to convert the input data to binary</strong> (i.e, a string
-		consisting of only <code>0</code> and <code>1</code> characters).
-	</p>
 	{#each getEncodeInputText_IdleDemoText($state.context.input.inputText, $state.context.input.inputEncoding) as text}
 		<p>{@html text}</p>
 	{/each}
@@ -157,7 +122,7 @@
 			In order to reconcile the differing byte sizes, we need to find a number that is evenly divisible by both 8 and 6.
 		</strong>
 	</p>
-{:else if $state.matches({ createInputChunks: 'idle' }) || $state.matches({ createInputChunks: 'autoPlayIdle' })}
+{:else if $state.matches({ createInputChunks: 'regularIdle' }) || $state.matches({ createInputChunks: 'autoPlayIdle' })}
 	<p>
 		In mathematics, this value is called the <strong><a href={wikiUrl} target="_blank">Least Common Multple</a></strong>
 		or <strong>LCM</strong>. The <strong>LCM</strong> of 8 and 6 is 24.
@@ -184,7 +149,7 @@
 	{#each explainLastPaddedChunk($state.context.currentInputChunk, $state.context.inputChunkIndex, $state.context.input.totalChunks) as text}
 		<p>{@html text}</p>
 	{/each}
-	<InputChunk {state} chunk={$state.context.currentInputChunk} chunkIndex={$state.context.inputChunkIndex} />
+	<InputChunk chunk={$state.context.currentInputChunk} chunkIndex={$state.context.inputChunkIndex} />
 {:else if $state.matches({ createInputChunks: 'explainPadCharacter' })}
 	{#each explainPadCharacter($state.context.currentInputChunk) as text}
 		<p>{@html text}</p>
@@ -439,7 +404,7 @@
 				tooltip={'Copy encoded output string to clipboard'}
 				name={'copy-output-string-button'}
 				style={copyToClipboardButtonStyle}
-				on:click={() => copyToClipboard($state.context.output.output)}
+				on:click={() => handleCopyButtonClicked($state.context.output.output)}
 			>
 				Copy to Clipboard
 			</LinkedLabel>

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { EncodingMachineStateStore, EncodingStateToEventMap, XStateSendEvent } from '$lib/types';
+	import type { EncodingMachineStateStore, EncodingStateToEventMap, EventLogStore, XStateSendEvent } from '$lib/types';
 	import type { EncodingEvent } from '$lib/xstate/b64Encode';
 	import { getContext } from 'svelte';
 	import { fade } from 'svelte/transition';
@@ -12,53 +12,67 @@
 	export let iconWidth: string = '11px';
 	export let disabled = false;
 	export let testId: string;
-	let hovering = false;
+	let labelShown = false;
+	let duration = 1250;
+	let timeout: NodeJS.Timeout;
 	let state: EncodingMachineStateStore;
+	let eventLog: EventLogStore;
 	let send: XStateSendEvent;
-	({ state, send } = getContext('demo'));
+	({ state, eventLog, send } = getContext('demo'));
 
-	$: labelStyle = `grid-column: ${buttonNumber} / span 1; grid-row: 1 / span 1;`;
+	$: labelColor = $state.context.autoplay ? `var(--nav-button-autoplay-bg-color)` : `var(--nav-button-active-bg-color)`;
+	$: labelStyle = `grid-column: ${buttonNumber} / span 1; grid-row: 1 / span 1; color: ${labelColor}`;
 	$: butttonStyle = `grid-column: ${buttonNumber} / span 1; grid-row: 2 / span 1;`;
 	$: validActions = encodingStateToEventMap
 		? [defaultNavAction, ...encodingStateToEventMap.map((m) => m.navAction())]
 		: [defaultNavAction];
+	$: helpDocs = buttonNumber === 0;
 	$: noActionIsPossible =
 		!defaultNavAction && !encodingStateToEventMap ? false : !validActions.some((action) => $state?.can(action));
 
+	function showLabel() {
+		clearTimeout(timeout);
+		labelShown = true;
+		timeout = setTimeout(() => (labelShown = false), duration);
+	}
+
+	function hideLabel() {
+		clearTimeout(timeout);
+		labelShown = false;
+	}
+
 	function getNavAction(): EncodingEvent {
 		if (!encodingStateToEventMap) {
-			console.log({ action: defaultNavAction });
 			return defaultNavAction;
 		}
 		for (const { requiredState, navAction } of encodingStateToEventMap) {
 			if ($state.matches(requiredState.value)) {
-				console.log({ action: navAction() });
 				return navAction();
 			}
 		}
-		console.log({ action: defaultNavAction });
 		return defaultNavAction;
 	}
 
 	function fireNavAction() {
 		const action = getNavAction();
 		if ($state.can(action)) {
+			eventLog.add(action);
 			send(action);
 		}
 	}
 </script>
 
-{#if hovering}
+{#if labelShown}
 	<span transition:fade class="form-label" style={labelStyle}>{label}</span>
 {/if}
 <button
 	type="button"
 	title={tooltip}
 	style={butttonStyle}
-	disabled={disabled || noActionIsPossible}
-	data-test-id={testId}
-	on:mouseenter={() => (hovering = true)}
-	on:mouseleave={() => (hovering = false)}
+	disabled={!helpDocs && (disabled || noActionIsPossible)}
+	data-testid={testId}
+	on:mouseenter={() => showLabel()}
+	on:mouseleave={() => hideLabel()}
 	on:click={() => fireNavAction()}
 >
 	<div class="icon" style="width: {iconWidth}">

@@ -2,11 +2,13 @@
 	import { rotatingColors } from '$lib/constants';
 	import type { EncodingMachineStateStore, HexByteMap } from '$lib/types';
 	import { getBase64CharIndexFromGroupId, getChunkIndexFromByteIndex } from '$lib/util';
+	import { getContext } from 'svelte';
 
 	export let byte: HexByteMap;
 	export let byteIndex: number;
-	export let state: EncodingMachineStateStore;
 	let currentByteColor: string;
+	let state: EncodingMachineStateStore;
+	({ state } = getContext('demo'));
 
 	$: chunkId = getChunkIndexFromByteIndex(byteIndex);
 	$: chunkNumber = chunkId + 1;

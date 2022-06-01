@@ -2,11 +2,13 @@
 	import { rotatingColors } from '$lib/constants';
 	import type { EncodingMachineStateStore, OutputChunk } from '$lib/types';
 	import { getBase64CharIndexFromGroupId } from '$lib/util';
+	import { getContext } from 'svelte';
 	import { slide } from 'svelte/transition';
 
-	export let state: EncodingMachineStateStore;
 	export let chunk: OutputChunk;
 	export let chunkIndex: number;
+	let state: EncodingMachineStateStore;
+	({ state } = getContext('demo'));
 
 	$: chunkNumber = chunkIndex + 1;
 	$: chunkColor = rotatingColors[chunkIndex % rotatingColors.length];

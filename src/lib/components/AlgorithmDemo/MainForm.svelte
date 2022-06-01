@@ -1,23 +1,21 @@
 <script lang="ts">
 	import Base64EncodeDemo from '$lib/components/AlgorithmDemo/Base64EncodeDemo/Base64EncodeDemo.svelte';
-	import { createDemoStateStore } from '$lib/stores/demoState';
-	import type { DemoState } from '$lib/types';
+	import { createDemoStateStore, demoUIState } from '$lib/stores/demoState';
+	import { createEventLogStore } from '$lib/stores/eventLog';
 	import type { EncodingContext, EncodingEvent, EncodingTypeStates } from '$lib/xstate/b64Encode';
 	import { encodingMachineConfig, encodingMachineOptions } from '$lib/xstate/b64Encode';
 	import { useMachine } from '@xstate/svelte';
-	import { createEventDispatcher, setContext } from 'svelte';
-	import type { Writable } from 'svelte/store';
+	import { setContext } from 'svelte';
 	import { createMachine } from 'xstate';
 
-	export let demoUIState: Writable<DemoState>;
 	const encodingMachine = createMachine<EncodingContext, EncodingEvent, EncodingTypeStates>(
 		encodingMachineConfig,
 		encodingMachineOptions,
 	);
-	const { state, send } = useMachine<EncodingContext, EncodingEvent, EncodingTypeStates>(encodingMachine);
+	const { state, send, service } = useMachine<EncodingContext, EncodingEvent, EncodingTypeStates>(encodingMachine);
 	const demoState = createDemoStateStore(state);
-	const navButtonEventDispatcher = createEventDispatcher<{ navButtonEvent: { action: EncodingEvent } }>();
-	setContext('demo', { state, demoState, demoUIState, send, navButtonEventDispatcher });
+	const eventLog = createEventLogStore(service);
+	setContext('demo', { state, demoState, demoUIState, eventLog, send });
 	let pageWidth: number;
 
 	$: height = pageWidth < 730 ? 'auto' : '100vh';

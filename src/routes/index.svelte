@@ -10,7 +10,7 @@
 
 <Alert />
 <main class:encode={$demoUIState.mode === 'encode'} class:decode={$demoUIState.mode === 'decode'}>
-	<MainForm {demoUIState} />
+	<MainForm />
 </main>
 
 <style lang="postcss">

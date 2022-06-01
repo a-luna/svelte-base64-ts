@@ -1,9 +1,11 @@
 <script lang="ts">
 	import LinkedLabel from '$lib/components/AlgorithmDemo/Buttons/LinkedLabel.svelte';
 	import type { EncodingMachineStateStore } from '$lib/types';
+	import { getContext } from 'svelte';
 	import { slide } from 'svelte/transition';
 
-	export let state: EncodingMachineStateStore;
+	let state: EncodingMachineStateStore;
+	({ state } = getContext('demo'));
 </script>
 
 {#if $state.matches('inactive') || $state.matches({ validateInputText: 'error' })}
