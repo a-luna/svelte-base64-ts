@@ -1,10 +1,24 @@
-import type { HslColor } from './types';
+import type { HslColor, Result } from './types';
+
+interface RgbColor {
+	r: number;
+	g: number;
+	b: number;
+	a: number;
+}
+const decimalToOpacityValue = (decimal: number): number => parseFloat((decimal / 255).toFixed(2));
 
 const HSL_REGEX =
 	/^hsl\((((?<hueDeg>(([12]?[1-9]?\d)|[12]0\d|(3[0-5]\d))(\.\d+)?)|(\.\d+))(deg)?|(?<hueTurn>0|0?\.\d+)turn|(?<hueRad>(([0-6](\.\d+)?)|(\.\d+)))rad)((,\s?(?<satPercA>([1-9]?\d(\.\d+)?)|100|(\.\d+))%)(,\s?(?<lightPercA>([1-9]?\d(\.\d+)?)|100|(\.\d+))%)|(\s(?<satPercB>([1-9]?\d(\.\d+)?)|100|(\.\d+))%)(\s(?<lightPercB>([1-9]?\d(\.\d+)?)|100|(\.\d+))%))\)$/i;
 
 const HSLA_REGEX =
 	/^hsla\((((?<hueDeg>(([12]?[1-9]?\d)|[12]0\d|(3[0-5]\d))(\.\d+)?)|(\.\d+))(deg)?|(?<hueTurn>0|0?\.\d+)turn|(?<hueRad>(([0-6](\.\d+)?)|(\.\d+)))rad)(((,\s?(?<satPercA>([1-9]?\d(\.\d+)?)|100|(\.\d+))%)(,\s?(?<lightPercA>([1-9]?\d(\.\d+)?)|100|(\.\d+))%),\s?)|((\s(?<satPercB>([1-9]?\d(\.\d+)?)|100|(\.\d+))%)(\s(?<lightPercB>([1-9]?\d(\.\d+)?)|100|(\.\d+))%)\s\/\s))((?<alphaFloatA>0?\.\d+)|(?<alphaFloatB>[01])|(?<alphaPerc>([1-9]?\d(\.\d+)?)|100|(\.\d+))%)\)$/i;
+
+const HEX_REGEX =
+	/^#((?<redHexA>[\da-f])(?<greenHexA>[\da-f])(?<blueHexA>[\da-f]))$|^#((?<redHexB>[\da-f])(?<redHexC>[\da-f])(?<greenHexB>[\da-f])(?<greenHexC>[\da-f])(?<blueHexB>[\da-f])(?<blueHexC>[\da-f]))$/i;
+
+const HEXA_REGEX =
+	/^#((?<redHexA>[\da-f])(?<greenHexA>[\da-f])(?<blueHexA>[\da-f])(?<alphaHexA>[\da-f]))$|^#((?<redHexB>[\da-f])(?<redHexC>[\da-f])(?<greenHexB>[\da-f])(?<greenHexC>[\da-f])(?<blueHexB>[\da-f])(?<blueHexC>[\da-f])(?<alphaHexB>[\da-f])(?<alphaHexC>[\da-f]))$/i;
 
 export class Hsl implements HslColor {
 	constructor(public hue: number, public saturation: number, public lightness: number, public alpha: number) {}
@@ -27,11 +41,17 @@ export function parseHslColorFromString(s: string): Hsl {
 	if (match) {
 		return parseHsl(match, true);
 	}
+	match = HEX_REGEX.exec(s.trim());
+	if (match) {
+		return parseHslFromHex(match, false);
+	}
+	match = HEXA_REGEX.exec(s.trim());
+	if (match) {
+		return parseHslFromHex(match, true);
+	}
 }
 
 function parseHsl(match: RegExpExecArray, hasAlpha: boolean): Hsl {
-	console.log({ match });
-
 	const hue = parseHue(match);
 	const { s: saturation, l: lightness } = parseSaturationAndLightness(match);
 
@@ -69,4 +89,101 @@ function parseAlpha(match: RegExpExecArray): number {
 		alpha = (parseInt(match.groups.alphaPerc) / 100).toFixed(2);
 	}
 	return parseFloat(alpha);
+}
+
+function parseHslFromHex(match: RegExpExecArray, hasAlpha: boolean): Hsl {
+	let result = parseHexCondensedFormat(match, hasAlpha);
+	if (result.success) {
+		return result.value;
+	}
+	result = parseHexFullFormat(match, hasAlpha);
+	if (result.success) {
+		return result.value;
+	}
+}
+
+function parseHexCondensedFormat(match: RegExpExecArray, hasAlpha: boolean): Result<Hsl> {
+	const redHex = match.groups.redHexA;
+	const greenHex = match.groups.greenHexA;
+	const blueHex = match.groups.blueHexA;
+	if (!redHex || !greenHex || !blueHex) {
+		return { success: false, error: Error('Hex color is not in the condensed format (#RGB or #RGBA)') };
+	}
+	let hsl: { h: number; s: number; l: number; a: number };
+	const rgb = {
+		r: parseInt(`${redHex}${redHex}`, 16),
+		g: parseInt(`${greenHex}${greenHex}`, 16),
+		b: parseInt(`${blueHex}${blueHex}`, 16),
+		a: 255,
+	};
+	if (hasAlpha) {
+		const alphaHex = match.groups.alphaHexA;
+		rgb.a = parseInt(`${alphaHex}${alphaHex}`, 16);
+		hsl = rgbaToHsla(rgb);
+	} else {
+		hsl = rgbToHsl(rgb);
+	}
+	return { success: true, value: new Hsl(hsl.h, hsl.s, hsl.l, hsl.a) };
+}
+
+function parseHexFullFormat(match: RegExpExecArray, hasAlpha: boolean): Result<Hsl> {
+	const redHex1 = match.groups.redHexB;
+	const redHex2 = match.groups.redHexC;
+	const greenHex1 = match.groups.greenHexB;
+	const greenHex2 = match.groups.greenHexC;
+	const blueHex1 = match.groups.blueHexB;
+	const blueHex2 = match.groups.blueHexC;
+	if (!redHex1 || !redHex2 || !greenHex1 || !greenHex2 || !blueHex1 || !blueHex2) {
+		return { success: false, error: Error('Hex color is not in the full format (#RRGGBB or #RRGGBBAA)') };
+	}
+	let hsl: { h: number; s: number; l: number; a: number };
+	const rgb = {
+		r: parseInt(`${redHex1}${redHex2}`, 16),
+		g: parseInt(`${greenHex1}${greenHex2}`, 16),
+		b: parseInt(`${blueHex1}${blueHex2}`, 16),
+		a: 255,
+	};
+	if (hasAlpha) {
+		const alphaHex1 = match.groups.alphaHexB;
+		const alphaHex2 = match.groups.alphaHexC;
+		rgb.a = parseInt(`${alphaHex1}${alphaHex2}`, 16);
+		hsl = rgbaToHsla(rgb);
+	} else {
+		hsl = rgbToHsl(rgb);
+	}
+	return { success: true, value: new Hsl(hsl.h, hsl.s, hsl.l, hsl.a) };
+}
+
+export function rgbaToHsla(rgb: RgbColor): { h: number; s: number; l: number; a: number } {
+	const hsl = rgbToHsl(rgb);
+	return { ...hsl, a: decimalToOpacityValue(rgb.a) };
+}
+
+export function rgbToHsl(rgb: RgbColor): { h: number; s: number; l: number; a: number } {
+	const r = rgb.r / 255;
+	const g = rgb.g / 255;
+	const b = rgb.b / 255;
+	const cmax = Math.max(r, g, b);
+	const cmin = Math.min(r, g, b);
+	const delta = cmax - cmin;
+
+	const h = calculateHue(r, g, b, cmax, delta);
+	const l = (cmax + cmin) / 2;
+	const s = delta == 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
+	return { h, s: parseInt((s * 100).toFixed(1)), l: parseInt((l * 100).toFixed(1)), a: 1 };
+}
+
+function calculateHue(r: number, g: number, b: number, cmax: number, delta: number): number {
+	let h: number;
+	if (delta === 0) {
+		h = 0;
+	} else if (cmax === r) {
+		h = ((g - b) / delta) % 6;
+	} else if (cmax === g) {
+		h = (b - r) / delta + 2;
+	} else if (cmax === b) {
+		h = (r - g) / delta + 4;
+	}
+	h = Math.round(h * 60);
+	return h >= 0 ? h : h + 360;
 }

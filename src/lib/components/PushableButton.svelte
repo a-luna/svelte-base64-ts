@@ -16,7 +16,6 @@
 		bgColor = parseHslColorFromString(getCSSPropValue(document.body, bgColorCssPropName));
 	$: if (bgColor)
 		edgeGradient = `linear-gradient(to left, hsl(${bgColor.hue}deg ${bgColor.saturation}% 16%) 0%, hsl(${bgColor.hue}deg ${bgColor.saturation}% 32%) 8%, hsl(${bgColor.hue}deg ${bgColor.saturation}% 32%) 92%, hsl(${bgColor.hue}deg ${bgColor.saturation}% 16%) 100%)`;
-	$: if (typeof window !== 'undefined') console.log({ s: getCSSPropValue(document.body, bgColorCssPropName) });
 </script>
 
 <button {disabled} class="pushable" style="font-size: {fontSize};" on:click>
