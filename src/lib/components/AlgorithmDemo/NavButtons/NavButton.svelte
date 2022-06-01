@@ -12,6 +12,7 @@
 	export let iconWidth: string = '11px';
 	export let disabled = false;
 	export let testId: string;
+	let pageWidth: number;
 	let labelShown = false;
 	let duration = 1250;
 	let timeout: NodeJS.Timeout;
@@ -20,6 +21,7 @@
 	let send: XStateSendEvent;
 	({ state, eventLog, send } = getContext('demo'));
 
+	$: isMobile = pageWidth < 730;
 	$: labelColor = $state.context.autoplay ? `var(--nav-button-autoplay-bg-color)` : `var(--nav-button-active-bg-color)`;
 	$: labelStyle = `grid-column: ${buttonNumber} / span 1; grid-row: 1 / span 1; color: ${labelColor}`;
 	$: butttonStyle = `grid-column: ${buttonNumber} / span 1; grid-row: 2 / span 1;`;
@@ -31,14 +33,18 @@
 		!defaultNavAction && !encodingStateToEventMap ? false : !validActions.some((action) => $state?.can(action));
 
 	function showLabel() {
-		clearTimeout(timeout);
-		labelShown = true;
-		timeout = setTimeout(() => (labelShown = false), duration);
+		if (!isMobile) {
+			clearTimeout(timeout);
+			labelShown = true;
+			timeout = setTimeout(() => (labelShown = false), duration);
+		}
 	}
 
 	function hideLabel() {
-		clearTimeout(timeout);
-		labelShown = false;
+		if (!isMobile) {
+			clearTimeout(timeout);
+			labelShown = false;
+		}
 	}
 
 	function getNavAction(): EncodingEvent {
@@ -61,6 +67,8 @@
 		}
 	}
 </script>
+
+<svelte:window bind:innerWidth={pageWidth} />
 
 {#if labelShown}
 	<span transition:fade class="form-label" style={labelStyle}>{label}</span>
