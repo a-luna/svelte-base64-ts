@@ -12,19 +12,19 @@
 		encodingMachineConfig,
 		encodingMachineOptions,
 	);
-	const { state, send, service } = useMachine<EncodingContext, EncodingEvent, EncodingTypeStates>(encodingMachine);
+	const { state, send } = useMachine<EncodingContext, EncodingEvent, EncodingTypeStates>(encodingMachine);
 	const demoState = createDemoStateStore(state);
-	const eventLog = createEventLogStore(service);
+	const eventLog = createEventLogStore(state);
 	setContext('demo', { state, demoState, demoUIState, eventLog, send });
 	let pageWidth: number;
 
 	$: height = pageWidth < 730 ? 'auto' : '100vh';
 	$: gridStyles =
-		pageWidth < 730
+		pageWidth < 730 || $state.matches('finished')
 			? 'auto auto auto 1fr'
-			: $state.matches('inactive') || $state.matches('finished') || $state.matches({ validateInputText: 'error' })
-			? 'auto auto 1fr auto'
-			: 'auto auto 1fr 265px';
+			: $state.matches('inactive') || $state.matches({ validateInputText: 'error' })
+			? 'auto auto auto 1fr'
+			: 'auto auto 1fr 276px';
 </script>
 
 <svelte:window bind:innerWidth={pageWidth} />

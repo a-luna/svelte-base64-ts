@@ -24,7 +24,7 @@ export type { Encoder } from './Encoder';
 export type { EncoderInput } from './EncoderInput';
 export type { EncoderInputChunk } from './EncoderInputChunk';
 export type { EncoderOutput } from './EncoderOutput';
-export type { EventLogStore, MachineLogItem } from './EventLogStore';
+export type { EventLogStore } from './EventLogStore';
 export type { HelpSection, HelpSectionMap } from './HelpSection';
 export type { HexByteMap } from './HexByteMap';
 export type { HslColor } from './HslColor';

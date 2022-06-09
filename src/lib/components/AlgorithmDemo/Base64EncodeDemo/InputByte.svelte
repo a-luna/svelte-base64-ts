@@ -22,6 +22,7 @@
 	$: outputChunkMappingInProgress =
 		$state.matches({ createOutputChunks: 'autoPlayCreateOutputChunk' }) ||
 		$state.matches({ createOutputChunks: 'createOutputChunk' }) ||
+		$state.matches({ createOutputChunks: 'createLastPaddedChunk' }) ||
 		$state.matches({ createOutputChunks: 'createdAllOutputChunks' });
 	$: currentInputChunkIsMapped = inputChunkMappingInProgress && currentInputChunk === chunkId;
 	$: currentOutputChunkIsMapped = outputChunkMappingInProgress && currentOutputChunk === chunkId;

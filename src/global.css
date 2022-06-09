@@ -317,18 +317,20 @@ textarea {
 details {
 	width: 100%;
 	font-family: 'Roboto Mono', menlo, monospace;
-	color: var(--pri-color);
 }
 
-details:first-child:not(:only-child) {
+details:not(:last-child):not(:only-child) {
 	margin: 0 0 0.5rem 0;
 }
 
 details[open] > summary {
+	color: var(--pri-color);
 	margin: 0 0 0.5rem 0;
 }
 
 details > summary {
+	display: block;
+	color: var(--sec-color);
 	cursor: pointer;
 	font-size: 0.9rem;
 	font-weight: 500;
@@ -345,20 +347,21 @@ details > summary {
 
 #demo-text .details-content > p,
 #demo-text .details-content > p:first-child,
-#demo-text .details-content > p:last-child {
+#demo-text .details-content > p:last-child,
+#demo-text .details-content > p:last-of-type:not(:only-of-type) {
 	margin: 0 0 0 1rem;
 }
 
 #demo-text p {
-	margin: 0.5rem 0;
-}
-
-#demo-text p:first-child {
 	margin: 0 0 0.5rem 0;
 }
 
-#demo-text p:last-child {
-	margin: 0.5rem 0 0 0;
+#demo-text p:only-of-type {
+	margin: 0;
+}
+
+#demo-text p:last-of-type:not(:only-of-type) {
+	margin: 0;
 }
 
 .hide-element {
@@ -425,7 +428,7 @@ button {
 	font-size: 8px;
 }
 #demo-text .input-chunk {
-	margin: 0.5rem 0 0 1.5rem;
+	margin: 1rem 0 0 1.5rem;
 }
 #demo-text p code {
 	display: inline-block;
@@ -435,7 +438,7 @@ button {
 }
 
 #demo-text #byte-map-demo {
-	margin: 0;
+	margin: 1rem 0;
 }
 
 #demo-text #byte-map-demo .chunk-id {

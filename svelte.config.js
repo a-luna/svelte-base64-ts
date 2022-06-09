@@ -30,6 +30,8 @@ const config = {
 				deps: {
 					inline: ['xstate'],
 				},
+				testTimeout: 30_000,
+				hookTimeout: 30_000,
 			},
 		},
 	},

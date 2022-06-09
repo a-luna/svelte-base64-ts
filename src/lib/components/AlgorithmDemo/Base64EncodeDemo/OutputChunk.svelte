@@ -22,6 +22,7 @@
 	$: outputChunkMappingInProgress =
 		$state.matches({ createOutputChunks: 'autoPlayCreateOutputChunk' }) ||
 		$state.matches({ createOutputChunks: 'createOutputChunk' }) ||
+		$state.matches({ createOutputChunks: 'createLastPaddedChunk' }) ||
 		$state.matches({ createOutputChunks: 'createdAllOutputChunks' });
 	$: currentInputChunkIsMapped = inputChunkMappingInProgress && currentInputChunk === chunkIndex;
 	$: currentOutputChunkIsMapped = outputChunkMappingInProgress && currentOutputChunk === chunkIndex;
@@ -37,7 +38,7 @@
 	const getCurrentBitGroupColor = (base64CharIndex: number, groupId: string): string =>
 		highlightBitGroup(base64CharIndex, groupId) ? getBase64CharColor(groupId) : currentChunkColor;
 	const getCurrentBitGroupOutlineStyle = (base64CharIndex: number, groupId: string, isPad: boolean): string =>
-		isPad && highlightBitGroup(base64CharIndex, groupId)
+		isPad && (currentOutputChunkIsMapped || highlightBitGroup(base64CharIndex, groupId))
 			? ` outline: 1px dotted var(${getCurrentBitGroupColor(base64CharIndex, groupId)})`
 			: '';
 </script>

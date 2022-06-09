@@ -1,11 +1,12 @@
-import type { EncodingEvent } from '$lib/xstate/b64Encode';
+import type { MachineEvent, MachineLogs, MachineTestStepData } from '$lib/stores/eventLog';
+import type { PuppeteerOptions } from '$lib/stores/puppeteerScriptGenerator';
 import type { Writable } from 'svelte/store';
 
-export type MachineLogItem = EncodingEvent | { state: string };
-
 export interface EventLogStore {
-	subscribe: Writable<MachineLogItem[]>['subscribe'];
-	update: Writable<MachineLogItem[]>['update'];
-	add: (event: EncodingEvent) => void;
+	subscribe: Writable<MachineLogs>['subscribe'];
+	update: Writable<MachineLogs>['update'];
+	add: (event: MachineEvent) => void;
+	entries: () => MachineTestStepData[];
+	testScript: (options: PuppeteerOptions) => string;
 	clear: () => void;
 }

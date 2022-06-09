@@ -12,15 +12,24 @@
 	$: b64CharNumber = charIndex + 1;
 	$: byteDisplayChar = b64.isPad ? '&nbsp;' : 'B';
 	$: byteDisplayNumber = b64.isPad ? '&nbsp;' : `${b64CharNumber}`;
-	$: chunkId = getChunkIndexFromBase64CharIndex(charIndex);
-	$: chunkNumber = chunkId + 1;
-	$: chunkColor = rotatingColors[chunkId % rotatingColors.length];
-	$: currentChunk = $state.context.inputChunkIndex;
-	$: chunkMappingInProgress =
+	$: chunkIndex = getChunkIndexFromBase64CharIndex(charIndex);
+	$: chunkNumber = chunkIndex + 1;
+	$: chunkColor = rotatingColors[chunkIndex % rotatingColors.length];
+	$: currentInputChunk = $state.context.inputChunkIndex;
+	$: currentOutputChunk = $state.context.outputChunkIndex;
+	$: inputChunkMappingInProgress =
 		$state.matches({ createInputChunks: 'autoPlayCreateInputChunk' }) ||
 		$state.matches({ createInputChunks: 'createInputChunk' }) ||
 		$state.matches({ createInputChunks: 'createLastPaddedChunk' });
-	$: currentChunkIsMapped = chunkMappingInProgress && currentChunk === chunkId;
+	$: outputChunkMappingInProgress =
+		$state.matches({ createOutputChunks: 'autoPlayCreateOutputChunk' }) ||
+		$state.matches({ createOutputChunks: 'createOutputChunk' }) ||
+		$state.matches({ createOutputChunks: 'createLastPaddedChunk' }) ||
+		$state.matches({ createOutputChunks: 'createdAllOutputChunks' });
+	$: chunkMappingInProgress = inputChunkMappingInProgress || outputChunkMappingInProgress;
+	$: currentInputChunkIsMapped = inputChunkMappingInProgress && currentInputChunk === chunkIndex;
+	$: currentOutputChunkIsMapped = outputChunkMappingInProgress && currentOutputChunk === chunkIndex;
+	$: currentChunkIsMapped = currentInputChunkIsMapped || currentOutputChunkIsMapped;
 	$: currentChunkColor = currentChunkIsMapped ? chunkColor : '--black1';
 
 	$: b64CharColor = rotatingColors[charIndex % rotatingColors.length];
@@ -36,6 +45,7 @@
 		: $state.matches('finished')
 		? chunkColor
 		: '--light-gray3';
+	$: currentPadOutline = currentB64CharIsMapped ? `1px dotted var(${currentB64CharColor})` : 'none';
 
 	function getBase64DecimalValue() {
 		return b64.isPad ? '' : b64.dec < 10 ? `&nbsp;${b64.dec}` : b64.dec;
@@ -63,7 +73,7 @@
 			</div>
 		{/each}
 	{:else}
-		<div class="hex-bit-group pad-char" class:mapping={currentB64CharIsMapped}>
+		<div class="hex-bit-group pad-char" class:mapping={currentB64CharIsMapped} style="outline: {currentPadOutline};">
 			<code class="bit pad-bit"><span>{@html '&nbsp;'}</span></code>
 			<code class="bit pad-bit"><span>{@html '&nbsp;'}</span></code>
 			<code class="bit pad-bit"><span>{@html '&nbsp;'}</span></code>

@@ -28,7 +28,6 @@
 		border-radius: 6px;
 		padding: 0.5rem;
 		background-color: var(--black2);
-		margin: 1rem 0 0 0;
 
 		grid-column: 1 / span 3;
 		grid-row: 6 / span 1;

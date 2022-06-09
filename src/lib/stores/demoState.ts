@@ -5,7 +5,6 @@ import { derived, writable, type Readable } from 'svelte/store';
 export const demoUIState = writable<DemoState>({
 	mode: 'encode',
 	modalOpen: false,
-	appNavDetailsOpen: false,
 });
 
 export function createDemoStateStore(state: EncodingMachineStateStore): Readable<DemoStore> {
@@ -23,6 +22,7 @@ export function createDemoStateStore(state: EncodingMachineStateStore): Readable
 			$state.matches({ createInputChunks: 'createdAllInputChunks' }) ||
 			$state.matches({ createOutputChunks: 'autoPlayCreateOutputChunk' }) ||
 			$state.matches({ createOutputChunks: 'createOutputChunk' }) ||
+			$state.matches({ createOutputChunks: 'createLastPaddedChunk' }) ||
 			$state.matches({ createOutputChunks: 'createdAllOutputChunks' }) ||
 			$state.matches({ encodeOutput: 'autoPlayEncodeBase64' }) ||
 			$state.matches({ encodeOutput: 'encodeBase64' }) ||
@@ -37,6 +37,7 @@ export function createDemoStateStore(state: EncodingMachineStateStore): Readable
 		const showOutputChunks = () =>
 			$state.matches({ createOutputChunks: 'autoPlayCreateOutputChunk' }) ||
 			$state.matches({ createOutputChunks: 'createOutputChunk' }) ||
+			$state.matches({ createOutputChunks: 'createLastPaddedChunk' }) ||
 			$state.matches({ createOutputChunks: 'createdAllOutputChunks' }) ||
 			$state.matches({ encodeOutput: 'autoPlayEncodeBase64' }) ||
 			$state.matches({ encodeOutput: 'encodeBase64' }) ||
@@ -45,6 +46,7 @@ export function createDemoStateStore(state: EncodingMachineStateStore): Readable
 		const showOutputBytePlaceholders = () =>
 			$state.matches({ createOutputChunks: 'autoPlayCreateOutputChunk' }) ||
 			$state.matches({ createOutputChunks: 'createOutputChunk' }) ||
+			$state.matches({ createOutputChunks: 'createLastPaddedChunk' }) ||
 			$state.matches({ createOutputChunks: 'createdAllOutputChunks' });
 
 		const showOutputBytes = () =>

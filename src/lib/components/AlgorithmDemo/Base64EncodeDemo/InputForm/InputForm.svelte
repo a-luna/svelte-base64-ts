@@ -1,5 +1,4 @@
 <script lang="ts">
-	import OpenHelpDocsLarge from '$lib/components/AlgorithmDemo/Base64EncodeDemo/InputForm/OpenHelpDocsLarge.svelte';
 	import OpenHelpDocsSmall from '$lib/components/AlgorithmDemo/Base64EncodeDemo/InputForm/OpenHelpDocsSmall.svelte';
 	import NavButtons from '$lib/components/AlgorithmDemo/NavButtons/NavButtons.svelte';
 	import SelectBase64Encoding from '$lib/components/AlgorithmDemo/SelectBase64Encoding.svelte';
@@ -47,7 +46,6 @@
 	<div class="nav-buttons">
 		<NavButtons />
 	</div>
-	<OpenHelpDocsLarge on:click={() => openHelpDocsModal()} />
 </div>
 
 <style lang="postcss">
@@ -109,7 +107,7 @@
 			grid-template-columns: 86px 114px auto;
 			grid-template-rows: auto auto 20px 33px auto;
 			margin: 0 0 1rem 0;
-			width: 698px;
+			width: 701px;
 
 			grid-column: 1 / span 1;
 			grid-row: 2 / span 1;

@@ -38,10 +38,8 @@ export const getBase64AlphabetVerbose = (encoding: Base64Encoding) =>
 	encoding === 'base64' ? 'standard Base64 alphabet' : 'URL-safe Base64 alphabet';
 
 export const getInactive_WelcomeDemoText = (): string[] => [
-	'Welcome to the <strong>Base64 Algorithm Demo</strong> app! Enter a string value in the text box above to get started.',
 	'If necessary, update the <strong>Text Encoding</strong> setting (ASCII, hex or binary) based on the type of data your string contains.',
 	'The <strong>Output Encoding</strong> setting controls which Base64 alphabet is used to generate the encoded data: either the standard Base64 alphabet (<code>base64</code>) or the URL-safe variant (<code>base64url</code>).',
-	'When ready, click the <strong>Next Step</strong> button.',
 ];
 
 export const getInactive_AppNavDemoText = (): string[] => [
@@ -113,7 +111,7 @@ export function describeInputChunk(chunk: EncoderInputChunk, chunkIndex: number,
 	return `The ${chunkNum} chunk (${getInputChunkNumHtml(chunkIndex + 1, chunkIndex)}) ${chunkBytes}${chunkPadding}.`;
 }
 
-export function explainLastPaddedChunk(chunk: EncoderInputChunk, chunkIndex: number, totalChunks: number): string[] {
+export function explainLastPaddedInputChunk(chunk: EncoderInputChunk, totalChunks: number): string[] {
 	const onlyOnePaddedChunk = totalChunks === 1 && chunk.isPadded;
 	const paddedChunkSize = chunk.bytes.length === 1 ? 'one byte' : 'two bytes';
 	const remainingBytes = chunk.bytes.length === 1 ? 'is only one byte (8-bits)' : 'are only two bytes (16-bits)';
@@ -127,18 +125,6 @@ export function explainLastPaddedChunk(chunk: EncoderInputChunk, chunkIndex: num
 		`${preamble}, special processing must be performed.</strong>`,
 		`The chunk size of 24-bits was chosen because it is divisible by 6 (which is the number of bits required to store a Base64 digit). <strong>When the final chunk contains less than three bytes, simply add zeroes until the total number of bits is divisible by 6.</strong>`,
 		`If ${padLength} zeroes are added to the remaining ${totalBits} bits, the length becomes ${necessaryLength} which is divisible by 6.`,
-	];
-}
-
-export function explainPadCharacter(chunk: EncoderInputChunk): string[] {
-	const necessaryLength = chunk.bytes.length === 1 ? 12 : 18;
-	const b64DigitsInChunk = chunk.bytes.length === 1 ? 'two' : 'three';
-	const b64DigitsInChunkNum = chunk.bytes.length === 1 ? 2 : 3;
-	const totalPadCharacters = chunk.bytes.length === 1 ? 'two pad characters are added' : 'one pad character is added';
-	return [
-		`Unlike 24-bit chunks which result in four Base64 digits, <strong>a chunk that is padded to contain a total of ${necessaryLength} bits results in ${b64DigitsInChunk} 6-bit Base64 digits</strong> (${b64DigitsInChunkNum}x6 = ${necessaryLength} bits).`,
-		`Many systems require Base64 data to always be structured in groups of four digits. To satisfy this requirement, ${totalPadCharacters} to the output.`,
-		`Padding at the end of the data is performed using the <code>=</code> character.`,
 	];
 }
 
@@ -174,6 +160,28 @@ export function describeOutputChunk(chunk: OutputChunk, chunkIndex: number, tota
 	return [
 		`The ${chunkNum} chunk (${outputChunkNumHtml}) ${chunkB64Chars}${outputChunkPadding}.`,
 		`The ${chunkBitLength} bits in this chunk are taken from ${chunkHexBytes}${inputChunkPadding}.`,
+	];
+}
+
+export function explainLastPaddedOutputChunk(inputChunk: EncoderInputChunk): string[] {
+	const remainingBytes = inputChunk.bytes.length === 1 ? 'one byte (8 bits)' : 'two bytes (16 bits)';
+	const padLength =
+		inputChunk.bytes.length === 1 ? 'four zeroes (bits 9, 10, 11 and 12 below)' : 'two zeroes (bits 17 and 18 below)';
+	const necessaryLength = inputChunk.bytes.length === 1 ? 12 : 18;
+	const b64DigitsInChunk = inputChunk.bytes.length === 1 ? 'two' : 'three';
+	const b64DigitsInChunkNum = inputChunk.bytes.length === 1 ? 2 : 3;
+	return [
+		`Since the final input chunk only contains ${remainingBytes}, ${padLength} were added to pad the length to ${necessaryLength} bits.`,
+		`Unlike 24-bit chunks which result in four Base64 digits, a chunk that is padded to contain a total of ${necessaryLength} bits results in ${b64DigitsInChunk} 6-bit Base64 digits (${b64DigitsInChunkNum}x6 = ${necessaryLength} bits).`,
+	];
+}
+
+export function explainPadCharacter(chunk: OutputChunk): string[] {
+	const b64DigitsInChunk = chunk.bytes.length === 1 ? 'two' : 'three';
+	const totalPadCharacters = chunk.bytes.length === 1 ? 'two pad characters' : 'one pad character';
+	return [
+		`For various reasons, it is considered best practice to always structure Base64 data in groups of four digits. The Base64 alphabet contains a special padding character (<code>=</code>) for this exact purpose.`,
+		`Since the final chunk contains only ${b64DigitsInChunk} Base64 digits, ${totalPadCharacters} will be added to pad the length to four digits.`,
 	];
 }
 

@@ -1,99 +1,47 @@
 <script lang="ts">
+	import NormalByteMap from '$lib/components/AlgorithmDemo/Base64EncodeDemo/DemoByteMaps/NormalByteMap.svelte';
+	import DemoIntro from '$lib/components/AlgorithmDemo/Base64EncodeDemo/DemoIntro.svelte';
 	import InputChunk from '$lib/components/AlgorithmDemo/Base64EncodeDemo/InputChunk.svelte';
 	import {
 		describeBase64Char,
 		describeInputByte,
 		describeInputChunk,
 		describeOutputChunk,
-		explainLastPaddedChunk,
+		explainLastPaddedInputChunk,
+		explainLastPaddedOutputChunk,
 		explainPadCharacter,
 		getBase64AlphabetVerbose,
 		getEncodeInputText_IdleDemoText,
-		getInactive_AppNavDemoText,
-		getInactive_WelcomeDemoText,
 	} from '$lib/components/AlgorithmDemo/Base64EncodeDemo/_demoText';
-	import LinkedLabel from '$lib/components/AlgorithmDemo/Buttons/LinkedLabel.svelte';
-	import ArrowKey from '$lib/components/Icons/KeyboardIcons/ArrowKey.svelte';
-	import { alert } from '$lib/stores/alert';
-	import type { DemoState, EncodingMachineStateStore, StringEncoding } from '$lib/types';
-	import { copyToClipboard } from '$lib/util';
+	import type { EncodingMachineStateStore, StringEncoding } from '$lib/types';
 	import { getContext } from 'svelte';
-	import type { Writable } from 'svelte/store';
-	import { slide } from 'svelte/transition';
+	import OneByteMap from './DemoByteMaps/OneByteMap.svelte';
+	import TwoByteMap from './DemoByteMaps/TwoByteMap.svelte';
 
 	let state: EncodingMachineStateStore;
-	let demoUIState: Writable<DemoState>;
-	({ state, demoUIState } = getContext('demo'));
+	({ state } = getContext('demo'));
 	const formatEncodingType = (encoding: StringEncoding): string => (encoding === 'bin' ? 'binary' : encoding);
 	let pageWidth: number;
-	let arrowSize: 'sm' | 'md' | 'lg';
-	let welcomeDetailsElement: HTMLDetailsElement;
-	let appNavDetailsElement: HTMLDetailsElement;
 	const wikiUrl = 'https://en.wikipedia.org/wiki/Least_common_multiple';
 	const lcmSolveUrl =
 		'https://www.calculatorsoup.com/calculators/math/lcm.php?input=8+6&data=multiples_method&action=solve';
 
 	$: encodingIn = formatEncodingType($state.context.input.inputEncoding);
-	$: arrowSize = pageWidth < 730 ? 'sm' : 'md';
-	$: copyToClipboardButtonStyle = pageWidth < 730 ? 'font-weight: 700; align-self: flex-end;' : 'font-weight: 700;';
 	$: finalBase64CharNumber = $state.context.input.lastChunkPadded
 		? $state.context.byteMaps.length % 3 === 1
 			? $state.context.base64Maps.length - 2
 			: $state.context.base64Maps.length - 1
-		: 0;
-	$: finalInputChunkSize = $state.context.input.chunks.slice(-1)[0].bytes.length;
+		: $state.context.base64Maps.length;
+	$: finalInputChunk = $state.context.input.chunks.slice(-1)[0];
+	$: finalInputChunkSize = finalInputChunk.bytes.length;
 	$: finalInputChunkSizeVerbose = finalInputChunkSize === 2 ? 'two 8-bit bytes' : 'one 8-bit byte';
 	$: finalChunkBase64 = $state.context.output.chunks.slice(-1)[0].base64;
-
-	function toggleWelcomeDetails() {
-		if (welcomeDetailsElement.open) {
-			appNavDetailsElement.open = false;
-		}
-	}
-
-	function toggleAppNavDetails() {
-		if (appNavDetailsElement.open) {
-			welcomeDetailsElement.open = false;
-		}
-		$demoUIState.appNavDetailsOpen = appNavDetailsElement.open;
-	}
-
-	async function handleCopyButtonClicked(colorString: string) {
-		const result = await copyToClipboard(colorString);
-		if (!result.success) {
-			$alert = result.error.message;
-		}
-	}
 </script>
 
 <svelte:window bind:innerWidth={pageWidth} />
 
 {#if $state.matches('inactive') || $state.matches({ validateInputText: 'error' })}
-	<details bind:this={welcomeDetailsElement} on:toggle={() => toggleWelcomeDetails()} open>
-		<summary>Welcome!</summary>
-		{#if welcomeDetailsElement?.open}
-			<div transition:slide class="details-content">
-				{#each getInactive_WelcomeDemoText() as text}
-					<p>{@html text}</p>
-				{/each}
-			</div>
-		{/if}
-	</details>
-	<details bind:this={appNavDetailsElement} on:toggle={() => toggleAppNavDetails()}>
-		<summary>App Navigation</summary>
-		{#if appNavDetailsElement?.open}
-			<div transition:slide class="details-content">
-				<p>
-					You can proceed through the encoding process step-by-step (forward or backward) using the
-					<strong>Prev. Step</strong> and <strong>Next Step</strong> buttons (<ArrowKey arrow="left" size={arrowSize} />
-					and <ArrowKey arrow="right" size={arrowSize} /> arrow keys will perform the same function).
-				</p>
-				{#each getInactive_AppNavDemoText() as text}
-					<p>{@html text}</p>
-				{/each}
-			</div>
-		{/if}
-	</details>
+	<DemoIntro {pageWidth} />
 {:else if $state.matches({ validateInputText: 'success' })}
 	<p>
 		Nicely done! The value you provided looks, smells and tastes like a valid {encodingIn} string.
@@ -146,225 +94,44 @@
 		)}
 	</p>
 {:else if $state.matches({ createInputChunks: 'explainLastPaddedChunk' })}
-	{#each explainLastPaddedChunk($state.context.currentInputChunk, $state.context.inputChunkIndex, $state.context.input.totalChunks) as text}
+	{#each explainLastPaddedInputChunk($state.context.currentInputChunk, $state.context.input.totalChunks) as text}
 		<p>{@html text}</p>
 	{/each}
 	<InputChunk chunk={$state.context.currentInputChunk} chunkIndex={$state.context.inputChunkIndex} />
-{:else if $state.matches({ createInputChunks: 'explainPadCharacter' })}
-	{#each explainPadCharacter($state.context.currentInputChunk) as text}
-		<p>{@html text}</p>
-	{/each}
-{:else if $state.matches({ createOutputChunks: 'idle' })}
+{:else if $state.matches( { createOutputChunks: 'regularIdle' }, ) || $state.matches( { createOutputChunks: 'autoPlayIdle' }, )}
 	<p>
 		Next, for each chunk of input data with three 8-bit bytes (24 total bits), an output chunk with four 6-bit bytes is
 		created from the same sequence of bits.
 	</p>
-	<div id="byte-map-demo">
-		<div id="hex-b64-mapping" class="binary-chunks data-mapping">
-			<div class="input-chunk">
-				<div class="chunk-id">
-					<span class="chunk-label" style="color: var(--red4);">IN</span>
-				</div>
-				<div class="chunk-byte" data-bit-group="hex-chunk-1-byte-1" style="outline: 1px dotted var(--teal4);">
-					<div class="base64-bit-group" data-bit-group="base64-chunk-1-digit-1" style="color: var(--yellow3);">
-						<code class="bit">
-							<span>1</span>
-						</code>
-						<code class="bit">
-							<span>2</span>
-						</code>
-						<code class="bit">
-							<span>3</span>
-						</code>
-						<code class="bit">
-							<span>4</span>
-						</code>
-						<code class="bit">
-							<span>5</span>
-						</code>
-						<code class="bit">
-							<span>6</span>
-						</code>
-					</div>
-					<div class="base64-bit-group" data-bit-group="base64-chunk-1-digit-2" style="color: var(--pink4);">
-						<code class="bit">
-							<span>7</span>
-						</code>
-						<code class="bit">
-							<span>8</span>
-						</code>
-					</div>
-				</div>
-				<div class="chunk-byte" data-bit-group="hex-chunk-1-byte-2" style="outline: 1px dotted var(--orange-yellow3);">
-					<div class="base64-bit-group" data-bit-group="base64-chunk-1-digit-2" style="color: var(--pink4);">
-						<code class="bit">
-							<span>9</span>
-						</code>
-						<code class="bit">
-							<span>10</span>
-						</code>
-						<code class="bit">
-							<span>11</span>
-						</code>
-						<code class="bit">
-							<span>12</span>
-						</code>
-					</div>
-					<div class="base64-bit-group" data-bit-group="base64-chunk-1-digit-3" style="color: var(--yellow-green3);">
-						<code class="bit">
-							<span>13</span>
-						</code>
-						<code class="bit">
-							<span>14</span>
-						</code>
-						<code class="bit">
-							<span>15</span>
-						</code>
-						<code class="bit">
-							<span>16</span>
-						</code>
-					</div>
-				</div>
-				<div class="chunk-byte" data-bit-group="hex-chunk-1-byte-3" style="outline: 1px dotted var(--purple3);">
-					<div class="base64-bit-group" data-bit-group="base64-chunk-1-digit-3" style="color: var(--yellow-green3);">
-						<code class="bit">
-							<span>17</span>
-						</code>
-						<code class="bit">
-							<span>18</span>
-						</code>
-					</div>
-					<div class="base64-bit-group" data-bit-group="base64-chunk-1-digit-4" style="color: var(--orange3);">
-						<code class="bit">
-							<span>19</span>
-						</code>
-						<code class="bit">
-							<span>20</span>
-						</code>
-						<code class="bit">
-							<span>21</span>
-						</code>
-						<code class="bit">
-							<span>22</span>
-						</code>
-						<code class="bit">
-							<span>23</span>
-						</code>
-						<code class="bit">
-							<span>24</span>
-						</code>
-					</div>
-				</div>
-			</div>
-			<div class="output-chunk">
-				<div class="chunk-id">
-					<span class="chunk-label" style="color: var(--red4);">OUT</span>
-				</div>
-				<div class="chunk-byte" data-bit-group="base64-chunk-1-digit-1" style="outline: 1px dotted var(--yellow3);">
-					<div class="hex-bit-group" data-bit-group="hex-chunk-1-byte-1" style="color: var(--teal4);">
-						<code class="bit">
-							<span>1</span>
-						</code>
-						<code class="bit">
-							<span>2</span>
-						</code>
-						<code class="bit">
-							<span>3</span>
-						</code>
-						<code class="bit">
-							<span>4</span>
-						</code>
-						<code class="bit">
-							<span>5</span>
-						</code>
-						<code class="bit">
-							<span>6</span>
-						</code>
-					</div>
-				</div>
-				<div class="chunk-byte" data-bit-group="base64-chunk-1-digit-2" style="outline: 1px dotted var(--pink4);">
-					<div class="hex-bit-group" data-bit-group="hex-chunk-1-byte-1" style="color: var(--teal4);">
-						<code class="bit">
-							<span>7</span>
-						</code>
-						<code class="bit">
-							<span>8</span>
-						</code>
-					</div>
-					<div class="hex-bit-group" data-bit-group="hex-chunk-1-byte-2" style="color: var(--orange-yellow3);">
-						<code class="bit">
-							<span>9</span>
-						</code>
-						<code class="bit">
-							<span>10</span>
-						</code>
-						<code class="bit">
-							<span>11</span>
-						</code>
-						<code class="bit">
-							<span>12</span>
-						</code>
-					</div>
-				</div>
-				<div
-					class="chunk-byte"
-					data-bit-group="base64-chunk-1-digit-3"
-					style="outline: 1px dotted var(--yellow-green3);"
-				>
-					<div class="hex-bit-group" data-bit-group="hex-chunk-1-byte-2" style="color: var(--orange-yellow3);">
-						<code class="bit">
-							<span>13</span>
-						</code>
-						<code class="bit">
-							<span>14</span>
-						</code>
-						<code class="bit">
-							<span>15</span>
-						</code>
-						<code class="bit">
-							<span>16</span>
-						</code>
-					</div>
-					<div class="hex-bit-group" data-bit-group="hex-chunk-1-byte-3" style="color: var(--purple3);">
-						<code class="bit">
-							<span>17</span>
-						</code>
-						<code class="bit">
-							<span>18</span>
-						</code>
-					</div>
-				</div>
-				<div class="chunk-byte" data-bit-group="base64-chunk-1-digit-4" style="outline: 1px dotted var(--orange3);">
-					<div class="hex-bit-group" data-bit-group="hex-chunk-1-byte-3" style="color: var(--purple3);">
-						<code class="bit">
-							<span>19</span>
-						</code>
-						<code class="bit">
-							<span>20</span>
-						</code>
-						<code class="bit">
-							<span>21</span>
-						</code>
-						<code class="bit">
-							<span>22</span>
-						</code>
-						<code class="bit">
-							<span>23</span>
-						</code>
-						<code class="bit">
-							<span>24</span>
-						</code>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+	<NormalByteMap />
 	{#if $state.context.input.lastChunkPadded}
 		<p>
 			The last chunk will require special processing since it only contains {finalInputChunkSizeVerbose}.
 		</p>
 	{/if}
 {:else if $state.matches( { createOutputChunks: 'autoPlayCreateOutputChunk' }, ) || $state.matches( { createOutputChunks: 'createOutputChunk' }, )}
+	{#each describeOutputChunk($state.context.currentOutputChunk, $state.context.outputChunkIndex, $state.context.input.totalChunks) as text}
+		<p>
+			{@html text}
+		</p>
+	{/each}
+{:else if $state.matches({ createOutputChunks: 'explainLastPaddedChunk' })}
+	<p>
+		{@html explainLastPaddedOutputChunk(finalInputChunk)[0]}
+	</p>
+	{#if $state.context.currentOutputChunk.bytes.length === 2}
+		<TwoByteMap />
+	{:else}
+		<OneByteMap />
+	{/if}
+	<p>
+		{@html explainLastPaddedOutputChunk(finalInputChunk)[1]}
+	</p>
+{:else if $state.matches({ createOutputChunks: 'explainPadCharacter' })}
+	{#each explainPadCharacter($state.context.currentOutputChunk) as text}
+		<p>{@html text}</p>
+	{/each}
+{:else if $state.matches({ createOutputChunks: 'createLastPaddedChunk' })}
 	{#each describeOutputChunk($state.context.currentOutputChunk, $state.context.outputChunkIndex, $state.context.input.totalChunks) as text}
 		<p>
 			{@html text}
@@ -386,119 +153,10 @@
 	{/each}
 {:else if $state.matches('finished')}
 	<p>The encoding process is complete!</p>
-	<div class="demo-results">
-		<div class="result input-value">
-			<div class="result-label-wrapper">
-				<span class="result-label">Input</span>
-				<span class="encoding-type" title="Input Encoding">{$state.context.input.inputEncoding}</span>
-			</div>
-			<span class="result-value">{$state.context.input.inputText}</span>
-		</div>
-		<div class="result output-value">
-			<div class="result-label-wrapper">
-				<span class="result-label">Output</span>
-				<span class="encoding-type" title="Output Encoding">{$state.context.output.outputEncoding}</span>
-			</div>
-			<span class="result-value">{$state.context.output.output}</span>
-			<LinkedLabel
-				tooltip={'Copy encoded output string to clipboard'}
-				name={'copy-output-string-button'}
-				style={copyToClipboardButtonStyle}
-				on:click={() => handleCopyButtonClicked($state.context.output.output)}
-			>
-				Copy to Clipboard
-			</LinkedLabel>
-		</div>
-	</div>
 {/if}
 
 <style lang="postcss">
-	.details-content {
-		display: flex;
-		flex-flow: column nowrap;
-		gap: 0.75rem;
-	}
-	#byte-map-demo {
-		margin: 0.5rem 0 0 0;
-	}
-	.demo-results {
-		display: flex;
-		flex-flow: column nowrap;
-		gap: 0.5rem;
-		margin: 0 0 0.5rem 0;
-	}
-	.result {
-		display: flex;
-		flex-flow: column nowrap;
-		font-size: 0.65rem;
-		gap: 0.75rem;
-		padding: 0.5rem;
-		background-color: var(--black1);
-		border-radius: 6px;
-		white-space: normal;
-		word-break: break-all;
-		line-height: 1;
-	}
-	.result-label-wrapper {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-	}
-	.result-label {
-		font-size: 0.75rem;
-		font-weight: 700;
-
-		grid-column: 1 / span 1;
-		grid-row: 1 / span 1;
-	}
-	.input-value {
-		border: 1px solid var(--nav-button-bg-color);
-	}
-	.input-value .result-label {
-		color: var(--pri-color);
-	}
-	.output-value {
-		border: 1px solid var(--nav-button-stop-autoplay-bg-color);
-	}
-	.output-value .result-label {
-		color: var(--sec-color);
-	}
-	.result-value {
-		font-family: 'Roboto Mono', menlo, monospace;
-		color: var(--white3);
-		letter-spacing: 0.7px;
-		line-height: 1.4;
-
-		grid-column: 2 / span 1;
-		grid-row: 1 / span 1;
-	}
-	.encoding-type {
-		font-size: 0.6rem;
-	}
-	.input-value .encoding-type {
-		color: var(--nav-button-active-bg-color);
-	}
-	.output-value .encoding-type {
-		color: var(--nav-button-autoplay-bg-color);
-	}
 	.external-link {
 		font-size: 0.7rem;
-	}
-	@media screen and (min-width: 730px) {
-		.demo-results {
-			margin: 0.5rem 0 0 0;
-		}
-		.result {
-			font-size: 0.75rem;
-		}
-		.result-label {
-			font-size: 0.85rem;
-		}
-		.result-value {
-			line-height: 1.6;
-		}
-		.encoding-type {
-			font-size: 0.7rem;
-		}
 	}
 </style>

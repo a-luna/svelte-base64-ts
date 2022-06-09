@@ -110,15 +110,19 @@ export interface EncodingSchema {
 				createInputChunk: Record<string, unknown>;
 				explainLastPaddedChunk: Record<string, unknown>;
 				createLastPaddedChunk: Record<string, unknown>;
-				explainPadCharacter: Record<string, unknown>;
 				createdAllInputChunks: Record<string, unknown>;
 			};
 		};
 		createOutputChunks: {
 			states: {
 				idle: Record<string, unknown>;
+				autoPlayIdle: Record<string, unknown>;
+				regularIdle: Record<string, unknown>;
 				autoPlayCreateOutputChunk: Record<string, unknown>;
 				createOutputChunk: Record<string, unknown>;
+				explainLastPaddedChunk: Record<string, unknown>;
+				explainPadCharacter: Record<string, unknown>;
+				createLastPaddedChunk: Record<string, unknown>;
 				createdAllOutputChunks: Record<string, unknown>;
 			};
 		};
@@ -169,12 +173,16 @@ export type EncodingTypeStates = {
 		| { createInputChunks: 'createInputChunk' }
 		| { createInputChunks: 'explainLastPaddedChunk' }
 		| { createInputChunks: 'createLastPaddedChunk' }
-		| { createInputChunks: 'explainPadCharacter' }
 		| { createInputChunks: 'createdAllInputChunks' }
 		| 'createOutputChunks'
 		| { createOutputChunks: 'idle' }
+		| { createOutputChunks: 'regularIdle' }
+		| { createOutputChunks: 'autoPlayIdle' }
 		| { createOutputChunks: 'autoPlayCreateOutputChunk' }
 		| { createOutputChunks: 'createOutputChunk' }
+		| { createOutputChunks: 'explainLastPaddedChunk' }
+		| { createOutputChunks: 'explainPadCharacter' }
+		| { createOutputChunks: 'createLastPaddedChunk' }
 		| { createOutputChunks: 'createdAllOutputChunks' }
 		| 'encodeOutput'
 		| { encodeOutput: 'idle' }
@@ -569,7 +577,7 @@ export const encodingMachineConfig: MachineConfig<EncodingContext, EncodingSchem
 							},
 							{
 								actions: 'mapNextInputChunk',
-								cond: 'finalPaddedChunkRemaining',
+								cond: 'finalPaddedInputChunkRemaining',
 								target: 'explainLastPaddedChunk',
 							},
 							{
@@ -624,7 +632,7 @@ export const encodingMachineConfig: MachineConfig<EncodingContext, EncodingSchem
 							},
 							{
 								actions: 'mapNextInputChunk',
-								cond: 'finalPaddedChunkRemaining',
+								cond: 'finalPaddedInputChunkRemaining',
 								target: 'explainLastPaddedChunk',
 							},
 							{
@@ -651,7 +659,7 @@ export const encodingMachineConfig: MachineConfig<EncodingContext, EncodingSchem
 						RESUME_AUTO_PLAY: {
 							actions: 'startAutoPlay',
 							cond: 'autoPlayDisabled',
-							target: 'explainPadCharacter',
+							target: 'createLastPaddedChunk',
 						},
 						STOP_AUTO_PLAY: {
 							actions: 'stopAutoPlay',
@@ -692,7 +700,7 @@ export const encodingMachineConfig: MachineConfig<EncodingContext, EncodingSchem
 					after: {
 						'1000': {
 							cond: 'autoPlayEnabled',
-							target: 'explainPadCharacter',
+							target: 'createdAllInputChunks',
 						},
 					},
 					on: {
@@ -726,47 +734,6 @@ export const encodingMachineConfig: MachineConfig<EncodingContext, EncodingSchem
 						],
 						GO_TO_NEXT_STEP: {
 							cond: 'autoPlayDisabled',
-							target: 'explainPadCharacter',
-						},
-						GO_TO_LAST_STEP: {
-							actions: 'setFlagSkipDemo',
-							cond: 'autoPlayDisabled',
-							target: 'createdAllInputChunks',
-						},
-					},
-				},
-				explainPadCharacter: {
-					after: {
-						'1000': {
-							cond: 'autoPlayEnabled',
-							target: 'createdAllInputChunks',
-						},
-					},
-					on: {
-						RESUME_AUTO_PLAY: {
-							actions: 'startAutoPlay',
-							cond: 'autoPlayDisabled',
-							target: 'createLastPaddedChunk',
-						},
-						STOP_AUTO_PLAY: {
-							actions: 'stopAutoPlay',
-							cond: 'autoPlayEnabled',
-						},
-						RESET: {
-							actions: 'resetInput',
-							cond: 'autoPlayDisabled',
-							target: '#b64Encode.inactive',
-						},
-						GO_TO_FIRST_STEP: {
-							cond: 'autoPlayDisabled',
-							target: '#b64Encode.inactive',
-						},
-						GO_TO_PREV_STEP: {
-							cond: 'autoPlayDisabled',
-							target: 'createLastPaddedChunk',
-						},
-						GO_TO_NEXT_STEP: {
-							cond: 'autoPlayDisabled',
 							target: 'createdAllInputChunks',
 						},
 						GO_TO_LAST_STEP: {
@@ -795,12 +762,33 @@ export const encodingMachineConfig: MachineConfig<EncodingContext, EncodingSchem
 			states: {
 				idle: {
 					entry: 'resetRemainingOutputChunks',
+					always: [{ cond: 'autoPlayEnabled', target: 'autoPlayIdle' }, { target: 'regularIdle' }],
+				},
+				autoPlayIdle: {
 					after: {
-						'1000': {
-							cond: 'autoPlayEnabled',
-							target: 'autoPlayCreateOutputChunk',
-						},
+						'1000': [
+							{
+								cond: 'onlyOnePaddedChunk',
+								target: 'explainLastPaddedChunk',
+							},
+							{
+								target: 'autoPlayCreateOutputChunk',
+							},
+						],
 					},
+					on: {
+						STOP_AUTO_PLAY: [
+							{
+								cond: 'onlyOnePaddedChunk',
+								target: 'explainLastPaddedChunk',
+							},
+							{
+								target: 'createOutputChunk',
+							},
+						],
+					},
+				},
+				regularIdle: {
 					on: {
 						RESUME_AUTO_PLAY: {
 							actions: 'startAutoPlay',
@@ -823,8 +811,8 @@ export const encodingMachineConfig: MachineConfig<EncodingContext, EncodingSchem
 						GO_TO_PREV_STEP: [
 							{
 								actions: 'resetNoInputChunksRemaining',
-								cond: 'currentChunkIsPadded',
-								target: '#b64Encode.createInputChunks.explainPadCharacter',
+								cond: 'currentInputChunkIsPadded',
+								target: '#b64Encode.createInputChunks.createLastPaddedChunk',
 							},
 							{
 								actions: 'resetNoInputChunksRemaining',
@@ -832,10 +820,16 @@ export const encodingMachineConfig: MachineConfig<EncodingContext, EncodingSchem
 								target: '#b64Encode.createInputChunks.createInputChunk',
 							},
 						],
-						GO_TO_NEXT_STEP: {
-							cond: 'autoPlayDisabled',
-							target: 'createOutputChunk',
-						},
+						GO_TO_NEXT_STEP: [
+							{
+								cond: 'onlyOnePaddedChunk',
+								target: 'explainLastPaddedChunk',
+							},
+							{
+								cond: 'autoPlayDisabled',
+								target: 'createOutputChunk',
+							},
+						],
 						GO_TO_LAST_STEP: {
 							actions: 'setFlagSkipDemo',
 							cond: 'autoPlayDisabled',
@@ -852,6 +846,11 @@ export const encodingMachineConfig: MachineConfig<EncodingContext, EncodingSchem
 								cond: 'outputChunksRemaining',
 								target: 'autoPlayCreateOutputChunk',
 								internal: false,
+							},
+							{
+								actions: 'mapNextOutputChunk',
+								cond: 'finalPaddedOutputChunkRemaining',
+								target: 'explainLastPaddedChunk',
 							},
 							{
 								cond: 'noOutputChunksRemaining',
@@ -904,10 +903,152 @@ export const encodingMachineConfig: MachineConfig<EncodingContext, EncodingSchem
 								internal: false,
 							},
 							{
+								actions: 'mapNextOutputChunk',
+								cond: 'finalPaddedOutputChunkRemaining',
+								target: 'explainLastPaddedChunk',
+							},
+							{
 								cond: 'noOutputChunksRemaining',
 								target: 'createdAllOutputChunks',
 							},
 						],
+						GO_TO_LAST_STEP: {
+							actions: 'setFlagSkipDemo',
+							cond: 'autoPlayDisabled',
+							target: 'createdAllOutputChunks',
+						},
+					},
+				},
+				explainLastPaddedChunk: {
+					entry: 'getCurrentOutputChunk',
+					after: {
+						'1000': {
+							cond: 'autoPlayEnabled',
+							target: 'explainPadCharacter',
+						},
+					},
+					on: {
+						RESUME_AUTO_PLAY: {
+							actions: 'startAutoPlay',
+							cond: 'autoPlayDisabled',
+							target: 'explainPadCharacter',
+						},
+						STOP_AUTO_PLAY: {
+							actions: 'stopAutoPlay',
+							cond: 'autoPlayEnabled',
+						},
+						RESET: {
+							actions: 'resetInput',
+							cond: 'autoPlayDisabled',
+							target: '#b64Encode.inactive',
+						},
+						GO_TO_FIRST_STEP: {
+							cond: 'autoPlayDisabled',
+							target: '#b64Encode.inactive',
+						},
+						GO_TO_PREV_STEP: [
+							{
+								actions: 'mapPreviousOutputChunk',
+								cond: 'hasPreviousOutputChunk',
+								target: 'createOutputChunk',
+							},
+							{
+								cond: 'allOutputChunksRemaining',
+								target: 'idle',
+							},
+						],
+						GO_TO_NEXT_STEP: {
+							cond: 'autoPlayDisabled',
+							target: 'explainPadCharacter',
+						},
+						GO_TO_LAST_STEP: {
+							actions: 'setFlagSkipDemo',
+							cond: 'autoPlayDisabled',
+							target: 'createdAllOutputChunks',
+						},
+					},
+				},
+				explainPadCharacter: {
+					after: {
+						'1000': {
+							cond: 'autoPlayEnabled',
+							target: 'createLastPaddedChunk',
+						},
+					},
+					on: {
+						RESUME_AUTO_PLAY: {
+							actions: 'startAutoPlay',
+							cond: 'autoPlayDisabled',
+							target: 'createLastPaddedChunk',
+						},
+						STOP_AUTO_PLAY: {
+							actions: 'stopAutoPlay',
+							cond: 'autoPlayEnabled',
+						},
+						RESET: {
+							actions: 'resetInput',
+							cond: 'autoPlayDisabled',
+							target: '#b64Encode.inactive',
+						},
+						GO_TO_FIRST_STEP: {
+							cond: 'autoPlayDisabled',
+							target: '#b64Encode.inactive',
+						},
+						GO_TO_PREV_STEP: {
+							cond: 'autoPlayDisabled',
+							target: 'explainLastPaddedChunk',
+						},
+						GO_TO_NEXT_STEP: {
+							cond: 'autoPlayDisabled',
+							target: 'createLastPaddedChunk',
+						},
+						GO_TO_LAST_STEP: {
+							actions: 'setFlagSkipDemo',
+							cond: 'autoPlayDisabled',
+							target: 'createdAllOutputChunks',
+						},
+					},
+				},
+				createLastPaddedChunk: {
+					after: {
+						'1000': {
+							cond: 'autoPlayEnabled',
+							target: 'createdAllOutputChunks',
+						},
+					},
+					on: {
+						RESUME_AUTO_PLAY: {
+							actions: 'startAutoPlay',
+							cond: 'autoPlayDisabled',
+							target: 'createdAllOutputChunks',
+						},
+						STOP_AUTO_PLAY: {
+							actions: 'stopAutoPlay',
+							cond: 'autoPlayEnabled',
+						},
+						RESET: {
+							actions: 'resetInput',
+							cond: 'autoPlayDisabled',
+							target: '#b64Encode.inactive',
+						},
+						GO_TO_FIRST_STEP: {
+							cond: 'autoPlayDisabled',
+							target: '#b64Encode.inactive',
+						},
+						GO_TO_PREV_STEP: [
+							{
+								cond: 'lastChunkIsPadded',
+								target: 'explainPadCharacter',
+							},
+							{
+								cond: 'allOutputChunksRemaining',
+								target: 'idle',
+							},
+						],
+						GO_TO_NEXT_STEP: {
+							cond: 'autoPlayDisabled',
+							target: 'createdAllOutputChunks',
+						},
 						GO_TO_LAST_STEP: {
 							actions: 'setFlagSkipDemo',
 							cond: 'autoPlayDisabled',
@@ -959,11 +1100,18 @@ export const encodingMachineConfig: MachineConfig<EncodingContext, EncodingSchem
 							cond: 'autoPlayDisabled',
 							target: '#b64Encode.inactive',
 						},
-						GO_TO_PREV_STEP: {
-							actions: 'resetNoOutputChunksRemaining',
-							cond: 'autoPlayDisabled',
-							target: '#b64Encode.createOutputChunks.createOutputChunk',
-						},
+						GO_TO_PREV_STEP: [
+							{
+								actions: 'resetNoOutputChunksRemaining',
+								cond: 'currentOutputChunkIsPadded',
+								target: '#b64Encode.createOutputChunks.createLastPaddedChunk',
+							},
+							{
+								actions: 'resetNoOutputChunksRemaining',
+								cond: 'autoPlayDisabled',
+								target: '#b64Encode.createOutputChunks.createOutputChunk',
+							},
+						],
 						GO_TO_NEXT_STEP: {
 							cond: 'autoPlayDisabled',
 							target: 'encodeBase64',
@@ -1056,7 +1204,10 @@ export const encodingMachineConfig: MachineConfig<EncodingContext, EncodingSchem
 			},
 		},
 		finished: {
-			entry: ['stopAutoPlay', 'updateContextForLastStep'],
+			entry: ['updateContextForLastStep'],
+			after: {
+				10: { actions: 'stopAutoPlay', cond: 'autoPlayEnabled' },
+			},
 			on: {
 				RESET: {
 					actions: 'resetInput',
@@ -1270,20 +1421,25 @@ export const encodingMachineOptions: MachineOptions<
 		inputChunksRemaining: (context: EncodingContext) =>
 			context.input.lastChunkPadded ? context.remainingInputChunks > 1 : context.remainingInputChunks > 0,
 		lastChunkIsPadded: (context: EncodingContext) => !context.autoplay && context.input.lastChunkPadded,
-		finalPaddedChunkRemaining: (context: EncodingContext) =>
+		finalPaddedInputChunkRemaining: (context: EncodingContext) =>
 			(context.remainingInputChunks === 1 && context.input.lastChunkPadded) || false,
 		onlyOnePaddedChunk: (context: EncodingContext) => context.input.totalChunks === 1 && context.input.lastChunkPadded,
 		noInputChunksRemaining: (context: EncodingContext) => context.remainingInputChunks === 0,
 		allInputChunksRemaining: (context: EncodingContext) =>
 			context.remainingInputChunks + 1 === context.input.totalChunks,
-		currentChunkIsPadded: (context: EncodingContext) =>
+		currentInputChunkIsPadded: (context: EncodingContext) =>
 			!context.autoplay && context.currentInputChunk.bytes.length !== 3,
 		hasPreviousInputChunk: (context: EncodingContext) => !context.autoplay && context.inputChunkIndex > 0,
-		outputChunksRemaining: (context: EncodingContext) => context.remainingOutputChunks > 0,
+		outputChunksRemaining: (context: EncodingContext) =>
+			context.input.lastChunkPadded ? context.remainingOutputChunks > 1 : context.remainingOutputChunks > 0,
+		finalPaddedOutputChunkRemaining: (context: EncodingContext) =>
+			(context.remainingOutputChunks === 1 && context.input.lastChunkPadded) || false,
 		noOutputChunksRemaining: (context: EncodingContext) => context.remainingOutputChunks === 0,
 		allOutputChunksRemaining: (context: EncodingContext) =>
-			context.remainingOutputChunks + 1 === context.input.totalChunks,
-		hasPreviousOutputChunk: (context: EncodingContext) => context.outputChunkIndex > 0,
+			!context.autoplay && context.remainingOutputChunks + 1 === context.input.totalChunks,
+		currentOutputChunkIsPadded: (context: EncodingContext) =>
+			!context.autoplay && context.currentOutputChunk.bytes.length !== 3,
+		hasPreviousOutputChunk: (context: EncodingContext) => !context.autoplay && context.outputChunkIndex > 0,
 		base64CharsRemaining: (context: EncodingContext) => context.remainingBase64Chars > 0,
 		noBase64CharsRemaining: (context: EncodingContext) => context.remainingBase64Chars === 0,
 		allBase64CharsRemaining: (context: EncodingContext) =>

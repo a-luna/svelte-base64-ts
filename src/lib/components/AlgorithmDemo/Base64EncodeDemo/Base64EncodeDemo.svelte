@@ -2,11 +2,11 @@
 	import AuthorName from '$lib/components/AlgorithmDemo/AuthorName.svelte';
 	import DemoResults from '$lib/components/AlgorithmDemo/Base64EncodeDemo/DemoResults.svelte';
 	import DemoText from '$lib/components/AlgorithmDemo/Base64EncodeDemo/DemoText.svelte';
+	import FinalResults from '$lib/components/AlgorithmDemo/Base64EncodeDemo/FinalResults.svelte';
 	import InputForm from '$lib/components/AlgorithmDemo/Base64EncodeDemo/InputForm/InputForm.svelte';
+	import OpenHelpDocsLarge from '$lib/components/AlgorithmDemo/Base64EncodeDemo/InputForm/OpenHelpDocsLarge.svelte';
 	import EncoderHelpModal from '$lib/components/AlgorithmDemo/HelpModal/EncoderHelpModal.svelte';
 	import FormTitle from '$lib/components/FormTitle.svelte';
-	import AsciiLookupTable from '$lib/components/LookupTables/AsciiLookupTable.svelte';
-	import Base64LookupTable from '$lib/components/LookupTables/Base64LookupTable.svelte';
 	import { defaultEncoderInput } from '$lib/constants';
 	import { alert } from '$lib/stores/alert';
 	import { isBase64Encoding, isStringEncoding } from '$lib/typeguards';
@@ -19,10 +19,11 @@
 		XStateSendEvent,
 	} from '$lib/types';
 	import type { DemoStore } from '$lib/types/DemoStore';
+	import { copyToClipboard } from '$lib/util';
 	import type { EncodingEvent } from '$lib/xstate/b64Encode';
 	import { getContext } from 'svelte';
 	import type { Readable, Writable } from 'svelte/store';
-	import { fade } from 'svelte/transition';
+	import LookupTables from './LookupTables.svelte';
 
 	let state: EncodingMachineStateStore;
 	let demoState: Readable<DemoStore>;
@@ -39,16 +40,11 @@
 	let pageWidth: number;
 	let helpModal: EncoderHelpModal;
 
-	function openHelpDocsModal() {
-		if (!$state.context.autoplay) {
-			helpModal.toggleModal();
-		}
-	}
-
 	$: machineState =
 		$state.matches('inactive') || $state.matches('finished') ? $state.value : Object.keys($state.value)[0];
 	$: machineSubState =
 		$state.matches('inactive') || $state.matches('finished') ? 'none' : Object.values($state.value)[0];
+	$: if ($state.context.autoplay && $state.value) eventLog.add({ type: 'AUTOPLAYING' });
 	$: if (inputText) updateInputText(inputText, inputTextEncoding, outputBase64Encoding);
 	// $: console.log({ state: $state.value, context: $state.context });
 	// $: console.log({ state: `${machineState}${machineSubState !== 'none' ? `-${machineSubState}` : ``}` });
@@ -77,9 +73,14 @@
 		outputBase64Encoding = defaultEncoderInput.outputEncoding;
 		eventLog.clear();
 	}
-	$: tableChunkSize = pageWidth < 730 ? 32 : 16;
-	$: tableSectionHeight = pageWidth < 730 ? 'auto' : '260px';
+	$: bottomRowHeight = pageWidth < 730 ? 'auto' : '260px';
 	$: formTitleFontSize = pageWidth < 730 ? '1.6rem' : '1.9rem';
+
+	function openHelpDocsModal() {
+		if (!$state.context.autoplay) {
+			helpModal.toggleModal();
+		}
+	}
 
 	function updateInputText(input: string, stringEncoding: StringEncoding, base64Encoding: Base64Encoding) {
 		sendEvent({
@@ -101,7 +102,7 @@
 		}
 	}
 
-	function handleKeyPress(key: string) {
+	async function handleKeyPress(key: string) {
 		if (!$demoUIState.modalOpen) {
 			if (key === 'KeyA') {
 				console.log({ $eventLog });
@@ -110,12 +111,17 @@
 				console.log({ context: $state.context });
 			}
 			if (key === 'KeyE') {
-				const events = $eventLog.filter((e) => !Object.prototype.hasOwnProperty.call(e, 'state'));
-				console.log({ events });
+				console.log({ log: eventLog.entries() });
 			}
 			if (key === 'KeyL') {
 				eventLog.clear();
 				console.log({ $eventLog });
+			}
+			if (key === 'KeyP') {
+				const result = await copyToClipboard(eventLog.testScript({ port: 3500 }));
+				if (result.success) {
+					console.log('Successfully created test script and copied to clipboard!');
+				}
 			}
 			if (key === 'KeyS') {
 				console.log({ state: $state.value });
@@ -156,15 +162,15 @@
 
 	function sendEvent(action: EncodingEvent) {
 		if ($state.can(action)) {
-			send(action);
 			eventLog.add(action);
+			send(action);
 		}
 	}
 </script>
 
 <svelte:window on:keydown={(e) => handleKeyPress(e.code)} bind:innerWidth={pageWidth} />
 
-<div class="form-top-row">
+<div class="top-row">
 	<div class="form-title-wrappper">
 		<FormTitle title={'Base64 Algorithm Demo'} fontSize={formTitleFontSize} letterSpacing={'2.7px'} />
 	</div>
@@ -188,28 +194,15 @@
 		<DemoResults bind:highlightHexByte bind:highlightBase64 />
 	</div>
 </div>
-<div class="demo-references" style="flex: 1 0 {tableSectionHeight}">
-	{#if $demoState.showAsciiTable}
-		<div transition:fade class="ascii-table">
-			<AsciiLookupTable asciiTableChunkSize={tableChunkSize} {highlightHexByte} fontSize={'0.65rem'} />
-		</div>
-	{:else if $demoState.showBase64Table}
-		<div transition:fade class="base64-table">
-			<Base64LookupTable
-				base64Encoding={outputBase64Encoding}
-				base64TableChunkSize={tableChunkSize}
-				{highlightBase64}
-				fontSize={'0.65rem'}
-			/>
-		</div>
-	{:else}
-		<div class="placeholder" style="width: 292px" />
-	{/if}
+<div class="bottom-row" style="flex: 1 0 {bottomRowHeight}">
+	<OpenHelpDocsLarge on:click={() => openHelpDocsModal()} />
+	<LookupTables {outputBase64Encoding} {highlightBase64} {highlightHexByte} />
+	<FinalResults {pageWidth} />
 </div>
 <EncoderHelpModal bind:this={helpModal} />
 
 <style lang="postcss">
-	.form-top-row {
+	.top-row {
 		display: grid;
 		grid-template-columns: auto auto;
 		grid-template-rows: auto auto;
@@ -257,24 +250,19 @@
 		align-self: flex-start;
 		position: static;
 		z-index: 1;
-		margin: 0 0 0.5rem 0;
+		margin: 0;
 
 		grid-column: 1 / span 2;
 		grid-row: 2 / span 1;
 	}
-	.demo-references {
-		padding: 0.25rem;
+	#demo-text:not(:only-child) {
+		margin: 0 0 1rem 0;
+	}
+	.bottom-row {
 		overflow: auto;
-		width: min-content;
-		margin: 0 auto;
 
 		grid-column: 1 / span 1;
 		grid-row: 4 / span 1;
-	}
-	.ascii-table,
-	.base64-table {
-		flex: 0 1 auto;
-		margin: 0 auto;
 	}
 	:global(.highlight-hex-byte),
 	:global(.highlight-base64) {
@@ -283,12 +271,12 @@
 		transition: background-color 0.35s ease-in-out;
 	}
 	@media screen and (min-width: 730px) {
-		.form-top-row {
+		.top-row {
 			grid-template-columns: auto auto 1fr auto;
 			grid-template-rows: auto;
 			align-items: center;
 			margin: 0 0 2rem 0;
-			width: 698px;
+			width: 701px;
 
 			grid-column: 1 / span 1;
 			grid-row: 1 / span 1;
@@ -302,7 +290,7 @@
 		}
 		#demo-steps-wrapper {
 			padding: 1rem;
-			width: 666px;
+			width: 669px;
 
 			grid-column: 1 / span 1;
 			grid-row: 3 / span 1;
@@ -317,7 +305,9 @@
 			grid-column: 1 / span 5;
 			grid-row: 2 / span 1;
 		}
-		.demo-references {
+		.bottom-row {
+			margin: 1rem 0 0 0;
+
 			grid-column: 1 / span 1;
 			grid-row: 4 / span 1;
 		}

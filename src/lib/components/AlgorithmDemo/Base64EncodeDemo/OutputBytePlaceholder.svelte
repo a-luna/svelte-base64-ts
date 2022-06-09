@@ -19,9 +19,11 @@
 	$: chunkMappingInProgress =
 		$state.matches({ createOutputChunks: 'autoPlayCreateOutputChunk' }) ||
 		$state.matches({ createOutputChunks: 'createOutputChunk' }) ||
+		$state.matches({ createOutputChunks: 'createLastPaddedChunk' }) ||
 		$state.matches({ createOutputChunks: 'createdAllOutputChunks' });
 	$: currentChunkIsMapped = chunkMappingInProgress && currentOutputChunk === chunkId;
 	$: currentChunkColor = currentChunkIsMapped ? chunkColor : '--light-gray3';
+	$: currentBitGroupColor = currentChunkIsMapped ? chunkColor : '--black1';
 </script>
 
 <div class="b64Char-id" data-b64char-number={b64CharNumber} style="color: var({currentChunkColor});">
@@ -35,7 +37,7 @@
 				class="hex-bit-group"
 				data-bit-group={bitGroup.groupId}
 				class:mapping={currentChunkIsMapped}
-				style="color: var({currentChunkColor});"
+				style="color: var({currentBitGroupColor});"
 			>
 				{#each bitGroup.bits as bit}
 					<code class="bit"><span>{bit}</span></code>
@@ -43,7 +45,11 @@
 			</div>
 		{/each}
 	{:else}
-		<div class="hex-bit-group pad-char" class:mapping={currentChunkIsMapped}>
+		<div
+			class="hex-bit-group pad-char"
+			class:mapping={currentChunkIsMapped}
+			style="outline: 1px dotted var({currentChunkColor});"
+		>
 			<code class="bit pad-bit"><span>{@html '&nbsp;'}</span></code>
 			<code class="bit pad-bit"><span>{@html '&nbsp;'}</span></code>
 			<code class="bit pad-bit"><span>{@html '&nbsp;'}</span></code>
