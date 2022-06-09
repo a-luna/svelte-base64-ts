@@ -64,7 +64,7 @@
 		grid-column: 2 / span 1;
 		grid-row: 7 / span 1;
 	}
-	@media screen and (min-width: 730px) {
+	@media screen and (min-width: 762px) {
 		.reset {
 			grid-column: 2 / span 1;
 			grid-row: 1 / span 1;

@@ -164,7 +164,7 @@
 		border-color: #e5e7eb;
 		padding: 0;
 	}
-	@media screen and (min-width: 730px) {
+	@media screen and (min-width: 762px) {
 		.modal-dialog {
 			max-width: 650px;
 			margin: 2rem auto 0 auto;

@@ -101,7 +101,7 @@
 		grid-row: 5 / span 1;
 	}
 
-	@media screen and (min-width: 730px) {
+	@media screen and (min-width: 762px) {
 		.input-form {
 			display: grid;
 			grid-template-columns: 86px 114px auto;

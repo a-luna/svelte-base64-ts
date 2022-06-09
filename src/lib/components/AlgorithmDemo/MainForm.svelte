@@ -18,9 +18,9 @@
 	setContext('demo', { state, demoState, demoUIState, eventLog, send });
 	let pageWidth: number;
 
-	$: height = pageWidth < 730 ? 'auto' : '100vh';
+	$: height = pageWidth < 762 ? 'auto' : '100vh';
 	$: gridStyles =
-		pageWidth < 730 || $state.matches('finished')
+		pageWidth < 762 || $state.matches('finished')
 			? 'auto auto auto 1fr'
 			: $state.matches('inactive') || $state.matches({ validateInputText: 'error' })
 			? 'auto auto auto 1fr'
@@ -47,7 +47,7 @@
 		width: 343px;
 		min-height: 100vh;
 	}
-	@media screen and (min-width: 730px) {
+	@media screen and (min-width: 762px) {
 		.base64-algo-demo {
 			box-sizing: border-box;
 			grid-template-columns: auto;

@@ -14,7 +14,7 @@
 	let appNavDetailsElement: HTMLDetailsElement;
 	let openSection: 'none' | 'welcome' | 'settings' | 'navigation' = 'welcome';
 
-	$: arrowSize = pageWidth < 730 ? 'sm' : 'md';
+	$: arrowSize = pageWidth < 762 ? 'sm' : 'md';
 
 	function toggleWelcomeDetails() {
 		if (welcomeDetailsElement.open) {

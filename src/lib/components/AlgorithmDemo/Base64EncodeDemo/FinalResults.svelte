@@ -9,7 +9,7 @@
 	let state: EncodingMachineStateStore;
 	({ state } = getContext('demo'));
 
-	$: copyToClipboardButtonStyle = pageWidth < 730 ? 'font-weight: 700; align-self: flex-end;' : 'font-weight: 700;';
+	$: copyToClipboardButtonStyle = pageWidth < 762 ? 'font-weight: 700; align-self: flex-end;' : 'font-weight: 700;';
 
 	async function handleCopyButtonClicked(colorString: string) {
 		const result = await copyToClipboard(colorString);
@@ -106,7 +106,7 @@
 	.output-value .encoding-type {
 		color: var(--nav-button-autoplay-bg-color);
 	}
-	@media screen and (min-width: 730px) {
+	@media screen and (min-width: 762px) {
 		.demo-results {
 			gap: 1rem;
 		}

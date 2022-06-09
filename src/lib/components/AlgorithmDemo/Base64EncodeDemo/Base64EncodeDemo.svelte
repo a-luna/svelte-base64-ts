@@ -73,8 +73,8 @@
 		outputBase64Encoding = defaultEncoderInput.outputEncoding;
 		eventLog.clear();
 	}
-	$: bottomRowHeight = pageWidth < 730 ? 'auto' : '260px';
-	$: formTitleFontSize = pageWidth < 730 ? '1.6rem' : '1.9rem';
+	$: bottomRowHeight = pageWidth < 762 ? 'auto' : '260px';
+	$: formTitleFontSize = pageWidth < 762 ? '1.6rem' : '1.9rem';
 
 	function openHelpDocsModal() {
 		if (!$state.context.autoplay) {
@@ -270,7 +270,7 @@
 		font-weight: 700;
 		transition: background-color 0.35s ease-in-out;
 	}
-	@media screen and (min-width: 730px) {
+	@media screen and (min-width: 762px) {
 		.top-row {
 			grid-template-columns: auto auto 1fr auto;
 			grid-template-rows: auto;

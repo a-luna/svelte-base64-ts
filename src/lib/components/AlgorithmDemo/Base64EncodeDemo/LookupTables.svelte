@@ -1,12 +1,12 @@
 <script lang="ts">
 	import AsciiLookupTable from '$lib/components/LookupTables/AsciiLookupTable.svelte';
 	import Base64LookupTable from '$lib/components/LookupTables/Base64LookupTable.svelte';
-	import type { Base64Encoding,EncodingMachineStateStore } from '$lib/types';
+	import type { Base64Encoding, EncodingMachineStateStore } from '$lib/types';
 	import type { DemoStore } from '$lib/types/DemoStore';
 	import { getContext } from 'svelte';
 	import type { Readable } from 'svelte/store';
 	import { fade } from 'svelte/transition';
-	
+
 	export let outputBase64Encoding: Base64Encoding;
 	export let highlightHexByte: number;
 	export let highlightBase64: string;
@@ -16,7 +16,7 @@
 	let demoState: Readable<DemoStore>;
 	({ state, demoState } = getContext('demo'));
 
-	$: tableChunkSize = pageWidth < 730 ? 32 : 16;
+	$: tableChunkSize = pageWidth < 762 ? 32 : 16;
 </script>
 
 <svelte:window bind:innerWidth={pageWidth} />
@@ -34,7 +34,7 @@
 			fontSize={'0.65rem'}
 		/>
 	</div>
-<!-- {:else if !$state.matches('finished')}
+	<!-- {:else if !$state.matches('finished')}
 	<div class="placeholder" style="width: 292px" /> -->
 {/if}
 

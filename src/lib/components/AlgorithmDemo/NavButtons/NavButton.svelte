@@ -21,7 +21,7 @@
 	let send: XStateSendEvent;
 	({ state, eventLog, send } = getContext('demo'));
 
-	$: isMobile = pageWidth < 730;
+	$: isMobile = pageWidth < 762;
 	$: labelColor = $state.context.autoplay ? `var(--nav-button-autoplay-bg-color)` : `var(--nav-button-active-bg-color)`;
 	$: labelStyle = `grid-column: ${buttonNumber} / span 1; grid-row: 1 / span 1; color: ${labelColor}`;
 	$: butttonStyle = `grid-column: ${buttonNumber} / span 1; grid-row: 2 / span 1;`;

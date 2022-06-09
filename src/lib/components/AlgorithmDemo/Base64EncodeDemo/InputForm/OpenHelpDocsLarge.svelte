@@ -33,7 +33,7 @@
 		grid-row: 6 / span 1;
 	}
 
-	@media screen and (min-width: 730px) {
+	@media screen and (min-width: 762px) {
 		.open-help-docs {
 			font-size: 0.85rem;
 

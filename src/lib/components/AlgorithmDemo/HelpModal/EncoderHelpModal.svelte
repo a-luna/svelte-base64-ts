@@ -19,8 +19,8 @@
 	({ demoUIState } = getContext('demo'));
 
 	$: $demoUIState.modalOpen = !closed;
-	$: title = pageWidth < 730 ? 'Base64 Encoding Help Docs' : '';
-	$: showContentsPanel = pageWidth >= 730;
+	$: title = pageWidth < 762 ? 'Base64 Encoding Help Docs' : '';
+	$: showContentsPanel = pageWidth >= 762;
 	$: displayedSectionTitle = helpTopicsExpanded ? 'Help Topics' : encodingHelpSections[index].title;
 
 	export function toggleModal() {
