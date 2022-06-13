@@ -1,5 +1,7 @@
 <script lang="ts">
 	import NormalByteMap from '$lib/components/AlgorithmDemo/Base64EncodeDemo/DemoByteMaps/NormalByteMap.svelte';
+	import OneByteMap from '$lib/components/AlgorithmDemo/Base64EncodeDemo/DemoByteMaps/OneByteMap.svelte';
+	import TwoByteMap from '$lib/components/AlgorithmDemo/Base64EncodeDemo/DemoByteMaps/TwoByteMap.svelte';
 	import DemoIntro from '$lib/components/AlgorithmDemo/Base64EncodeDemo/DemoIntro.svelte';
 	import InputChunk from '$lib/components/AlgorithmDemo/Base64EncodeDemo/InputChunk.svelte';
 	import {
@@ -15,8 +17,6 @@
 	} from '$lib/components/AlgorithmDemo/Base64EncodeDemo/_demoText';
 	import type { EncodingMachineStateStore, StringEncoding } from '$lib/types';
 	import { getContext } from 'svelte';
-	import OneByteMap from './DemoByteMaps/OneByteMap.svelte';
-	import TwoByteMap from './DemoByteMaps/TwoByteMap.svelte';
 
 	let state: EncodingMachineStateStore;
 	({ state } = getContext('demo'));
@@ -109,7 +109,7 @@
 			The last chunk will require special processing since it only contains {finalInputChunkSizeVerbose}.
 		</p>
 	{/if}
-{:else if $state.matches( { createOutputChunks: 'autoPlayCreateOutputChunk' }, ) || $state.matches( { createOutputChunks: 'createOutputChunk' }, )}
+{:else if $state.matches( { createOutputChunks: 'autoPlayCreateOutputChunk' }, ) || $state.matches( { createOutputChunks: 'createOutputChunk' }, ) || $state.matches( { createOutputChunks: 'createLastPaddedChunk' }, )}
 	{#each describeOutputChunk($state.context.currentOutputChunk, $state.context.outputChunkIndex, $state.context.input.totalChunks) as text}
 		<p>
 			{@html text}
@@ -130,12 +130,6 @@
 {:else if $state.matches({ createOutputChunks: 'explainPadCharacter' })}
 	{#each explainPadCharacter($state.context.currentOutputChunk) as text}
 		<p>{@html text}</p>
-	{/each}
-{:else if $state.matches({ createOutputChunks: 'createLastPaddedChunk' })}
-	{#each describeOutputChunk($state.context.currentOutputChunk, $state.context.outputChunkIndex, $state.context.input.totalChunks) as text}
-		<p>
-			{@html text}
-		</p>
 	{/each}
 {:else if $state.matches({ encodeOutput: 'idle' })}
 	<p>

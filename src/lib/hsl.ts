@@ -1,4 +1,4 @@
-import type { HslColor, Result } from './types';
+import type { HslColor, Result } from '$lib/types';
 
 interface RgbColor {
 	r: number;

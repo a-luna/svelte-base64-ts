@@ -324,17 +324,19 @@ details:not(:last-child):not(:only-child) {
 }
 
 details[open] > summary {
-	color: var(--pri-color);
 	margin: 0 0 0.5rem 0;
 }
 
 details > summary {
 	display: block;
-	color: var(--sec-color);
+	color: var(--pri-color);
 	cursor: pointer;
 	font-size: 0.9rem;
 	font-weight: 500;
 	padding: 0.25rem 0;
+}
+details > summary .list-icon {
+	color: var(--pri-color);
 }
 
 .details-content > p,

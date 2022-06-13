@@ -5,6 +5,7 @@
 	import FinalResults from '$lib/components/AlgorithmDemo/Base64EncodeDemo/FinalResults.svelte';
 	import InputForm from '$lib/components/AlgorithmDemo/Base64EncodeDemo/InputForm/InputForm.svelte';
 	import OpenHelpDocsLarge from '$lib/components/AlgorithmDemo/Base64EncodeDemo/InputForm/OpenHelpDocsLarge.svelte';
+	import LookupTables from '$lib/components/AlgorithmDemo/Base64EncodeDemo/LookupTables.svelte';
 	import EncoderHelpModal from '$lib/components/AlgorithmDemo/HelpModal/EncoderHelpModal.svelte';
 	import FormTitle from '$lib/components/FormTitle.svelte';
 	import { defaultEncoderInput } from '$lib/constants';
@@ -23,7 +24,6 @@
 	import type { EncodingEvent } from '$lib/xstate/b64Encode';
 	import { getContext } from 'svelte';
 	import type { Readable, Writable } from 'svelte/store';
-	import LookupTables from './LookupTables.svelte';
 
 	let state: EncodingMachineStateStore;
 	let demoState: Readable<DemoStore>;
@@ -188,7 +188,7 @@
 <div id="demo-steps-wrapper">
 	<div class="demo-steps" data-testid="demo-steps">
 		<!-- <InspectStateMachineButton on:click={() => inspect({ iframe: false })} /> -->
-		<div id="demo-text" data-state={machineState} data-sub-state={machineSubState}>
+		<div id="demo-text" data-testid="demo-text" data-state={machineState} data-sub-state={machineSubState}>
 			<DemoText />
 		</div>
 		<DemoResults bind:highlightHexByte bind:highlightBase64 />

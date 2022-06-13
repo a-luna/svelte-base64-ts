@@ -1,5 +1,4 @@
-import type { MachineEvent, MachineLogs, MachineTestStepData } from '$lib/stores/eventLog';
-import type { PuppeteerOptions } from '$lib/stores/puppeteerScriptGenerator';
+import type { MachineEvent, MachineLogs, MachineTestStepData } from '$lib/xstate/b64Encode.test/types';
 import type { Writable } from 'svelte/store';
 
 export interface EventLogStore {
@@ -7,6 +6,6 @@ export interface EventLogStore {
 	update: Writable<MachineLogs>['update'];
 	add: (event: MachineEvent) => void;
 	entries: () => MachineTestStepData[];
-	testScript: (options: PuppeteerOptions) => string;
+	testScript: (ignoreUpdateTextEvents?: boolean) => string;
 	clear: () => void;
 }

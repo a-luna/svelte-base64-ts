@@ -1,4 +1,4 @@
-import type { AppMode } from './Literals';
+import type { AppMode } from '.';
 
 export interface DemoState {
 	mode: AppMode;

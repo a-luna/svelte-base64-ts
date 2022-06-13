@@ -2,7 +2,7 @@
 	import CircleOutline from '$lib/components/Icons/CircleOutline.svelte';
 </script>
 
-<div>
+<div class="list-icon">
 	<CircleOutline />
 </div>
 

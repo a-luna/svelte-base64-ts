@@ -2,7 +2,7 @@
 	import CircleFull from '$lib/components/Icons/CircleFull.svelte';
 </script>
 
-<div>
+<div class="list-icon">
 	<CircleFull />
 </div>
 
