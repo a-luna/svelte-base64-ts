@@ -334,9 +334,13 @@ details > summary {
 	font-size: 0.9rem;
 	font-weight: 500;
 	padding: 0.25rem 0;
+	list-style-type: none;
 }
 details > summary .list-icon {
 	color: var(--pri-color);
+}
+details > summary::-webkit-details-marker {
+    display: none;
 }
 
 .details-content > p,

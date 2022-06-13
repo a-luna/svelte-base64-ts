@@ -1,4 +1,4 @@
-import type { JSDomTestCase } from '$lib/xstate/b64Encode.test/types';
+import type { PuppeteerTestCase } from '$lib/xstate/b64Encode.test/types';
 import { machineStateDemoTextMap } from '$lib/xstate/b64Encode.test/util';
 import type { ElementHandle, Page } from 'puppeteer';
 
@@ -374,7 +374,7 @@ const asciiHappyPathSkipDemo = async (page: Page, expect: Vi.ExpectStatic): Prom
 	await page.waitForSelector('[data-sub-state="none"]');
 };
 
-export const testPaths: JSDomTestCase[] = [
+export const testPaths: PuppeteerTestCase[] = [
 	{ description: 'encode ascii text, execute all steps manually', testFunction: asciiHappyPath },
 	// { description: 'encode ascii text, execute all steps with autoplay', testFunction: asciiHappyPathAutoplay },
 	// { description: 'encode ascii text, skip demo', testFunction: asciiHappyPathSkipDemo },
