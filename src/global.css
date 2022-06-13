@@ -783,6 +783,7 @@ button {
 
 .help-docs .nav-buttons .nav-icon {
 	height: 13px;
+	width: 9px;
 }
 
 .help-docs .nav-prev {
@@ -1183,6 +1184,9 @@ button {
 	.output-chunk .bit {
 		width: 12px;
 	}
+	.help-docs {
+		font-size: 13px;
+	}
 	.help-docs-wrapper {
 		border-top-left-radius: 0;
 		border-bottom-left-radius: 0;
@@ -1212,6 +1216,7 @@ button {
 	}
 	.help-docs .nav-buttons .nav-icon {
 		height: 15px;
+		width: 10px;
 	}
 	.help-docs h3 {
 		line-height: 1;
