@@ -1,3 +1,4 @@
+/* c8 ignore start */
 import { isStringEncoding } from '$lib/typeguards';
 import type { Base64Encoding, StringEncoding } from '$lib/types';
 import type {
@@ -172,3 +173,4 @@ export function createTestScript(testSteps: MachineTestStepData[], options?: Tes
 
 	return [`await page.goto('http://localhost:${port}', {waitUntil: 'networkidle0'})`, ...codeSteps].join('\n\n');
 }
+/* c8 ignore stop */

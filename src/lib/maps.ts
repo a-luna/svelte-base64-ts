@@ -10,12 +10,6 @@ export const getBase64LookupMap = (base64Encoding: Base64Encoding): { [key: stri
 	return base64Lookup;
 };
 
-export const getBase64CharacterMap = (args: {
-	base64Encoding: Base64Encoding;
-	chunkSize: number;
-}): Base64CharacterMap[] =>
-	getChunkedBase64Map({ base64Encoding: args.base64Encoding, chunkSize: args.chunkSize }).flat();
-
 export function getChunkedBase64Map(args: {
 	base64Encoding: Base64Encoding;
 	chunkSize: number;

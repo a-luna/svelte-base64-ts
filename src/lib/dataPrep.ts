@@ -13,7 +13,6 @@ import {
 	asciiStringFromByteArray,
 	byteArrayToBinaryStringArray,
 	divmod,
-	// escapeUtf8String,
 	hexStringFromByteArray,
 	stringToByteArray,
 } from '$lib/util';
@@ -28,9 +27,7 @@ export function validateEncoderInput(
 	if (!validationResult.success) {
 		return { ...defaultEncoderInput, inputText, inputEncoding, outputEncoding, validationResult };
 	}
-	if (inputEncoding === 'hex') {
-		inputText = validationResult.value;
-	}
+	inputText = validationResult.value;
 	return createEncoderInput(inputText, inputEncoding, outputEncoding, validationResult);
 }
 
@@ -71,10 +68,9 @@ function getEncodingParameters(
 	outputEncoding: Base64Encoding,
 	validationResult: Result<string>,
 ): EncoderInput {
+	const utf8encoded = inputEncoding === 'UTF-8' ? encodeURIComponent(inputText) : '';
 	const bytes = stringToByteArray(inputText, inputEncoding);
 	const ascii = inputEncoding === 'ASCII' ? inputText : '';
-	// const utf8 = inputEncoding === 'UTF-8' ? inputText : '';
-	// const utf8Escaped = inputEncoding === 'UTF-8' ? escapeUtf8String(inputText) : '';
 	const binary = inputEncoding === 'bin' ? inputText : byteArrayToBinaryStringArray(bytes).join('');
 	const hex = hexStringFromByteArray(bytes, true, ' ');
 	const hexBytes = hex.split(' ');
@@ -91,8 +87,7 @@ function getEncodingParameters(
 		hexBytes,
 		hex,
 		ascii,
-		// utf8,
-		// utf8Escaped,
+		utf8encoded,
 		binary,
 		totalChunks,
 		lastChunkPadded,

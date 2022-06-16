@@ -1,5 +1,7 @@
+/// <reference types="vitest" />
 import adapter from '@sveltejs/adapter-static';
 import preprocess from 'svelte-preprocess';
+import { configDefaults } from 'vitest/config';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -30,8 +32,11 @@ const config = {
 				deps: {
 					inline: ['xstate'],
 				},
+				coverage: {
+					skipFull: true,
+					exclude: [...configDefaults.exclude, '<rootDir>/src/lib/xstate/b64Encode.test/*'],
+				},
 				testTimeout: 30_000,
-				hookTimeout: 30_000,
 			},
 		},
 	},

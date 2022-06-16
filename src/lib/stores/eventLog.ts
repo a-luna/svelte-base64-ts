@@ -1,3 +1,4 @@
+/* c8 ignore start */
 import type { EncodingMachineStateStore, EventLogStore } from '$lib/types';
 import { createTestScript } from '$lib/xstate/b64Encode.test/testScriptGenerator';
 import type { MachineEvent, MachineLogs, MachineState, MachineTestStepData } from '$lib/xstate/b64Encode.test/types';
@@ -47,3 +48,4 @@ export function createEventLogStore(machineState: EncodingMachineStateStore): Ev
 		clear,
 	};
 }
+/* c8 ignore stop */

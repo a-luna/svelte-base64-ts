@@ -1,4 +1,3 @@
-import { unescape } from '$lib/htmlEscape';
 import type { Result, StringEncoding } from '$lib/types';
 import { validateAsciiBytes } from '$lib/validation';
 
@@ -6,16 +5,6 @@ export const HEX_BIT_GROUP_REGEX = /hex-chunk-(?<chunk>\d+)-byte-(?<byte>1|2|3)/
 export const B64_BIT_GROUP_REGEX = /base64-chunk-(?<chunk>\d+)-digit-(?<b64Char>1|2|3|4)/;
 
 export const divmod = (x: number, y: number): [number, number] => [(x / y) | 0, x % y];
-
-export const genericStringToByteArray = (s: string): number[] => Array.from(s, (_, i) => s.charCodeAt(i));
-
-export const hexStringToByteArray = (hex: string): number[] =>
-	Array.from({ length: hex.length / 2 }, (_, i) => parseInt(hex.slice(i * 2, i * 2 + 2), 16));
-
-export const binaryStringToByteArray = (bin: string): number[] =>
-	Array.from({ length: bin.length / 8 }, (_, i) => parseInt(bin.slice(i * 8, i * 8 + 8), 2));
-
-export const utf8StringToByteArray = (s: string): number[] => genericStringToByteArray(unescape(encodeURIComponent(s)));
 
 export const stringToByteArray = (s: string, encoding: StringEncoding): number[] =>
 	encoding === 'hex'
@@ -25,6 +14,16 @@ export const stringToByteArray = (s: string, encoding: StringEncoding): number[]
 		: encoding === 'UTF-8'
 		? utf8StringToByteArray(s)
 		: genericStringToByteArray(s);
+
+export const hexStringToByteArray = (hex: string): number[] =>
+	Array.from({ length: hex.length / 2 }, (_, i) => parseInt(hex.slice(i * 2, i * 2 + 2), 16));
+
+export const binaryStringToByteArray = (bin: string): number[] =>
+	Array.from({ length: bin.length / 8 }, (_, i) => parseInt(bin.slice(i * 8, i * 8 + 8), 2));
+
+export const utf8StringToByteArray = (s: string): number[] => genericStringToByteArray(encodeURIComponent(s));
+
+const genericStringToByteArray = (s: string): number[] => Array.from(s, (_, i) => s.charCodeAt(i));
 
 export const asciiStringFromByteArray = (byteArray: number[]): string =>
 	validateAsciiBytes(byteArray) ? Array.from(byteArray, (x) => String.fromCharCode(x)).join('') : '';
@@ -41,14 +40,18 @@ export const hexStringFromByteArray = (byteArray: number[], upperCase = false, s
 export const byteArrayToBinaryStringArray = (byteArray: number[]): string[] =>
 	byteArray.map((byte) => decimalToBinaryString(byte));
 
-export const decimalToBinaryString = (val: number): string =>
-	`${'0'.repeat(8 - val.toString(2).length)}${val.toString(2)}`;
+export const decimalToBinaryString = (val: number): string => val.toString(2).padStart(8, '0');
 
-export const utf8StringFromByteArray = (byteArray: number[]): string =>
-	Array.from(byteArray, (x) => String.fromCharCode(x)).join('');
+export function utf8StringFromByteArray(byteArray: number[]): string {
+	try {
+		return decodeURIComponent(genericStringFromByteArray(byteArray));
+	} catch (ex) {
+		return '';
+	}
+}
 
-export const escapeUtf8String = (utf8String: string): string =>
-	Array.from(utf8StringToByteArray(utf8String), (x) => String.fromCharCode(x)).join('');
+const genericStringFromByteArray = (byteArray: number[]): string =>
+	byteArray.map((byte) => String.fromCharCode(byte)).join('');
 
 export function chunkify<T>(args: { inputList: T[]; chunkSize: number }): T[][] {
 	const { inputList, chunkSize } = args;

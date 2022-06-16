@@ -9,8 +9,7 @@ export interface EncoderInput {
 	hexBytes?: string[];
 	hex?: string;
 	ascii?: string;
-	// utf8?: string;
-	// utf8Escaped?: string;
+	utf8encoded?: string;
 	binary?: string;
 	totalChunks?: number;
 	lastChunkPadded?: boolean;

@@ -7,7 +7,7 @@ import type {
 	EncoderInputChunk,
 	EncoderOutput,
 	HexByteMap,
-	OutputChunk
+	OutputChunk,
 } from '$lib/types';
 
 export const B64_ALPHABET_COMMON = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';

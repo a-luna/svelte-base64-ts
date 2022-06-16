@@ -1,3 +1,4 @@
+/* c8 ignore start */
 import { isStringEncoding } from '$lib/typeguards';
 import type { Base64Encoding, StringEncoding } from '$lib/types';
 import type {
@@ -27,7 +28,7 @@ const getAutoplayTimeout = (machineState: MachineState): number =>
 		? 100
 		: 1100;
 
-export function createTestScript(testSteps: MachineTestStepData[], ignoreUpdateTextEvents = false): string {
+export function createTestScript(testSteps: MachineTestStepData[], ignoreUpdateTextEvents = true): string {
 	const instantiatedScriptObjects = getScripObjectTracker();
 	const instantiatedNavButtons = getNavButtonTracker();
 	const instantiatedHtmlElements = getElementHandleTracker();
@@ -160,11 +161,9 @@ export function createTestScript(testSteps: MachineTestStepData[], ignoreUpdateT
 	}
 
 	return testSteps
-		.map((step) => {
-			const ignoreStep = ignoreUpdateTextEvents && step.event.type === 'UPDATE_TEXT';
-			if (!step || !ignoreStep) {
-				return generateCodeForTestStep(step);
-			}
-		})
+		.filter((step) => step)
+		.filter((step) => step.event.type !== 'UPDATE_TEXT' || !ignoreUpdateTextEvents)
+		.map(generateCodeForTestStep)
 		.join('\n\n');
 }
+/* c8 ignore stop */

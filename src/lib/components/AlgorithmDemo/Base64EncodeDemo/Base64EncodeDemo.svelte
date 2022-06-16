@@ -10,7 +10,6 @@
 	import FormTitle from '$lib/components/FormTitle.svelte';
 	import { defaultEncoderInput } from '$lib/constants';
 	import { alert } from '$lib/stores/alert';
-	import { isBase64Encoding, isStringEncoding } from '$lib/typeguards';
 	import type {
 		Base64Encoding,
 		DemoState,
@@ -76,6 +75,31 @@
 	$: bottomRowHeight = pageWidth < 762 ? 'auto' : '260px';
 	$: formTitleFontSize = pageWidth < 762 ? '1.6rem' : '1.9rem';
 
+	// $: if (typeof window !== 'undefined') {
+	// 	// const i_b64 = '4pyTIMOgIGxhIG1vZGU=';
+	// 	const i_b64 = 'JUUyJTg4JTkxJUMzJTlGJUMzJUE1JUM1JTkzJTIwJUUyJTg5JTg4JTIwJUUyJTg4JTg2Yw==';
+	// 	const decoded = b64Decode(validateDecoderInput(i_b64, 'base64url'));
+	// 	const i_hex = decoded.chunks.map((chunk) => chunk.hex).join('');
+	// 	// const i_hex = b64Decode(validateDecoderInput(i_b64, 'base64url')).output;
+	// 	const j_bytes = hexStringToByteArray(i_hex);
+	// 	const k_utf8 = utf8StringFromByteArray(j_bytes);
+	// 	console.log({ decoded });
+	// }
+	// $: if (typeof window !== 'undefined') {
+	// 	const i_utf8 = '✓ à la mode';
+	// 	// const i_utf8 = '∑ßåœ ≈ ∆c';
+	// 	const l_bytes = utf8StringToByteArray(i_utf8);
+	// 	const m_hex = hexStringFromByteArray(l_bytes);
+	// 	const m_utf8encoded = utf8StringFromByteArray(l_bytes);
+	// 	const n_b64 = b64Encode(validateEncoderInput(m_hex, 'ASCII', 'base64')).output;
+	// 	console.log({ i_utf8, l_bytes, m_hex, m_utf8encoded, n_b64 });
+	// }
+	// $: if (typeof window !== 'undefined') {
+	// 	const input = '∑ßåœ ≈ ∆c';
+	// 	console.log(validateEncoderInput(input, 'UTF-8', 'base64'));
+	// 	console.log(b64Encode(validateEncoderInput(input, 'UTF-8', 'base64')));
+	// }
+
 	function openHelpDocsModal() {
 		if (!$state.context.autoplay) {
 			helpModal.toggleModal();
@@ -92,14 +116,12 @@
 	}
 
 	function submitForm(input: string) {
-		if (isStringEncoding(inputTextEncoding) && isBase64Encoding(outputBase64Encoding)) {
-			sendEvent({
-				type: 'VALIDATE_TEXT',
-				inputText: input,
-				inputEncoding: inputTextEncoding,
-				outputEncoding: outputBase64Encoding,
-			});
-		}
+		sendEvent({
+			type: 'VALIDATE_TEXT',
+			inputText: input,
+			inputEncoding: inputTextEncoding,
+			outputEncoding: outputBase64Encoding,
+		});
 	}
 
 	async function handleKeyPress(key: string) {
@@ -118,7 +140,7 @@
 				console.log({ $eventLog });
 			}
 			if (key === 'KeyP') {
-				const result = await copyToClipboard(eventLog.testScript({ port: 3500 }));
+				const result = await copyToClipboard(eventLog.testScript());
 				if (result.success) {
 					console.log('Successfully created test script and copied to clipboard!');
 				}

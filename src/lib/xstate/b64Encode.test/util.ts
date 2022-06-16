@@ -1,3 +1,4 @@
+/* c8 ignore start */
 import type { Base64Encoding, StringEncoding } from '$lib/types';
 import type {
 	DataEvent,
@@ -242,3 +243,4 @@ export const isDataMachineEvent = (event: MachineEvent): event is DataEvent =>
 
 export const formatStateName = (state: MachineState): string =>
 	`${state.state}${state.substate !== 'none' ? `-${state.substate}` : ``}`;
+/* c8 ignore stop */

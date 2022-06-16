@@ -9,6 +9,13 @@ describe('Base64Encoder', () => {
 		expect(encoded.output).toBe('ZG9n');
 	});
 
+	test('can encode a valid UTF-8 string to standard base64', () => {
+		const encoder = new Base64Encoder();
+		const encodingInput = encoder.validateInput('∑ßåœ ≈ ∆c', 'UTF-8', 'base64');
+		const encoded = encoder.encode(encodingInput);
+		expect(encoded.output).toBe('JUUyJTg4JTkxJUMzJTlGJUMzJUE1JUM1JTkzJTIwJUUyJTg5JTg4JTIwJUUyJTg4JTg2Yw==');
+	});
+
 	test('can decode a string that produces more than one output chunk', () => {
 		const encoder = new Base64Encoder();
 		const encodingInput = encoder.validateInput('this is a test', 'ASCII', 'base64');

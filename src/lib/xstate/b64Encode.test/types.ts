@@ -1,3 +1,4 @@
+/* c8 ignore start */
 import type { Base64Encoding, StringEncoding } from '$lib/types';
 import type { DATA_EVENT_TYPES, NULL_EVENT_TYPES, SIMPLE_EVENT_TYPES } from '$lib/xstate/b64Encode.test/util';
 import type { Matcher, MatcherOptions, Screen, waitForOptions } from '@testing-library/svelte';
@@ -48,3 +49,4 @@ export type PuppeteerTestCase = { description: string; testFunction: PuppeteerTe
 
 export type JSDomTestFunction = (screen: Screen, userEvent: UserEvent, expect: Vi.ExpectStatic) => Promise<void>;
 export type JSDomTestCase = { description: string; testFunction: JSDomTestFunction };
+/* c8 ignore stop */

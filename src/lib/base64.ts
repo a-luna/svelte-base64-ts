@@ -13,9 +13,14 @@ import type {
 	EncoderOutput,
 	HexByteMap,
 	OutputChunk,
-	StringEncoding
+	StringEncoding,
 } from '$lib/types';
-import { asciiStringFromByteArray, hexStringFromByteArray, hexStringToByteArray } from '$lib/util';
+import {
+	asciiStringFromByteArray,
+	hexStringFromByteArray,
+	hexStringToByteArray,
+	utf8StringFromByteArray,
+} from '$lib/util';
 import { validateAsciiBytes } from '$lib/validation';
 
 export class Base64Encoder implements Encoder {
@@ -90,7 +95,7 @@ function encodeChunk(
 	};
 	return addBitGroupsToOutputChunk(outputChunk, chunkNumber);
 }
- 
+
 export function b64Decode(decoderInput: DecoderInput): DecoderOutput {
 	const { inputText, inputEncoding } = decoderInput;
 	const hexMap = createHexMap(decoderInput.chunks);
@@ -98,12 +103,14 @@ export function b64Decode(decoderInput: DecoderInput): DecoderOutput {
 	const hexString = outputChunks.map((chunk) => chunk.hex).join('');
 	const bytes = hexStringToByteArray(hexString);
 	const isASCII = validateAsciiBytes(bytes);
+	const utf8 = utf8StringFromByteArray(bytes);
+	const isUTF8 = utf8 !== '';
 	return {
 		input: inputText,
 		inputEncoding,
-		output: isASCII ? asciiStringFromByteArray(bytes) : hexString,
+		output: isUTF8 ? utf8 : isASCII ? asciiStringFromByteArray(bytes) : hexString,
 		bytes: outputChunks.map((chunk) => chunk.bytes).flat(),
-		outputEncoding: isASCII ? 'ASCII' : 'hex',
+		outputEncoding: isUTF8 ? 'UTF-8' : isASCII ? 'ASCII' : 'hex',
 		chunks: outputChunks,
 	};
 }
@@ -132,10 +139,7 @@ function createHexMap(inputChunks: DecoderInputChunk[]): HexByteMap[] {
 	});
 }
 
-function mapHexBytesToBase64Chunks(
-	hexMap: HexByteMap[],
-	inputChunks: DecoderInputChunk[],
-): OutputChunk[] {
+function mapHexBytesToBase64Chunks(hexMap: HexByteMap[], inputChunks: DecoderInputChunk[]): OutputChunk[] {
 	return Array.from({ length: inputChunks.length }, (_, i) => {
 		const bytesInChunk: HexByteMap[] = [];
 		for (let j = 0; j < 3; j++) {

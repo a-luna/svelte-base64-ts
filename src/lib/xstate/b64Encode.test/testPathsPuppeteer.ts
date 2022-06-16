@@ -1,3 +1,4 @@
+/* c8 ignore start */
 import type { PuppeteerTestCase } from '$lib/xstate/b64Encode.test/types';
 import { machineStateDemoTextMap } from '$lib/xstate/b64Encode.test/util';
 import type { ElementHandle, Page } from 'puppeteer';
@@ -379,3 +380,4 @@ export const testPaths: PuppeteerTestCase[] = [
 	// { description: 'encode ascii text, execute all steps with autoplay', testFunction: asciiHappyPathAutoplay },
 	// { description: 'encode ascii text, skip demo', testFunction: asciiHappyPathSkipDemo },
 ];
+/* c8 ignore stop */

@@ -1,3 +1,4 @@
+/* c8 ignore start */
 import MainForm from '$lib/components/AlgorithmDemo/MainForm.svelte';
 import { testPaths } from '$lib/xstate/b64Encode.test/testPaths';
 import { render, screen } from '@testing-library/svelte';
@@ -13,3 +14,4 @@ describe('base64 encoding demo', () => {
 		});
 	});
 });
+/* c8 ignore stop */
