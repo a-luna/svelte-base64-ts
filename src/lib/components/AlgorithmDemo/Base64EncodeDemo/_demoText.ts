@@ -96,7 +96,7 @@ export function describeInputByte(
 		const char = String.fromCharCode(byte);
 		return `The ${byteNum} byte (${byteNumHtml}) contains <code>${char}</code>${charDescNonAlphaNumeric}, which has binary value&nbsp;<code>${bin}</code> (Hex: <code>${hex}</code>)`;
 	} else {
-		return `The ${byteNum} byte (${byteNumHtml}) is <code>${hex}</code>, which has binary value ${bin}`;
+		return `The ${byteNum} byte (${byteNumHtml}) is <code>${hex}</code>, which has binary value <code>${bin}</code>`;
 	}
 }
 

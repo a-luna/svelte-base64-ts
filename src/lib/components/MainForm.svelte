@@ -7,23 +7,26 @@
 </script>
 
 <div class="base64-wrapper">
-	<InputForm />
-	<InputResults />
-	<OutputResults />
-	<Visualization />
+	<div class="base64">
+		<InputForm />
+		<InputResults />
+		<OutputResults />
+		<Visualization />
+	</div>
 	<LookupTables asciiTableChunkSize={32} base64TableChunkSize={26} />
 </div>
 
 <style lang="postcss">
 	.base64-wrapper {
-		display: grid;
-		grid-template-columns: 87px auto auto 87px;
-		grid-template-rows: 31px auto 31px auto auto 1fr;
-		grid-gap: 1rem 0.5rem;
-
 		background-color: var(--page-bg-color);
 		max-width: 510px;
 		margin: 0 auto;
 		padding: 1rem;
+	}
+	.base64 {
+		display: grid;
+		grid-template-columns: 87px 1fr 1fr 87px;
+		grid-template-rows: 31px auto 31px auto auto 1fr;
+		grid-gap: 1rem 0.5rem;
 	}
 </style>

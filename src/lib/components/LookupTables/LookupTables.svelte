@@ -26,5 +26,6 @@
 		flex-flow: row wrap;
 		justify-content: space-around;
 		gap: 1.5rem;
+		margin: 1.5rem 0 0 0;
 	}
 </style>

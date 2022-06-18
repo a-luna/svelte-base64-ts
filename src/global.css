@@ -518,12 +518,12 @@ button {
 	margin: 0;
 }
 
-.ascii,
-.hex,
-.input-byte,
-.base64,
-.dec,
-.base64-char {
+.demo-steps .ascii,
+.demo-steps .hex,
+.demo-steps .input-byte,
+.demo-steps .base64,
+.demo-steps .dec,
+.demo-steps .base64-char {
 	font-size: 10px;
 }
 
@@ -1154,12 +1154,12 @@ button {
 	.b64Char-number {
 		font-size: 8px;
 	}
-	.ascii,
-	.hex,
-	.input-byte,
-	.base64,
-	.dec,
-	.base64-char {
+	.demo-steps .ascii,
+	.demo-steps .hex,
+	.demo-steps .input-byte,
+	.demo-steps .base64,
+	.demo-steps .dec,
+	.demo-steps .base64-char {
 		font-size: 11px;
 	}
 	.input-byte,

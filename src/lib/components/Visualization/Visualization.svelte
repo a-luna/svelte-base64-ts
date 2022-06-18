@@ -101,6 +101,8 @@
 		cursor: ew-resize;
 		block-size: calc(100% + 25px);
 		list-style-type: none;
+		margin: 0;
+		padding: 0;
 	}
 
 	.encoding-map li {

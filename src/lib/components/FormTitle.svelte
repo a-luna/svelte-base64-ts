@@ -10,7 +10,6 @@
 
 <style lang="postcss">
 	.form-title {
-		grid-column: 1 / span 2;
 		color: var(--form-title-text-color);
 		font-weight: 400;
 		text-align: center;

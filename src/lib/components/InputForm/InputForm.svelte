@@ -54,10 +54,13 @@
 	}
 </script>
 
-<FormTitle title={$app.formTitle} />
-<PushableButton size={'xs'} color={$app.switchModeButtonColor} on:click={() => toggleMode()}>Switch Mode</PushableButton
->
-<PushableButton size={'xs'} color={'gray'} on:click={() => resetForm()}>Reset</PushableButton>
+<div class="form-top">
+	<FormTitle title={$app.formTitle} />
+	<PushableButton size={'xs'} color={$app.switchModeButtonColor} on:click={() => toggleMode()}
+		>Switch Mode</PushableButton
+	>
+	<PushableButton size={'xs'} color={'gray'} on:click={() => resetForm()}>Reset</PushableButton>
+</div>
 <div class="input-encoding-options" style={inputEncodingGridStyles}>
 	{#if $app.encoderMode}
 		<InputStringEncodingRadioButtons bind:this={inputStringEncodingButtons} />
@@ -82,7 +85,14 @@
 <PushableButton size={'xs'} color={$app.buttonColor} on:click={() => submitForm()}>{$app.buttonLabel}</PushableButton>
 
 <style lang="postcss">
-	.input-form {
+	.form-top {
+		display: grid;
+		grid-template-columns: 1fr 115px 115px;
+		grid-template-rows: 31px;
+		grid-gap: 1rem;
+
+		grid-column: 1 / span 4;
+		grid-row: 1 / span 1;
 	}
 	.input-encoding-options,
 	.output-encoding-options {
