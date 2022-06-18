@@ -4,6 +4,7 @@ import type { DATA_EVENT_TYPES, NULL_EVENT_TYPES, SIMPLE_EVENT_TYPES } from '$li
 import type { Matcher, MatcherOptions, Screen, waitForOptions } from '@testing-library/svelte';
 import type { UserEvent } from '@testing-library/user-event/dist/types/setup';
 import type { Page } from 'puppeteer';
+import type { Writable } from 'svelte/store';
 
 export type NullEventType = typeof NULL_EVENT_TYPES[number];
 export type SimpleEventType = typeof SIMPLE_EVENT_TYPES[number];
@@ -30,6 +31,15 @@ export type MachineTestStepData = {
 	expectedState: MachineState;
 };
 
+export interface EventLogStore {
+	subscribe: Writable<MachineLogs>['subscribe'];
+	update: Writable<MachineLogs>['update'];
+	add: (event: MachineEvent) => void;
+	entries: () => MachineTestStepData[];
+	testScript: (scriptName?: string, ignoreUpdateTextEvents?: boolean) => string;
+	clear: () => void;
+}
+
 export type SimpleEventTestDetails = { buttonName: string; testId: string };
 export type SimpleEventTestDetailsMap = { type: SimpleEventType; data: SimpleEventTestDetails };
 export type DataEventToSimpleEventMap = { dataEvent: DataEventType; simpleEvent: SimpleEventType };
@@ -49,4 +59,11 @@ export type PuppeteerTestCase = { description: string; testFunction: PuppeteerTe
 
 export type JSDomTestFunction = (screen: Screen, userEvent: UserEvent, expect: Vi.ExpectStatic) => Promise<void>;
 export type JSDomTestCase = { description: string; testFunction: JSDomTestFunction };
+
+export type TestFunctionInputData = {
+	scriptName: string;
+	description: string;
+	type: 'fast' | 'slow';
+	events: MachineTestStepData[];
+};
 /* c8 ignore stop */

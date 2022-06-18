@@ -36,6 +36,7 @@
 	$: finalInputChunkSize = finalInputChunk.bytes.length;
 	$: finalInputChunkSizeVerbose = finalInputChunkSize === 2 ? 'two 8-bit bytes' : 'one 8-bit byte';
 	$: finalChunkBase64 = $state.context.output.chunks.slice(-1)[0].base64;
+	$: chunkSize = pageWidth < 762 ? 15 : 30;
 </script>
 
 <svelte:window bind:innerWidth={pageWidth} />
@@ -47,7 +48,7 @@
 		Nicely done! The value you provided looks, smells and tastes like a valid {encodingIn} string.
 	</p>
 {:else if $state.matches({ encodeInput: 'idle' })}
-	{#each getEncodeInputText_IdleDemoText($state.context.input.inputText, $state.context.input.inputEncoding) as text}
+	{#each getEncodeInputText_IdleDemoText($state.context.input.inputText, $state.context.input.inputEncoding, chunkSize) as text}
 		<p>{@html text}</p>
 	{/each}
 {:else if $state.matches({ encodeInput: 'autoPlayEncodeByte' }) || $state.matches({ encodeInput: 'encodeByte' })}

@@ -1,5 +1,6 @@
 import { getBase64Alphabet } from '$lib/maps';
 import type { Base64Encoding, Result, StringEncoding } from '$lib/types';
+import { utf8StringFromByteArray, utf8StringToByteArray } from '$lib/util';
 
 const BASE64_STANDARD_ALPHABET = /^[0-9A-Za-z+/=]+$/;
 const BASE64_STANDARD_FORMAT = /^[0-9A-Za-z+/]+[=]{0,2}$/;
@@ -84,8 +85,13 @@ function validateBinaryString(input: string): Result<string> {
 
 export function validateUtf8String(input: string): Result<string> {
 	try {
-		encodeURIComponent(input);
-		return { success: true, value: input };
+		const bytes = utf8StringToByteArray(input);
+		const utf8 = utf8StringFromByteArray(bytes);
+		if (utf8 === input) {
+			return { success: true, value: input };
+		} else {
+			return { success: false, error: Error(`Error occurred when encoding URI component: ${input}`) };
+		}
 	} catch (ex) {
 		return { success: false, error: Error(`Error occurred when encoding URI component: ${input}`) };
 	}

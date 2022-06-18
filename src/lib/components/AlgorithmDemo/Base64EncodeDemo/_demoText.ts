@@ -1,7 +1,7 @@
 import { rotatingColors } from '$lib/constants';
 import { getAsciiCharacterDescription } from '$lib/maps';
 import type { Base64ByteMap, Base64Encoding, EncoderInputChunk, OutputChunk, StringEncoding } from '$lib/types';
-import { decimalToBinaryString, hexStringFromByte, parseGroupId, stringToByteArray } from '$lib/util';
+import { chunkify, decimalToBinaryString, hexStringFromByte, parseGroupId, stringToByteArray } from '$lib/util';
 
 const convertNumber = (num: number) =>
 	(num < 4 || num > 20) && num.toString().slice(-1)[0] === '1'
@@ -33,6 +33,7 @@ const getChunkBytesHtml = (chunk: EncoderInputChunk | OutputChunk, chunkIndex: n
 	Array.from({ length: chunk.bytes.length }, (_, i) => getByteNumHtml(3 * chunkIndex + i + 1, chunkIndex));
 const getChunkB64CharsHtml = (totalB64Chars: number, chunkIndex: number) =>
 	Array.from({ length: totalB64Chars }, (_, i) => getB64CharNumHtml(4 * chunkIndex + i + 1, chunkIndex)).join(', ');
+const getHexBytesHtml = (bytes: number[]): string => bytes.map((b) => `<span>${hexStringFromByte(b)}</span>`).join(' ');
 
 export const getBase64AlphabetVerbose = (encoding: Base64Encoding) =>
 	encoding === 'base64' ? 'standard Base64 alphabet' : 'URL-safe Base64 alphabet';
@@ -49,13 +50,21 @@ export const getInactive_AppNavDemoText = (): string[] => [
 	'You can stop autoplaying and return to manually stepping through the demo with the <strong>Stop Autoplay</strong> button (You can also start/stop autoplay using the <kbd>Space</kbd> bar).',
 ];
 
-export function getEncodeInputText_IdleDemoText(input: string, encoding: StringEncoding): string[] {
-	const totalBytes = stringToByteArray(input, encoding).length;
+export function getEncodeInputText_IdleDemoText(input: string, encoding: StringEncoding, chunkSize: number): string[] {
+	const bytes = stringToByteArray(input, encoding);
+	const chunkedBytes = chunkify<number>({ inputList: bytes, chunkSize });
+	const totalBytes = bytes.length;
 	let demoText: string[] = [];
 	if (encoding === 'ASCII') {
 		demoText = [
 			'<strong>Each ASCII character is stored as an 8-bit byte</strong>. The table below shows the complete set of printable ASCII characters and their hex and binary values.',
 			`The input data contains ${totalBytes} ASCII characters. <strong>As each character is converted to an 8-bit value, the corresponding row in the table below will be highlighted.</strong>`,
+		];
+	} else if (encoding === 'UTF-8') {
+		const byteString = chunkedBytes.map((chunk) => `<code>${getHexBytesHtml(chunk)}</code>`);
+		demoText = [
+			`In UTF-8 encoding, some characters translate to a single byte, but others translate to pairs or triplets of bytes. The string you provided translates to the following bytes:`,
+			...byteString,
 		];
 	} else if (encoding === 'hex') {
 		demoText = [
@@ -87,7 +96,7 @@ export function describeInputByte(
 		const char = String.fromCharCode(byte);
 		return `The ${byteNum} byte (${byteNumHtml}) contains <code>${char}</code>${charDescNonAlphaNumeric}, which has binary value&nbsp;<code>${bin}</code> (Hex: <code>${hex}</code>)`;
 	} else {
-		return `The ${byteNum} byte (${byteNumHtml}), <code>${hex}</code>, is equal to ${bin}`;
+		return `The ${byteNum} byte (${byteNumHtml}) is <code>${hex}</code>, which has binary value ${bin}`;
 	}
 }
 

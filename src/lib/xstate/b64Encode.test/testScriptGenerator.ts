@@ -1,6 +1,7 @@
 /* c8 ignore start */
 import { isStringEncoding } from '$lib/typeguards';
 import type { Base64Encoding, StringEncoding } from '$lib/types';
+import { getRandomHexString } from '$lib/util';
 import type {
 	DataEvent,
 	MachineEvent,
@@ -28,7 +29,11 @@ const getAutoplayTimeout = (machineState: MachineState): number =>
 		? 100
 		: 1100;
 
-export function createTestScript(testSteps: MachineTestStepData[], ignoreUpdateTextEvents = true): string {
+export function createTestScript(
+	testSteps: MachineTestStepData[],
+	scriptName: string,
+	ignoreUpdateTextEvents = true,
+): string {
 	const instantiatedScriptObjects = getScripObjectTracker();
 	const instantiatedNavButtons = getNavButtonTracker();
 	const instantiatedHtmlElements = getElementHandleTracker();
@@ -160,10 +165,17 @@ export function createTestScript(testSteps: MachineTestStepData[], ignoreUpdateT
 		}
 	}
 
-	return testSteps
+	if (scriptName === null) {
+		scriptName = `test${getRandomHexString(4)}`;
+	}
+	const functionDeclaration = `const ${scriptName}: JSDomTestFunction = async (screen: Screen, userEvent: UserEvent, expect: Vi.ExpectStatic): Promise<void> => {`;
+
+	const testScript = testSteps
 		.filter((step) => step)
 		.filter((step) => step.event.type !== 'UPDATE_TEXT' || !ignoreUpdateTextEvents)
 		.map(generateCodeForTestStep)
 		.join('\n\n');
+
+	return [functionDeclaration, testScript, '};'].join('\n');
 }
 /* c8 ignore stop */

@@ -114,6 +114,10 @@ function getEncodingSettingElementIdMap(): Map<StringEncoding | Base64Encoding, 
 		ids: ['select-string-encoding-open-list-button', 'select-string-encoding-option-1'],
 		variableNames: ['stringEncodingMenu', 'asciiEncodingMenuItem'],
 	});
+	encodingSettingElementIdMap.set('UTF-8', {
+		ids: ['select-string-encoding-open-list-button', 'select-string-encoding-option-2'],
+		variableNames: ['stringEncodingMenu', 'asciiEncodingMenuItem'],
+	});
 	encodingSettingElementIdMap.set('hex', {
 		ids: ['select-string-encoding-open-list-button', 'select-string-encoding-option-3'],
 		variableNames: ['stringEncodingMenu', 'hexEncodingMenuItem'],

@@ -1,7 +1,13 @@
 /* c8 ignore start */
-import type { EncodingMachineStateStore, EventLogStore } from '$lib/types';
+import type { EncodingMachineStateStore } from '$lib/types';
 import { createTestScript } from '$lib/xstate/b64Encode.test/testScriptGenerator';
-import type { MachineEvent, MachineLogs, MachineState, MachineTestStepData } from '$lib/xstate/b64Encode.test/types';
+import type {
+	EventLogStore,
+	MachineEvent,
+	MachineLogs,
+	MachineState,
+	MachineTestStepData,
+} from '$lib/xstate/b64Encode.test/types';
 import { createMachineTestStepData, reconcileEventAndStateLists } from '$lib/xstate/b64Encode.test/util';
 import { get, writable } from 'svelte/store';
 
@@ -31,6 +37,10 @@ export function createEventLogStore(machineState: EncodingMachineStateStore): Ev
 		return createMachineTestStepData(reconciledlogs.events, reconciledlogs.states);
 	}
 
+	function testScript(scriptName?: string, ignoreUpdateTextEvents?: boolean): string {
+		return createTestScript(entries(), scriptName ?? null, ignoreUpdateTextEvents ?? true);
+	}
+
 	function clear() {
 		update((eventLog) => {
 			eventLog = { events: [], states: [] };
@@ -43,8 +53,7 @@ export function createEventLogStore(machineState: EncodingMachineStateStore): Ev
 		update,
 		add,
 		entries,
-		testScript: (ignoreUpdateTextEvents?: boolean): string =>
-			createTestScript(entries(), ignoreUpdateTextEvents ?? false),
+		testScript,
 		clear,
 	};
 }

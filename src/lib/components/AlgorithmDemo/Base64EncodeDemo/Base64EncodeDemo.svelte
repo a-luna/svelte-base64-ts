@@ -14,13 +14,14 @@
 		Base64Encoding,
 		DemoState,
 		EncodingMachineStateStore,
-		EventLogStore,
 		StringEncoding,
 		XStateSendEvent,
 	} from '$lib/types';
 	import type { DemoStore } from '$lib/types/DemoStore';
 	import { copyToClipboard } from '$lib/util';
 	import type { EncodingEvent } from '$lib/xstate/b64Encode';
+	import { createTestSet } from '$lib/xstate/b64Encode.test/testSetGenerator';
+	import type { EventLogStore } from '$lib/xstate/b64Encode.test/types';
 	import { getContext } from 'svelte';
 	import type { Readable, Writable } from 'svelte/store';
 
@@ -45,11 +46,7 @@
 		$state.matches('inactive') || $state.matches('finished') ? 'none' : Object.values($state.value)[0];
 	$: if ($state.context.autoplay && $state.value) eventLog.add({ type: 'AUTOPLAYING' });
 	$: if (inputText) updateInputText(inputText, inputTextEncoding, outputBase64Encoding);
-	// $: console.log({ state: $state.value, context: $state.context });
-	// $: console.log({ state: `${machineState}${machineSubState !== 'none' ? `-${machineSubState}` : ``}` });
-	$: if ($demoState.errorOccurred) {
-		$alert = $state.context.input.validationResult.error.message;
-	}
+	$: if ($demoState.errorOccurred) $alert = $state.context.input.validationResult.error.message;
 	$: if (
 		$state.matches({ encodeInput: 'idle' }) ||
 		$state.matches({ createInputChunks: 'idle' }) ||
@@ -97,7 +94,9 @@
 	// $: if (typeof window !== 'undefined') {
 	// 	const input = '∑ßåœ ≈ ∆c';
 	// 	console.log(validateEncoderInput(input, 'UTF-8', 'base64'));
-	// 	console.log(b64Encode(validateEncoderInput(input, 'UTF-8', 'base64')));
+	// 	console.log(
+	// 		validateDecoderInput('JUUyJTg4JTkxJUMzJTlGJUMzJUE1JUM1JTkzJTIwJUUyJTg5JTg4JTIwJUUyJTg4JTg2Yw==', 'base64'),
+	// 	);
 	// }
 
 	function openHelpDocsModal() {
@@ -147,6 +146,12 @@
 			}
 			if (key === 'KeyS') {
 				console.log({ state: $state.value });
+			}
+			if (key === 'KeyT') {
+				const result = await copyToClipboard(createTestSet());
+				if (result.success) {
+					console.log('Successfully created test set and copied to clipboard!');
+				}
 			}
 			if (key === 'ArrowRight') {
 				if ($state.matches('inactive')) {

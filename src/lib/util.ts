@@ -28,9 +28,6 @@ const genericStringToByteArray = (s: string): number[] => Array.from(s, (_, i) =
 export const asciiStringFromByteArray = (byteArray: number[]): string =>
 	validateAsciiBytes(byteArray) ? Array.from(byteArray, (x) => String.fromCharCode(x)).join('') : '';
 
-export const asciiStringFromHexString = (hexString: string): string =>
-	asciiStringFromByteArray(hexStringToByteArray(hexString));
-
 export const hexStringFromByte = (byte: number, upperCase = true): string =>
 	upperCase ? byte.toString(16).toUpperCase().padStart(2, '0') : byte.toString(16).padStart(2, '0');
 
@@ -131,40 +128,15 @@ export function parseGroupId(groupId: string): {
 	}
 }
 
-export function getChunkIndexFromGroupId(groupId: string): number {
-	const { chunkIndex } = parseGroupId(groupId);
-	return chunkIndex ?? 0;
-}
-
-export function getByteIndexFromGroupId(groupId: string): number {
-	const { byteIndex } = parseGroupId(groupId);
-	return byteIndex ?? 0;
-}
-
-export function getByteIndexWithinChunkFromGroupId(groupId: string): number {
-	const { byteIndexWithinChunk } = parseGroupId(groupId);
-	return byteIndexWithinChunk ?? 0;
-}
-
 export function getBase64CharIndexFromGroupId(groupId: string): number {
 	const { b64CharIndex } = parseGroupId(groupId);
 	return b64CharIndex ?? 0;
 }
 
-export function getb64IndexWithinChunkFromGroupId(groupId: string): number {
-	const { b64IndexWithinChunk } = parseGroupId(groupId);
-	return b64IndexWithinChunk ?? 0;
-}
-
 export const getChunkIndexFromByteIndex = (byteIndex: number): number => (byteIndex / 3) | 0;
 export const getChunkIndexFromBase64CharIndex = (charIndex: number): number => (charIndex / 4) | 0;
 
-export const capitalizeWords = (input: string): string =>
-	input
-		.split(' ')
-		.map((word) => `${word.slice(0, 1)?.toUpperCase()}${word.slice(1)}`)
-		.join(' ');
-
+/* c8 ignore start */
 export async function copyToClipboard(text: string): Promise<Result> {
 	if (typeof window !== 'undefined') {
 		try {
@@ -175,3 +147,4 @@ export async function copyToClipboard(text: string): Promise<Result> {
 		}
 	}
 }
+/* c8 ignore stop */

@@ -1,9 +1,9 @@
 <script lang="ts">
 	import Base64EncodeDemo from '$lib/components/AlgorithmDemo/Base64EncodeDemo/Base64EncodeDemo.svelte';
 	import { createDemoStateStore, demoUIState } from '$lib/stores/demoState';
-	import { createEventLogStore } from '$lib/stores/eventLog';
 	import type { EncodingContext, EncodingEvent, EncodingTypeStates } from '$lib/xstate/b64Encode';
 	import { encodingMachineConfig, encodingMachineOptions } from '$lib/xstate/b64Encode';
+	import { createEventLogStore } from '$lib/xstate/b64Encode.test/eventLog';
 	import { useMachine } from '@xstate/svelte';
 	import { setContext } from 'svelte';
 	import { createMachine } from 'xstate';
