@@ -2,14 +2,18 @@
 	import LinkedLabel from '$lib/components/AlgorithmDemo/Buttons/LinkedLabel.svelte';
 	import { alert } from '$lib/stores/alert';
 	import type { EncodingMachineStateStore } from '$lib/types';
+	import type { DemoStore } from '$lib/types/DemoStore';
 	import { copyToClipboard } from '$lib/util';
 	import { getContext } from 'svelte';
+	import type { Readable } from 'svelte/store';
 
-	export let pageWidth: number;
 	let state: EncodingMachineStateStore;
-	({ state } = getContext('demo'));
+	let demoState: Readable<DemoStore>;
+	({ state, demoState } = getContext('demo'));
 
-	$: copyToClipboardButtonStyle = pageWidth < 762 ? 'font-weight: 700; align-self: flex-end;' : 'font-weight: 700;';
+	$: copyToClipboardButtonStyle = $demoState.isMobileDisplay
+		? 'font-weight: 700; align-self: flex-end;'
+		: 'font-weight: 700;';
 
 	async function handleCopyButtonClicked(colorString: string) {
 		const result = await copyToClipboard(colorString);

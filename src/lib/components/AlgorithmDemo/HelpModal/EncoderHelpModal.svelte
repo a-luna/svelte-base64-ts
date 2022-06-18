@@ -4,23 +4,24 @@
 	import ChevronRight from '$lib/components/Icons/ChevronRight.svelte';
 	import Modal from '$lib/components/Modal.svelte';
 	import type { DemoState } from '$lib/types';
+	import type { DemoStore } from '$lib/types/DemoStore';
 	import { getContext } from 'svelte';
-	import type { Writable } from 'svelte/store';
+	import type { Readable, Writable } from 'svelte/store';
 	import { slide } from 'svelte/transition';
 	import CloseModalButton from '../Buttons/CloseModalButton.svelte';
 	import ShowHelpTopicsButton from '../Buttons/ShowHelpTopicsButton.svelte';
 
 	export let index = 0;
+	let demoState: Readable<DemoStore>;
 	let demoUIState: Writable<DemoState>;
 	let modal: Modal;
 	let closed: boolean;
-	let pageWidth: number;
 	let helpTopicsExpanded = false;
-	({ demoUIState } = getContext('demo'));
+	({ demoState, demoUIState } = getContext('demo'));
 
 	$: $demoUIState.modalOpen = !closed;
-	$: title = pageWidth < 762 ? 'Base64 Encoding Help Docs' : '';
-	$: showContentsPanel = pageWidth >= 762;
+	$: title = $demoState.isMobileDisplay ? 'Base64 Encoding Help Docs' : '';
+	$: showContentsPanel = !$demoState.isMobileDisplay;
 	$: displayedSectionTitle = helpTopicsExpanded ? 'Help Topics' : encodingHelpSections[index].title;
 
 	export function toggleModal() {
@@ -49,7 +50,7 @@
 	const prev = () => (index = getPrevIndex(index));
 </script>
 
-<svelte:window on:keydown={(e) => handleKeyPress(e.code)} bind:innerWidth={pageWidth} />
+<svelte:window on:keydown={(e) => handleKeyPress(e.code)} />
 
 <Modal bind:this={modal} bind:closed {title} noHeader={true} noFooter={true}>
 	<div class="help-docs">

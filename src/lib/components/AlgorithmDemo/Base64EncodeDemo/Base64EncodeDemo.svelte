@@ -38,7 +38,6 @@
 	let outputBase64Encoding: Base64Encoding = defaultEncoderInput.outputEncoding;
 	let highlightHexByte: number;
 	let highlightBase64: string;
-	let pageWidth: number;
 	let helpModal: EncoderHelpModal;
 
 	$: machineState =
@@ -70,8 +69,8 @@
 		outputBase64Encoding = defaultEncoderInput.outputEncoding;
 		eventLog.clear();
 	}
-	$: bottomRowHeight = pageWidth < 762 ? 'auto' : '260px';
-	$: formTitleFontSize = pageWidth < 762 ? '1.6rem' : '1.9rem';
+	$: bottomRowHeight = $demoState.isMobileDisplay ? 'auto' : '260px';
+	$: formTitleFontSize = $demoState.isMobileDisplay ? '1.6rem' : '1.9rem';
 
 	// $: if (typeof window !== 'undefined') {
 	// 	// const i_b64 = '4pyTIMOgIGxhIG1vZGU=';
@@ -198,7 +197,7 @@
 	}
 </script>
 
-<svelte:window on:keydown={(e) => handleKeyPress(e.code)} bind:innerWidth={pageWidth} />
+<svelte:window on:keydown={(e) => handleKeyPress(e.code)} />
 
 <div class="top-row">
 	<div class="form-title-wrappper">
@@ -227,7 +226,7 @@
 <div class="bottom-row" style="flex: 1 0 {bottomRowHeight}">
 	<OpenHelpDocsLarge on:click={() => openHelpDocsModal()} />
 	<LookupTables {outputBase64Encoding} {highlightBase64} {highlightHexByte} />
-	<FinalResults {pageWidth} />
+	<FinalResults />
 </div>
 <EncoderHelpModal bind:this={helpModal} />
 

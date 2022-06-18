@@ -16,12 +16,14 @@
 		getEncodeInputText_IdleDemoText,
 	} from '$lib/components/AlgorithmDemo/Base64EncodeDemo/_demoText';
 	import type { EncodingMachineStateStore, StringEncoding } from '$lib/types';
+	import type { DemoStore } from '$lib/types/DemoStore';
 	import { getContext } from 'svelte';
+	import type { Readable } from 'svelte/store';
 
 	let state: EncodingMachineStateStore;
-	({ state } = getContext('demo'));
+	let demoState: Readable<DemoStore>;
+	({ state, demoState } = getContext('demo'));
 	const formatEncodingType = (encoding: StringEncoding): string => (encoding === 'bin' ? 'binary' : encoding);
-	let pageWidth: number;
 	const wikiUrl = 'https://en.wikipedia.org/wiki/Least_common_multiple';
 	const lcmSolveUrl =
 		'https://www.calculatorsoup.com/calculators/math/lcm.php?input=8+6&data=multiples_method&action=solve';
@@ -36,13 +38,11 @@
 	$: finalInputChunkSize = finalInputChunk.bytes.length;
 	$: finalInputChunkSizeVerbose = finalInputChunkSize === 2 ? 'two 8-bit bytes' : 'one 8-bit byte';
 	$: finalChunkBase64 = $state.context.output.chunks.slice(-1)[0].base64;
-	$: chunkSize = pageWidth < 762 ? 15 : 30;
+	$: chunkSize = $demoState.isMobileDisplay ? 15 : 30;
 </script>
 
-<svelte:window bind:innerWidth={pageWidth} />
-
 {#if $state.matches('inactive') || $state.matches({ validateInputText: 'error' })}
-	<DemoIntro {pageWidth} />
+	<DemoIntro />
 {:else if $state.matches({ validateInputText: 'success' })}
 	<p>
 		Nicely done! The value you provided looks, smells and tastes like a valid {encodingIn} string.

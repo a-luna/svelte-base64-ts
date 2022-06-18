@@ -16,18 +16,15 @@
 	const demoState = createDemoStateStore(state);
 	const eventLog = createEventLogStore(state);
 	setContext('demo', { state, demoState, demoUIState, eventLog, send });
-	let pageWidth: number;
 
-	$: height = pageWidth < 762 ? 'auto' : '100vh';
+	$: height = $demoState.isMobileDisplay ? 'auto' : '100vh';
 	$: gridStyles =
-		pageWidth < 762 || $state.matches('finished')
+		$demoState.isMobileDisplay || $state.matches('finished')
 			? 'auto auto auto 1fr'
 			: $state.matches('inactive') || $state.matches({ validateInputText: 'error' })
 			? 'auto auto auto 1fr'
 			: 'auto auto 1fr 276px';
 </script>
-
-<svelte:window bind:innerWidth={pageWidth} />
 
 <div class="base64-algo-demo" style="height: {height}; grid-template-rows: {gridStyles};">
 	{#if $demoUIState.mode === 'encode'}

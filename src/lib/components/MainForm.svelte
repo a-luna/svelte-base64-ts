@@ -21,7 +21,7 @@
 		background-color: var(--page-bg-color);
 		max-width: 510px;
 		margin: 0 auto;
-		padding: 1rem;
+		padding: 1.5rem 1rem 1rem 1rem;
 	}
 	.base64 {
 		display: grid;

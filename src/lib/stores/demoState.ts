@@ -1,3 +1,4 @@
+import { getPageWidth } from '$lib/stores/pageWidth';
 import type { DemoState, EncodingMachineStateStore } from '$lib/types';
 import type { DemoStore } from '$lib/types/DemoStore';
 import { derived, writable, type Readable } from 'svelte/store';
@@ -8,9 +9,11 @@ export const demoUIState = writable<DemoState>({
 });
 
 export function createDemoStateStore(state: EncodingMachineStateStore): Readable<DemoStore> {
-	return derived(state, ($state) => {
+	return derived([state, getPageWidth()], ([$state, $pageWidth]) => {
 		const errorOccurred = () =>
 			$state?.context?.input?.validationResult?.error?.message ? $state.matches({ validateInputText: 'error' }) : false;
+
+		const isMobileDisplay = (): boolean => $pageWidth < 525;
 
 		const showInputBytes = () =>
 			$state.matches({ encodeInput: 'autoPlayEncodeByte' }) ||
@@ -65,6 +68,7 @@ export function createDemoStateStore(state: EncodingMachineStateStore): Readable
 
 		return {
 			errorOccurred: errorOccurred(),
+			isMobileDisplay: isMobileDisplay(),
 			showInputBytes: showInputBytes(),
 			showInputChunks: showInputChunks(),
 			showOutputChunks: showOutputChunks(),

@@ -52,7 +52,7 @@
 	.input-form {
 		display: grid;
 		grid-template-columns: 114px auto 114px;
-		grid-template-rows: auto auto auto auto auto auto;
+		grid-template-rows: auto auto auto 55px auto;
 		column-gap: 1rem;
 		margin: 0;
 

@@ -5,16 +5,20 @@
 		getInactive_WelcomeDemoText,
 	} from '$lib/components/AlgorithmDemo/Base64EncodeDemo/_demoText';
 	import ArrowKey from '$lib/components/Icons/KeyboardIcons/ArrowKey.svelte';
+	import type { DemoStore } from '$lib/types/DemoStore';
+	import { getContext } from 'svelte';
+	import type { Readable } from 'svelte/store';
 	import { slide } from 'svelte/transition';
 
-	export let pageWidth: number;
 	let arrowSize: 'sm' | 'md' | 'lg';
 	let welcomeDetailsElement: HTMLDetailsElement;
 	let encodingDetailsElement: HTMLDetailsElement;
 	let appNavDetailsElement: HTMLDetailsElement;
 	let openSection: 'none' | 'welcome' | 'settings' | 'navigation' = 'welcome';
+	let demoState: Readable<DemoStore>;
+	({ demoState } = getContext('demo'));
 
-	$: arrowSize = pageWidth < 762 ? 'sm' : 'md';
+	$: arrowSize = $demoState.isMobileDisplay ? 'sm' : 'md';
 
 	function toggleWelcomeDetails() {
 		if (welcomeDetailsElement.open) {
