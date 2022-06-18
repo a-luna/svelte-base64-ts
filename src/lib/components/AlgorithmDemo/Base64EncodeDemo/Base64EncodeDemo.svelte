@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { dev } from '$app/env';
 	import AuthorName from '$lib/components/AlgorithmDemo/AuthorName.svelte';
 	import DemoResults from '$lib/components/AlgorithmDemo/Base64EncodeDemo/DemoResults.svelte';
 	import DemoText from '$lib/components/AlgorithmDemo/Base64EncodeDemo/DemoText.svelte';
@@ -125,25 +126,6 @@
 
 	async function handleKeyPress(key: string) {
 		if (!$demoUIState.modalOpen) {
-			if (key === 'KeyA') {
-				console.log({ $eventLog });
-			}
-			if (key === 'KeyC') {
-				console.log({ context: $state.context });
-			}
-			if (key === 'KeyE') {
-				console.log({ log: eventLog.entries() });
-			}
-			if (key === 'KeyL') {
-				eventLog.clear();
-				console.log({ $eventLog });
-			}
-			if (key === 'KeyP') {
-				const result = await copyToClipboard(eventLog.testScript());
-				if (result.success) {
-					console.log('Successfully created test script and copied to clipboard!');
-				}
-			}
 			if (key === 'KeyS') {
 				console.log({ state: $state.value });
 			}
@@ -181,6 +163,27 @@
 						});
 					} else {
 						sendEvent({ type: 'RESUME_AUTO_PLAY' });
+					}
+				}
+			}
+			if (dev) {
+				if (key === 'KeyA') {
+					console.log({ $eventLog });
+				}
+				if (key === 'KeyC') {
+					console.log({ context: $state.context });
+				}
+				if (key === 'KeyE') {
+					console.log({ log: eventLog.entries() });
+				}
+				if (key === 'KeyL') {
+					eventLog.clear();
+					console.log({ $eventLog });
+				}
+				if (key === 'KeyP') {
+					const result = await copyToClipboard(eventLog.testScript());
+					if (result.success) {
+						console.log('Successfully created test script and copied to clipboard!');
 					}
 				}
 			}
