@@ -19,5 +19,14 @@
 			1.5px 1.5px var(--form-title-text-shadow-color), 1.25px 1.25px var(--form-title-text-shadow-color),
 			1px 1px var(--form-title-text-shadow-color), 0.75px 0.75px var(--form-title-text-shadow-color),
 			0.5px 0.5px var(--form-title-text-shadow-color), 0.25px 0.25px var(--form-title-text-shadow-color);
+
+		grid-column: 1 / span 2;
+		grid-row: 1 / span 1;
+	}
+	@media screen and (min-width: 525px) {
+		.form-title {
+			grid-column: 1 / span 1;
+			grid-row: 1 / span 1;
+		}
 	}
 </style>

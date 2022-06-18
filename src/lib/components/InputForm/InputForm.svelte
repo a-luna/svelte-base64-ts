@@ -56,10 +56,14 @@
 
 <div class="form-top">
 	<FormTitle title={$app.formTitle} />
-	<PushableButton size={'xs'} color={$app.switchModeButtonColor} on:click={() => toggleMode()}
-		>Switch Mode</PushableButton
-	>
-	<PushableButton size={'xs'} color={'gray'} on:click={() => resetForm()}>Reset</PushableButton>
+	<div class="switch-mode-button-wrapper">
+		<PushableButton size={'xs'} color={$app.switchModeButtonColor} on:click={() => toggleMode()}
+			>Switch Mode</PushableButton
+		>
+	</div>
+	<div class="reset-form-button-wrapper">
+		<PushableButton size={'xs'} color={'gray'} width={'115px'} on:click={() => resetForm()}>Reset</PushableButton>
+	</div>
 </div>
 <div class="input-encoding-options" style={inputEncodingGridStyles}>
 	{#if $app.encoderMode}
@@ -87,8 +91,8 @@
 <style lang="postcss">
 	.form-top {
 		display: grid;
-		grid-template-columns: 1fr 115px 115px;
-		grid-template-rows: 31px;
+		grid-template-columns: auto auto;
+		grid-template-rows: 31px 31px;
 		grid-gap: 1rem;
 
 		grid-column: 1 / span 4;
@@ -97,5 +101,34 @@
 	.input-encoding-options,
 	.output-encoding-options {
 		margin: 0 0 0.25rem 0;
+	}
+	.switch-mode-button-wrapper {
+		grid-column: 1 / span 1;
+		grid-row: 2 / span 1;
+		justify-self: end;
+	}
+	.reset-form-button-wrapper {
+		grid-column: 2 / span 1;
+		grid-row: 2 / span 1;
+	}
+	@media screen and (min-width: 525px) {
+		.form-top {
+			display: grid;
+			grid-template-columns: 1fr 115px 115px;
+			grid-template-rows: 31px;
+			grid-gap: 1rem;
+
+			grid-column: 1 / span 4;
+			grid-row: 1 / span 1;
+		}
+		.switch-mode-button-wrapper {
+			grid-column: 2 / span 1;
+			grid-row: 1 / span 1;
+			justify-self: center;
+		}
+		.reset-form-button-wrapper {
+			grid-column: 3 / span 1;
+			grid-row: 1 / span 1;
+		}
 	}
 </style>

@@ -6,17 +6,19 @@
 
 	export let asciiTableChunkSize: number;
 	export let base64TableChunkSize: number;
+
+	$: fontSize = $app.isMobileDisplay ? '0.7rem' : '0.8rem';
 </script>
 
 <div class="lookup-tables">
 	{#if $app.isAscii}
-		<AsciiLookupTable {asciiTableChunkSize} highlightHexByte={$state.highlightHexByte} fontSize={'0.8rem'} />
+		<AsciiLookupTable {asciiTableChunkSize} highlightHexByte={$state.highlightHexByte} {fontSize} />
 	{/if}
 	<Base64LookupTable
 		base64Encoding={$app.base64Encoding}
 		{base64TableChunkSize}
 		highlightBase64={$state.highlightBase64}
-		fontSize={'0.8rem'}
+		{fontSize}
 	/>
 </div>
 

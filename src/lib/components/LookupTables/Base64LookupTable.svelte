@@ -37,7 +37,7 @@
 
 <style lang="postcss">
 	.table-wrapper h2 {
-		font-size: 0.85rem;
+		font-size: 0.875rem;
 		font-weight: 400;
 		line-height: 1;
 		letter-spacing: 0.8px;

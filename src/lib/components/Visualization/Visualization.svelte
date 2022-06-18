@@ -39,6 +39,7 @@
 
 <style lang="postcss">
 	.visualization-wrapper {
+		font-size: 0.75rem;
 		background-color: var(--page-bg-color);
 		border: 1px solid hsla(0, 0%, 85%, 0.45);
 		border-radius: 0.375rem;
@@ -64,6 +65,8 @@
 		flex-flow: column nowrap;
 		color: var(--fieldset-title-color);
 		font-weight: 400;
+		padding: 0 0.5rem 0 0;
+		border-right: 1px solid hsla(0, 0%, 85%, 0.45);
 	}
 
 	.input-key {
@@ -111,11 +114,12 @@
 		border-right: 1px solid hsla(0, 0%, 85%, 0.25);
 	}
 
-	.encoding-map li:first-child {
-		border-left: 1px solid hsla(0, 0%, 85%, 0.25);
-	}
-
 	.encoding-map li:last-child {
 		border: none;
+	}
+	@media screen and (min-width: 525px) {
+		.visualization-wrapper {
+			font-size: 0.875rem;
+		}
 	}
 </style>

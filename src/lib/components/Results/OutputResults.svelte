@@ -45,7 +45,7 @@
 		border: 1px solid var(--fieldset-border-color);
 		border-radius: 4px;
 		padding: 0.5rem 0.75rem 0.25rem 0.75rem;
-		font-size: 0.9rem;
+		font-size: 0.8rem;
 		line-height: 1;
 	}
 	fieldset:last-child {
@@ -70,5 +70,10 @@
 	}
 	.details-wrapper .value {
 		color: var(--options-details-value-color);
+	}
+	@media screen and (min-width: 525px) {
+		fieldset {
+			font-size: 0.875rem;
+		}
 	}
 </style>

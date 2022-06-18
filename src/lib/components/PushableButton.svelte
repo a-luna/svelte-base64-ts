@@ -6,6 +6,7 @@
 	export let size: 'xs' | 'sm' | 'md' | 'lg' = 'sm';
 	export let color: ButtonColor = 'blue';
 	export let disabled = false;
+	export let width = 'auto';
 	let bgColor: Hsl;
 	let edgeGradient = '';
 
@@ -18,7 +19,7 @@
 		edgeGradient = `linear-gradient(to left, hsl(${bgColor.hue}deg ${bgColor.saturation}% 16%) 0%, hsl(${bgColor.hue}deg ${bgColor.saturation}% 32%) 8%, hsl(${bgColor.hue}deg ${bgColor.saturation}% 32%) 92%, hsl(${bgColor.hue}deg ${bgColor.saturation}% 16%) 100%)`;
 </script>
 
-<button {disabled} class="pushable" style="font-size: {fontSize};" on:click>
+<button {disabled} class="pushable" style="font-size: {fontSize}; width: {width}" on:click>
 	<span class="shadow" />
 	<span class="edge" style="background: {edgeGradient}" />
 	<span class="front" style="color: var({fgColorCssPropName}); background: var({bgColorCssPropName})">

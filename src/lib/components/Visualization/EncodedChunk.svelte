@@ -145,13 +145,8 @@
 		flex-flow: row nowrap;
 		justify-content: flex-start;
 	}
-	/* 
-	.hex-digit:last-child {
-		margin: 0 0 0 1rem;
-	} */
 
 	.hex-byte {
-		/* margin: 0 0.125rem; */
 		display: flex;
 		flex-flow: column nowrap;
 		justify-content: flex-end;
@@ -166,8 +161,6 @@
 		display: flex;
 		flex-flow: column nowrap;
 		justify-content: flex-end;
-		/* min-width: 45px; */
-		/* margin: 0 1px; */
 	}
 
 	code {

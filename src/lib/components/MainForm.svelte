@@ -26,7 +26,12 @@
 	.base64 {
 		display: grid;
 		grid-template-columns: 87px 1fr 1fr 87px;
-		grid-template-rows: 31px auto 31px auto auto 1fr;
+		grid-template-rows: 78px auto 31px auto auto 1fr;
 		grid-gap: 1rem 0.5rem;
+	}
+	@media screen and (min-width: 525px) {
+		.base64 {
+			grid-template-rows: 31px auto 31px auto auto 1fr;
+		}
 	}
 </style>

@@ -36,12 +36,12 @@
 
 <style lang="postcss">
 	.table-wrapper h2 {
-		font-size: 0.75rem;
+		font-size: 0.875rem;
 		font-weight: 400;
 		line-height: 1;
 		letter-spacing: 0.8px;
 		text-align: center;
-		margin: 0 0 0.25rem 0;
+		margin: 0 0 0.5rem 0;
 	}
 
 	.ascii-lookup-table {

@@ -3,6 +3,7 @@ import type { Base64Encoding, ButtonColor, Encoding, OutputChunk } from '.';
 export interface AppStore {
 	encoderMode: boolean;
 	decoderMode: boolean;
+	isMobileDisplay: boolean;
 	inputText: string;
 	outputText: string;
 	totalBytesIn: number;
