@@ -17,8 +17,14 @@
 	.help-docs-button-wrapper {
 		font-size: 0.75rem;
 
-		justify-self: flex-end;
+		justify-self: center;
 		grid-column: 3 / span 1;
 		grid-row: 1 / span 1;
+	}
+
+	@media screen and (min-width: 762px) {
+		.help-docs-button-wrapper {
+			justify-self: flex-end;
+		}
 	}
 </style>

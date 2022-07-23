@@ -26,7 +26,10 @@
 		"checkJs": false,
 		"paths": {
 			"$lib": ["src/lib"],
-			"$lib/*": ["src/lib/*"]
+			"$lib/*": ["src/lib/*"],
+			"$components": ["src/lib/components"],
+			"$components/*": ["src/lib/components/*"],
+			"$util": ["src/lib/util"]
 		},
 		"types": ["node", "svelte"]
 	},

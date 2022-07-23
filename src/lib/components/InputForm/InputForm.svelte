@@ -16,8 +16,8 @@
 	let outputBase64EncodingOptions: OutputBase64EncodingRadioButtons;
 
 	$: inputTextBoxGridStyles = 'grid-column: 1 / span 3;';
-	$: inputEncodingGridStyles = $state.mode === 'encode' ? 'grid-column: 1 / span 2;' : 'grid-column: 2 / span 2;';
-	$: outputEncodingGridStyles = $state.mode === 'encode' ? 'grid-column: 3 / span 2;' : 'grid-column: 4 / span 1;';
+	$: inputEncodingGridStyles = $state.mode === 'encode' ? 'flex: 1;' : 'flex: 0 1 50%';
+	$: outputEncodingGridStyles = $state.mode === 'encode' ? 'flex: 0 1 auto;' : '';
 	$: state.changeInputText(inputText);
 	$: if ($state.resetPerformed) {
 		inputText = '';
@@ -57,27 +57,31 @@
 <div class="form-top">
 	<FormTitle title={$app.formTitle} />
 	<div class="switch-mode-button-wrapper">
-		<PushableButton size={'xs'} color={$app.switchModeButtonColor} on:click={() => toggleMode()}
+		<PushableButton size={$app.buttonSize} color={'pri'} width={'100%'} on:click={() => toggleMode()}
 			>Switch Mode</PushableButton
 		>
 	</div>
 	<div class="reset-form-button-wrapper">
-		<PushableButton size={'xs'} color={'gray'} width={'115px'} on:click={() => resetForm()}>Reset</PushableButton>
+		<PushableButton size={$app.buttonSize} color={'sec'} width={'100%'} on:click={() => resetForm()}
+			>Reset</PushableButton
+		>
 	</div>
 </div>
-<div class="input-encoding-options" style={inputEncodingGridStyles}>
-	{#if $app.encoderMode}
-		<InputStringEncodingRadioButtons bind:this={inputStringEncodingButtons} />
-	{:else}
-		<InputBase64EncodingRadioButtons bind:this={inputBase64EncodingOptions} />
-	{/if}
-</div>
-<div class="output-encoding-options" style={outputEncodingGridStyles}>
-	{#if $app.encoderMode}
-		<OutputBase64EncodingRadioButtons bind:this={outputBase64EncodingOptions} />
-	{:else}
-		<div class="placeholder" />
-	{/if}
+<div class="encoding-options-wrapper">
+	<div class="input-encoding-options" style={inputEncodingGridStyles}>
+		{#if $app.encoderMode}
+			<InputStringEncodingRadioButtons bind:this={inputStringEncodingButtons} />
+		{:else}
+			<InputBase64EncodingRadioButtons bind:this={inputBase64EncodingOptions} />
+		{/if}
+	</div>
+	<div class="output-encoding-options" style={outputEncodingGridStyles}>
+		{#if $app.encoderMode}
+			<OutputBase64EncodingRadioButtons bind:this={outputBase64EncodingOptions} />
+		{:else}
+			<div class="placeholder" />
+		{/if}
+	</div>
 </div>
 <InputTextBox
 	bind:inputText
@@ -91,16 +95,26 @@
 <style lang="postcss">
 	.form-top {
 		display: grid;
-		grid-template-columns: auto auto;
+		grid-template-columns: 1fr 1fr;
 		grid-template-rows: 31px 31px;
 		grid-gap: 1rem;
 
 		grid-column: 1 / span 4;
 		grid-row: 1 / span 1;
 	}
+	.encoding-options-wrapper {
+		display: flex;
+		gap: 0.5rem;
+		justify-content: center;
+		grid-column: 1 / span 4;
+	}
 	.input-encoding-options,
 	.output-encoding-options {
 		margin: 0 0 0.25rem 0;
+	}
+	.switch-mode-button-wrapper,
+	.reset-form-button-wrapper {
+		width: 100%;
 	}
 	.switch-mode-button-wrapper {
 		grid-column: 1 / span 1;

@@ -13,7 +13,7 @@ export function createDemoStateStore(state: EncodingMachineStateStore): Readable
 		const errorOccurred = () =>
 			$state?.context?.input?.validationResult?.error?.message ? $state.matches({ validateInputText: 'error' }) : false;
 
-		const isMobileDisplay = (): boolean => $pageWidth < 525;
+		const isMobileDisplay = (): boolean => $pageWidth < 762;
 
 		const showInputBytes = () =>
 			$state.matches({ encodeInput: 'autoPlayEncodeByte' }) ||
@@ -67,6 +67,7 @@ export function createDemoStateStore(state: EncodingMachineStateStore): Readable
 			$state.matches({ encodeInput: 'explainByteMapping' }) || $state.matches('encodeOutput');
 
 		return {
+			pageWidth: $pageWidth,
 			errorOccurred: errorOccurred(),
 			isMobileDisplay: isMobileDisplay(),
 			showInputBytes: showInputBytes(),

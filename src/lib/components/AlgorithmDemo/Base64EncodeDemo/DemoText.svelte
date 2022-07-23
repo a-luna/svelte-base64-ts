@@ -3,12 +3,14 @@
 	import OneByteMap from '$lib/components/AlgorithmDemo/Base64EncodeDemo/DemoByteMaps/OneByteMap.svelte';
 	import TwoByteMap from '$lib/components/AlgorithmDemo/Base64EncodeDemo/DemoByteMaps/TwoByteMap.svelte';
 	import DemoIntro from '$lib/components/AlgorithmDemo/Base64EncodeDemo/DemoIntro.svelte';
+	import Utf8EncodedBytes from '$lib/components/AlgorithmDemo/Base64EncodeDemo/DemoUtf8/Utf8EncodedBytes.svelte';
 	import InputChunk from '$lib/components/AlgorithmDemo/Base64EncodeDemo/InputChunk.svelte';
 	import {
 		describeBase64Char,
 		describeInputByte,
 		describeInputChunk,
 		describeOutputChunk,
+		explainCombinedUtf8Chars,
 		explainLastPaddedInputChunk,
 		explainLastPaddedOutputChunk,
 		explainPadCharacter,
@@ -36,21 +38,27 @@
 		: $state.context.base64Maps.length;
 	$: finalInputChunk = $state.context.input.chunks.slice(-1)[0];
 	$: finalInputChunkSize = finalInputChunk.bytes.length;
-	$: finalInputChunkSizeVerbose = finalInputChunkSize === 2 ? 'two 8-bit bytes' : 'one 8-bit byte';
+	$: finalInputChunkSizeVerbose =
+		finalInputChunkSize === 2 ? '18 bits (two 8-bit bytes + 2 pad bits)' : '12 bits (one 8-bit byte + 4 pad bits)';
 	$: finalChunkBase64 = $state.context.output.chunks.slice(-1)[0].base64;
-	$: chunkSize = $demoState.isMobileDisplay ? 15 : 30;
 </script>
 
 {#if $state.matches('inactive') || $state.matches({ validateInputText: 'error' })}
-	<DemoIntro />
+	<DemoIntro on:openHelpModal />
 {:else if $state.matches({ validateInputText: 'success' })}
 	<p>
 		Nicely done! The value you provided looks, smells and tastes like a valid {encodingIn} string.
 	</p>
 {:else if $state.matches({ encodeInput: 'idle' })}
-	{#each getEncodeInputText_IdleDemoText($state.context.input.inputText, $state.context.input.inputEncoding, chunkSize) as text}
+	{#each getEncodeInputText_IdleDemoText($state.context.input.inputText, $state.context.input.inputEncoding) as text}
 		<p>{@html text}</p>
 	{/each}
+	{#if $state.context.input.inputEncoding === 'UTF-8'}
+		{#if $state.context.output.utf8.hasCombinedChars}
+			<p>{@html explainCombinedUtf8Chars($state.context.output.utf8)}</p>
+		{/if}
+		<Utf8EncodedBytes input={$state.context.input.inputText} />
+	{/if}
 {:else if $state.matches({ encodeInput: 'autoPlayEncodeByte' }) || $state.matches({ encodeInput: 'encodeByte' })}
 	<p>
 		{@html describeInputByte(
@@ -101,7 +109,7 @@
 	<InputChunk chunk={$state.context.currentInputChunk} chunkIndex={$state.context.inputChunkIndex} />
 {:else if $state.matches( { createOutputChunks: 'regularIdle' }, ) || $state.matches( { createOutputChunks: 'autoPlayIdle' }, )}
 	<p>
-		Next, for each chunk of input data with three 8-bit bytes (24 total bits), an output chunk with four 6-bit bytes is
+		Next, for each chunk of input data with 24 bits (three 8-bit bytes), an output chunk with four 6-bit bytes is
 		created from the same sequence of bits.
 	</p>
 	<NormalByteMap />

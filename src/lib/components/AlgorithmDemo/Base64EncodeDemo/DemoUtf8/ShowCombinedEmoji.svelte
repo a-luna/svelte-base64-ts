@@ -6,9 +6,9 @@
 	let hovering = false;
 </script>
 
-<div class="close-button-wrapper" class:hovering>
+<div class="button-wrapper" class:hovering>
 	<button
-		id="show-help-topics-button"
+		id="show-combined-emoji-button"
 		on:click={() => (shown = !shown)}
 		on:click
 		on:mouseenter={() => (hovering = true)}
@@ -24,33 +24,22 @@
 </div>
 
 <style lang="postcss">
-	.close-button-wrapper {
-		padding: 0.25rem;
-		border-top-left-radius: 5px;
-		background-color: var(--help-docs-border-color);
+	.button-wrapper {
+		border-top-left-radius: 6px;
+		background-color: inherit;
+		height: 16px;
 	}
-	#show-help-topics-button {
-		width: 0.8rem;
-		height: 0.8rem;
-		color: var(--black2);
+	#show-combined-emoji-button {
+		width: 0.9rem;
+		height: 0.9rem;
+		color: var(--pri-color);
 		background-color: transparent;
 		border: none;
 		padding: 0;
 		align-self: flex-start;
 	}
 
-	#show-help-topics-button:hover,
-	#show-help-topics-button:focus,
-	#show-help-topics-button:active,
-	#show-help-topics-button:active:focus {
-		color: var(--black2);
-	}
-
 	.hovering button {
 		background-color: transparent;
-	}
-
-	.close-button-wrapper.hovering {
-		background-color: var(--nav-button-active-bg-color);
 	}
 </style>

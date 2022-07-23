@@ -9,6 +9,7 @@ import type {
 	Result,
 	StringEncoding,
 } from '$lib/types';
+import { decomposeUtf8String } from '$lib/utf8';
 import {
 	asciiStringFromByteArray,
 	byteArrayToBinaryStringArray,
@@ -16,7 +17,8 @@ import {
 	hexStringFromByteArray,
 	stringToByteArray,
 } from '$lib/util';
-import { validateBase64Encoding, validateTextEncoding } from '$lib/validation';
+import { validateAsciiBytes, validateBase64Encoding, validateTextEncoding } from '$lib/validation';
+import { isTextEncoding } from './typeguards';
 
 export function validateEncoderInput(
 	inputText: string,
@@ -39,12 +41,12 @@ function createEncoderInput(
 ): EncoderInput {
 	const encoderInput = getEncodingParameters(inputText, inputEncoding, outputEncoding, validationResult);
 	const { bytes: inputBytes, totalChunks, lastChunkPadded, padLength } = encoderInput;
-	const inputChunks = Array.from({ length: totalChunks }, (_, i) => {
+	const chunks = Array.from({ length: totalChunks }, (_, i) => {
 		const isPadded = lastChunkPadded && i === totalChunks - 1;
 		const bytes = inputBytes.slice(i * 3, Math.min(inputBytes.length, i * 3 + 3));
 		const hex = hexStringFromByteArray(bytes, true, ' ');
 		const hexBytes = hex.split(' ');
-		const ascii = inputEncoding === 'ASCII' ? asciiStringFromByteArray(bytes) : '';
+		const ascii = validateAsciiBytes(bytes) ? asciiStringFromByteArray(bytes) : '';
 		const byteStrings = byteArrayToBinaryStringArray(bytes);
 		const binary = padBinaryString(byteStrings.join(''), 6);
 		return {
@@ -59,7 +61,7 @@ function createEncoderInput(
 			inputMap: createHexByteMapsForChunk(bytes, inputEncoding, ascii, byteStrings),
 		};
 	});
-	return { ...encoderInput, chunks: inputChunks };
+	return { ...encoderInput, chunks };
 }
 
 function getEncodingParameters(
@@ -68,9 +70,9 @@ function getEncodingParameters(
 	outputEncoding: Base64Encoding,
 	validationResult: Result<string>,
 ): EncoderInput {
-	const utf8encoded = inputEncoding === 'UTF-8' ? encodeURIComponent(inputText) : '';
 	const bytes = stringToByteArray(inputText, inputEncoding);
 	const ascii = inputEncoding === 'ASCII' ? inputText : '';
+	const utf8 = isTextEncoding(inputEncoding) ? decomposeUtf8String(inputText) : null;
 	const binary = inputEncoding === 'bin' ? inputText : byteArrayToBinaryStringArray(bytes).join('');
 	const hex = hexStringFromByteArray(bytes, true, ' ');
 	const hexBytes = hex.split(' ');
@@ -87,7 +89,7 @@ function getEncodingParameters(
 		hexBytes,
 		hex,
 		ascii,
-		utf8encoded,
+		utf8,
 		binary,
 		totalChunks,
 		lastChunkPadded,

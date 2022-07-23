@@ -19,7 +19,7 @@ export const whatIsntBase64 = [
 ];
 
 export const whatIsBase64Standard = [
-	'The standard Base64 alphabet consists of uppercase letters A-Z (26 characters), lowercase letters a-z (26 characters), and numbers 0-9 (10 characters).',
+	'The standard Base64 alphabet consists of uppercase letters <code>A-Z</code> (26 characters), lowercase letters <code>a-z</code> (26 characters), and numbers <code>0-9</code> (10 characters).',
 	'These three groups provide 62 of the necessary 64 characters. In standard Base64 encoding, letter 63 is the <code>+</code> (plus) character and letter 64 is the <code>/</code> (forward-slash) character.',
 ];
 
@@ -29,15 +29,27 @@ export const whatIsBase64Url = [
 ];
 
 export const stringInputEncoding1 = [
-	'This demo allows you to encode ASCII (text), hex or binary data to Base64 and illustrates every step of the process.',
-	'Please select either <strong>ASCII</strong>, <strong>hex</strong> or <strong>bin</strong> from the dropdown menu labeled <strong>Text Encoding</strong> to specify the format of the string you have provided.',
+	`Having a firm grasp of the structure and purpose of your data is vital to ensuring that a recipient is able to decode the data back to its original form.`,
+	'Generally speaking, Base64 is used to encode either textual data (e.g., data typed into a form on a webpage) or binary data (e.g., a file attached to an email).',
 ];
 
 export const stringInputEncoding2 = [
+	'If you are encoding text, please select either <span class="b64">ASCII</span> or <span class="b64">UTF-8</span> from the <strong>Text Encoding</strong> menu.',
+	'If you are encoding binary data, please select either <span class="b64">hex</span> or <span class="b64">bin</span>.',
+];
+
+export const stringInputEncodingAscii = [
 	'If you are providing a ASCII (text) string, <strong>it can only contain characters in the printable range of the ASCII table (<code>0x20</code> - <code>0x7E</code>)</strong>. Which includes most punctuation characters, the space character and all alphanumeric characters.',
 ];
 
-export const stringInputEncoding3a = [
+export const stringInputEncodingUTF81 = [
+	'If you are encoding text that contains characters outside of the ASCII range (e.g., non-english names/words, mathemetical symbols, emojis, etc) please select <span class="b64">UTF-8</span> as the <strong>Text Encoding</strong> value.',
+	'Examples of valid UTF-8 strings:',
+];
+
+export const stringInputEncodingUTF82 = ['✓ à la mode', '∑ßåœ ≈ ∆c', '日本語文字列', '🌭🌧😩🧺'];
+
+export const stringInputEncodingHex1 = [
 	'If you are providing a hex string, it can be provided in any of the formats below:',
 ];
 
@@ -48,11 +60,11 @@ export const hexStringFormats = [
 	['12 78 AB EF', 'bytes separated by spaces'],
 ];
 
-export const stringInputEncoding3b = [
+export const stringInputEncodingHex2 = [
 	'Additionally, your hex string must contain an even number of digits in order to be encoded, otherwise you would be missing the last 4 bits of the last byte.',
 ];
 
-export const stringInputEncoding4 = [
+export const stringInputEncodingBinary = [
 	'If you are providing a binary string, it must meet both of the requirements below:',
 ];
 
@@ -72,13 +84,13 @@ export const references = [
 		url: 'https://datatracker.ietf.org/doc/html/rfc4648',
 		description: [
 			'<span class="emphasis">RFC 4648</span> is the specification for Base64 encoding (also Base32 and Base16 encodings, but these are rarely used). This document defines the standard and URL-safe alphabets used in this demonstration, as well as the algorithm for encoding 8-bit bytes to 6-bit ASCII characters.',
-		]
+		],
 	},
 	{
 		title: 'Base64 (wikipedia.com)',
 		url: 'https://en.wikipedia.org/wiki/Base64',
 		description: [
 			'The wikipedia article for Base64 covers a much larger number of subjects than RFC 4648, including the use of Base64 encoding with UTF-7, OpenPGP, MIME, and several other examples of practical uses for Base64 encoding.',
-		]
-	}
-]
+		],
+	},
+];

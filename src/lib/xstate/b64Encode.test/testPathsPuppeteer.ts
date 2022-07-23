@@ -13,6 +13,8 @@ async function getInnerTextFromDomElements(results: ElementHandle<Element>[]): P
 	return textContent.join(' ');
 }
 
+// const getInnerText = async (page: Page, elHandle: ElementHandle<Node>): Promise<string> => await page.evaluate(el => el.innerText, elHandle);
+
 const asciiHappyPath = async (page: Page, expect: Vi.ExpectStatic): Promise<void> => {
 	await page.goto('http://localhost:3500', { waitUntil: 'networkidle0' });
 
@@ -375,9 +377,9 @@ const asciiHappyPathSkipDemo = async (page: Page, expect: Vi.ExpectStatic): Prom
 	await page.waitForSelector('[data-sub-state="none"]');
 };
 
-export const testPaths: PuppeteerTestCase[] = [
+export const testPathsPuppeteer: PuppeteerTestCase[] = [
 	{ description: 'encode ascii text, execute all steps manually', testFunction: asciiHappyPath },
-	// { description: 'encode ascii text, execute all steps with autoplay', testFunction: asciiHappyPathAutoplay },
-	// { description: 'encode ascii text, skip demo', testFunction: asciiHappyPathSkipDemo },
+	{ description: 'encode ascii text, execute all steps with autoplay', testFunction: asciiHappyPathAutoplay },
+	{ description: 'encode ascii text, skip demo', testFunction: asciiHappyPathSkipDemo },
 ];
 /* c8 ignore stop */

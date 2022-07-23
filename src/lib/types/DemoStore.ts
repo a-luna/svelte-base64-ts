@@ -1,4 +1,5 @@
 export interface DemoStore {
+	pageWidth: number;
 	errorOccurred: boolean;
 	isMobileDisplay: boolean;
 	showInputBytes: boolean;

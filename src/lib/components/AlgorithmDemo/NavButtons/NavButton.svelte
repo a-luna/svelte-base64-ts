@@ -1,7 +1,8 @@
 <script lang="ts">
-	import type { EncodingMachineStateStore, EncodingStateToEventMap, EventLogStore, XStateSendEvent } from '$lib/types';
+	import type { EncodingMachineStateStore, EncodingStateToEventMap, XStateSendEvent } from '$lib/types';
 	import type { DemoStore } from '$lib/types/DemoStore';
 	import type { EncodingEvent } from '$lib/xstate/b64Encode';
+	import type { EventLogStore } from '$lib/xstate/b64Encode.test/types';
 	import { getContext } from 'svelte';
 	import type { Readable } from 'svelte/store';
 	import { fade } from 'svelte/transition';

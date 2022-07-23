@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { rotatingColors } from '$lib/constants';
+	import { isTextEncoding } from '$lib/typeguards';
 	import type { EncodingMachineStateStore, HexByteMap } from '$lib/types';
 	import { getBase64CharIndexFromGroupId, getChunkIndexFromByteIndex } from '$lib/util';
 	import { getContext } from 'svelte';
@@ -10,6 +11,7 @@
 	let state: EncodingMachineStateStore;
 	({ state } = getContext('demo'));
 
+	$: inputEncoding = $state.context.input.inputEncoding;
 	$: chunkId = getChunkIndexFromByteIndex(byteIndex);
 	$: chunkNumber = chunkId + 1;
 	$: chunkColor = rotatingColors[chunkId % rotatingColors.length];
@@ -61,8 +63,8 @@
 	<span class="letter-H" style="color: var({currentByteIdColor});">H</span>
 	<span class="byte-number" style="color: var({currentByteIdColor});">{byteNumber}</span>
 </div>
-{#if byte.ascii}
-	<span class="ascii" data-ascii={byte.ascii}>{@html byte.isWhiteSpace ? '&nbsp;' : byte.ascii}</span>
+{#if isTextEncoding(inputEncoding)}
+	<span class="char" data-ascii={byte.char}>{@html byte.isWhiteSpace ? '&nbsp;' : byte.char}</span>
 {/if}
 <span class="hex" data-hex="{byte.hex_word1}{byte.hex_word2}">{byte.hex_word1}{byte.hex_word2}</span>
 <div

@@ -24,12 +24,21 @@ export type { Encoder } from './Encoder';
 export type { EncoderInput } from './EncoderInput';
 export type { EncoderInputChunk } from './EncoderInputChunk';
 export type { EncoderOutput } from './EncoderOutput';
-export type { EventLogStore } from './EventLogStore';
 export type { HelpSection, HelpSectionMap } from './HelpSection';
 export type { HexByteMap } from './HexByteMap';
 export type { HslColor } from './HslColor';
-export { BASE64_ENCODINGS, BUTTON_COLORS, STRING_ENCODINGS } from './Literals';
-export type { AppMode, Base64Encoding, ButtonColor, Encoding, StringEncoding } from './Literals';
+export { BASE64_ENCODINGS, BUTTON_COLORS, BUTTON_SIZES, STRING_ENCODINGS } from './Literals';
+export type {
+	AppMode,
+	Base64Encoding,
+	ButtonColor,
+	ButtonSize,
+	Encoding,
+	StringEncoding,
+	TextEncoding,
+} from './Literals';
 export type { OutputChunk } from './OutputChunk';
 export type { Result } from './Result';
 export type { SelectMenuOption } from './SelectMenuOption';
+export type { ByteEncodingMap, Utf8ComplexCharacterMap, Utf8StandardCharacterMap, Utf8StringComposition } from './utf8';
+export type { MappedLiteral, MappedStringLiteralPick } from './Utilities';

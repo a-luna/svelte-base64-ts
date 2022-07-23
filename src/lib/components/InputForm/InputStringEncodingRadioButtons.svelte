@@ -19,10 +19,22 @@
 				checked: $state.encoderInput.inputEncoding === 'ASCII',
 			},
 			{
-				label: 'Hex',
+				label: 'UTF-8',
 				id: 'inputEncoding2',
+				value: 'UTF-8',
+				checked: $state.encoderInput.inputEncoding === 'UTF-8',
+			},
+			{
+				label: 'Hex',
+				id: 'inputEncoding3',
 				value: 'hex',
 				checked: $state.encoderInput.inputEncoding === 'hex',
+			},
+			{
+				label: 'Binary',
+				id: 'inputEncoding4',
+				value: 'bin',
+				checked: $state.encoderInput.inputEncoding === 'bin',
 			},
 		],
 	};

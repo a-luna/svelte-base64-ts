@@ -1417,7 +1417,7 @@ const binValidationError: JSDomTestFunction = async (
 	expect(demoText.innerHTML).toContain(expectedTextForState);
 };
 
-const utf8HappyPathEvents: JSDomTestFunction = async (
+const utf8HappyPath: JSDomTestFunction = async (
 	screen: Screen,
 	userEvent: UserEvent,
 	expect: Vi.ExpectStatic,
@@ -1430,11 +1430,11 @@ const utf8HappyPathEvents: JSDomTestFunction = async (
 	await userEvent.click(stringEncodingMenu);
 	const asciiEncodingMenuItem = await screen.findByTestId('select-string-encoding-option-2');
 	await userEvent.click(asciiEncodingMenuItem);
-	// Change output encoding setting to base64url
+	// Change output encoding setting to base64
 	const base64EncodingMenu = await screen.findByTestId('select-base64-encoding-open-list-button');
 	await userEvent.click(base64EncodingMenu);
-	const base64urlEncodingMenuItem = await screen.findByTestId('select-base64-encoding-option-2');
-	await userEvent.click(base64urlEncodingMenuItem);
+	const base64EncodingMenuItem = await screen.findByTestId('select-base64-encoding-option-1');
+	await userEvent.click(base64EncodingMenuItem);
 
 	// Click GO_TO_NEXT_STEP button
 	const nextStepButton = await screen.findByTestId('next-step-button');
@@ -1452,38 +1452,6 @@ const utf8HappyPathEvents: JSDomTestFunction = async (
 	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="idle"]');
 	expect(domReflectsCurrentState).toBeTruthy();
 	expectedTextForState = `The first step in the Base64 encoding process is to convert the input data to binary`;
-	expect(demoText.innerHTML).toContain(expectedTextForState);
-
-	// Click GO_TO_NEXT_STEP button
-	await userEvent.click(nextStepButton);
-	// Verify transition to state: encodeInput-encodeByte after event GO_TO_NEXT_STEP
-	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="encodeByte"]');
-	expect(domReflectsCurrentState).toBeTruthy();
-	expectedTextForState = `, which has binary value`;
-	expect(demoText.innerHTML).toContain(expectedTextForState);
-
-	// Click GO_TO_NEXT_STEP button
-	await userEvent.click(nextStepButton);
-	// Verify transition to state: encodeInput-encodeByte after event GO_TO_NEXT_STEP
-	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="encodeByte"]');
-	expect(domReflectsCurrentState).toBeTruthy();
-	expectedTextForState = `, which has binary value`;
-	expect(demoText.innerHTML).toContain(expectedTextForState);
-
-	// Click GO_TO_NEXT_STEP button
-	await userEvent.click(nextStepButton);
-	// Verify transition to state: encodeInput-encodeByte after event GO_TO_NEXT_STEP
-	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="encodeByte"]');
-	expect(domReflectsCurrentState).toBeTruthy();
-	expectedTextForState = `, which has binary value`;
-	expect(demoText.innerHTML).toContain(expectedTextForState);
-
-	// Click GO_TO_NEXT_STEP button
-	await userEvent.click(nextStepButton);
-	// Verify transition to state: encodeInput-encodeByte after event GO_TO_NEXT_STEP
-	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="encodeByte"]');
-	expect(domReflectsCurrentState).toBeTruthy();
-	expectedTextForState = `, which has binary value`;
 	expect(demoText.innerHTML).toContain(expectedTextForState);
 
 	// Click GO_TO_NEXT_STEP button
@@ -1546,16 +1514,6 @@ const utf8HappyPathEvents: JSDomTestFunction = async (
 
 	// Click GO_TO_NEXT_STEP button
 	await userEvent.click(nextStepButton);
-	// Verify transition to state: createInputChunks-createInputChunk after event GO_TO_NEXT_STEP
-	domReflectsCurrentState = document.querySelector(
-		'[data-state="createInputChunks"][data-sub-state="createInputChunk"]',
-	);
-	expect(domReflectsCurrentState).toBeTruthy();
-	expectedTextForState = ` chunk (`;
-	expect(demoText.innerHTML).toContain(expectedTextForState);
-
-	// Click GO_TO_NEXT_STEP button
-	await userEvent.click(nextStepButton);
 	// Verify transition to state: createInputChunks-explainLastPaddedChunk after event GO_TO_NEXT_STEP
 	domReflectsCurrentState = document.querySelector(
 		'[data-state="createInputChunks"][data-sub-state="explainLastPaddedChunk"]',
@@ -1580,16 +1538,6 @@ const utf8HappyPathEvents: JSDomTestFunction = async (
 	domReflectsCurrentState = document.querySelector('[data-state="createOutputChunks"][data-sub-state="regularIdle"]');
 	expect(domReflectsCurrentState).toBeTruthy();
 	expectedTextForState = `Next, for each chunk of input data with three 8-bit bytes`;
-	expect(demoText.innerHTML).toContain(expectedTextForState);
-
-	// Click GO_TO_NEXT_STEP button
-	await userEvent.click(nextStepButton);
-	// Verify transition to state: createOutputChunks-createOutputChunk after event GO_TO_NEXT_STEP
-	domReflectsCurrentState = document.querySelector(
-		'[data-state="createOutputChunks"][data-sub-state="createOutputChunk"]',
-	);
-	expect(domReflectsCurrentState).toBeTruthy();
-	expectedTextForState = ` bits in this chunk are taken from `;
 	expect(demoText.innerHTML).toContain(expectedTextForState);
 
 	// Click GO_TO_NEXT_STEP button
@@ -1706,39 +1654,115 @@ const utf8HappyPathEvents: JSDomTestFunction = async (
 
 	// Click GO_TO_NEXT_STEP button
 	await userEvent.click(nextStepButton);
-	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
-	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
-	expect(domReflectsCurrentState).toBeTruthy();
-	expectedTextForState = `Base64 digit`;
-	expect(demoText.innerHTML).toContain(expectedTextForState);
-
-	// Click GO_TO_NEXT_STEP button
-	await userEvent.click(nextStepButton);
-	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
-	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
-	expect(domReflectsCurrentState).toBeTruthy();
-	expectedTextForState = `Base64 digit`;
-	expect(demoText.innerHTML).toContain(expectedTextForState);
-
-	// Click GO_TO_NEXT_STEP button
-	await userEvent.click(nextStepButton);
-	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
-	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
-	expect(domReflectsCurrentState).toBeTruthy();
-	expectedTextForState = `Base64 digit`;
-	expect(demoText.innerHTML).toContain(expectedTextForState);
-
-	// Click GO_TO_NEXT_STEP button
-	await userEvent.click(nextStepButton);
-	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
-	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
-	expect(domReflectsCurrentState).toBeTruthy();
-	expectedTextForState = `Base64 digit`;
-	expect(demoText.innerHTML).toContain(expectedTextForState);
-
-	// Click GO_TO_NEXT_STEP button
-	await userEvent.click(nextStepButton);
 	// Verify transition to state: finished after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="finished"][data-sub-state="none"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `The encoding process is complete!`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+};
+
+const utf8MixedAscii: JSDomTestFunction = async (
+	screen: Screen,
+	userEvent: UserEvent,
+	expect: Vi.ExpectStatic,
+): Promise<void> => {
+	// Set the value of the input data text box: ✓ à la mode
+	const inputTextBox = await screen.findByTestId('input-text');
+	await userEvent.type(inputTextBox, '✓ à la mode');
+	// Change input encoding setting to UTF-8
+	const stringEncodingMenu = await screen.findByTestId('select-string-encoding-open-list-button');
+	await userEvent.click(stringEncodingMenu);
+	const asciiEncodingMenuItem = await screen.findByTestId('select-string-encoding-option-2');
+	await userEvent.click(asciiEncodingMenuItem);
+	// Change output encoding setting to base64
+	const base64EncodingMenu = await screen.findByTestId('select-base64-encoding-open-list-button');
+	await userEvent.click(base64EncodingMenu);
+	const base64EncodingMenuItem = await screen.findByTestId('select-base64-encoding-option-1');
+	await userEvent.click(base64EncodingMenuItem);
+
+	// Click GO_TO_NEXT_STEP button
+	const nextStepButton = await screen.findByTestId('next-step-button');
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: validateInputText-success after event VALIDATE_TEXT
+	let domReflectsCurrentState = document.querySelector('[data-state="validateInputText"][data-sub-state="success"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	const demoText = await screen.findByTestId('demo-text');
+	let expectedTextForState = `Nicely done! The value you provided looks, smells and tastes like a valid`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_LAST_STEP button
+	const lastStepButton = await screen.findByTestId('last-step-button');
+	await userEvent.click(lastStepButton);
+	// Verify transition to state: finished after event GO_TO_LAST_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="finished"][data-sub-state="none"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `The encoding process is complete!`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_FIRST_STEP button
+	const firstStepButton = await screen.findByTestId('first-step-button');
+	await userEvent.click(firstStepButton);
+	// Verify transition to state: inactive after event GO_TO_FIRST_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="inactive"][data-sub-state="none"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Enter a string value in the text box above to get started.`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Set the value of the input data text box: ∑ßåœ ≈ ∆c
+	await userEvent.clear(inputTextBox);
+	await userEvent.type(inputTextBox, '∑ßåœ ≈ ∆c');
+	// Change input encoding setting to UTF-8
+	await userEvent.click(stringEncodingMenu);
+	await userEvent.click(asciiEncodingMenuItem);
+	// Change output encoding setting to base64
+	await userEvent.click(base64EncodingMenu);
+	await userEvent.click(base64EncodingMenuItem);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: validateInputText-success after event VALIDATE_TEXT
+	domReflectsCurrentState = document.querySelector('[data-state="validateInputText"][data-sub-state="success"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Nicely done! The value you provided looks, smells and tastes like a valid`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_LAST_STEP button
+	await userEvent.click(lastStepButton);
+	// Verify transition to state: finished after event GO_TO_LAST_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="finished"][data-sub-state="none"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `The encoding process is complete!`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_FIRST_STEP button
+	await userEvent.click(firstStepButton);
+	// Verify transition to state: inactive after event GO_TO_FIRST_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="inactive"][data-sub-state="none"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Enter a string value in the text box above to get started.`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Set the value of the input data text box: 日本語文字列
+	await userEvent.clear(inputTextBox);
+	await userEvent.type(inputTextBox, '日本語文字列');
+	// Change input encoding setting to UTF-8
+	await userEvent.click(stringEncodingMenu);
+	await userEvent.click(asciiEncodingMenuItem);
+	// Change output encoding setting to base64
+	await userEvent.click(base64EncodingMenu);
+	await userEvent.click(base64EncodingMenuItem);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: validateInputText-success after event VALIDATE_TEXT
+	domReflectsCurrentState = document.querySelector('[data-state="validateInputText"][data-sub-state="success"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Nicely done! The value you provided looks, smells and tastes like a valid`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_LAST_STEP button
+	await userEvent.click(lastStepButton);
+	// Verify transition to state: finished after event GO_TO_LAST_STEP
 	domReflectsCurrentState = document.querySelector('[data-state="finished"][data-sub-state="none"]');
 	expect(domReflectsCurrentState).toBeTruthy();
 	expectedTextForState = `The encoding process is complete!`;
@@ -1755,7 +1779,8 @@ const fastTests: JSDomTestCase[] = [
 	{ description: 'encode bin string, execute all steps manually', testFunction: binHappyPath },
 	{ description: 'encode bin string, skip demo', testFunction: binHappyPathSkipDemo },
 	{ description: 'encode bin string, validation error', testFunction: binValidationError },
-	{ description: 'encode utf8 string, execute all steps manually', testFunction: utf8HappyPathEvents },
+	{ description: 'encode utf8 string, execute all steps manually', testFunction: utf8HappyPath },
+	{ description: 'encode multiple utf8 strings, mix of ascii and utf8', testFunction: utf8MixedAscii },
 ];
 
 const slowTests: JSDomTestCase[] = [

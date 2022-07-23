@@ -7,7 +7,9 @@ export interface HexByteMap {
 	hex_word1: string;
 	hex_word2: string;
 	ascii: string;
+	char?: string;
 	isWhiteSpace?: boolean;
 	groupId?: string;
 	bitGroups?: BitGroup[];
+	characterId?: string;
 }

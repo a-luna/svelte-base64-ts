@@ -24,7 +24,7 @@
 	.help-row {
 		display: flex;
 		flex-flow: row nowrap;
-		gap: 0.5rem;
+		gap: 0.75rem;
 		align-items: center;
 		height: 33px;
 		white-space: nowrap;
@@ -49,49 +49,19 @@
 		grid-row: 3 / span 1;
 	}
 	.first {
-		grid-column: 2 / span 1;
-		grid-row: 4 / span 1;
+		grid-column: 3 / span 1;
+		grid-row: 1 / span 1;
 	}
 	.prev {
-		grid-column: 2 / span 1;
-		grid-row: 5 / span 1;
+		grid-column: 3 / span 1;
+		grid-row: 2 / span 1;
 	}
 	.next {
-		grid-column: 2 / span 1;
-		grid-row: 6 / span 1;
+		grid-column: 3 / span 1;
+		grid-row: 3 / span 1;
 	}
 	.last {
-		grid-column: 2 / span 1;
-		grid-row: 7 / span 1;
-	}
-	@media screen and (min-width: 762px) {
-		.reset {
-			grid-column: 2 / span 1;
-			grid-row: 1 / span 1;
-		}
-		.start {
-			grid-column: 2 / span 1;
-			grid-row: 2 / span 1;
-		}
-		.stop {
-			grid-column: 2 / span 1;
-			grid-row: 3 / span 1;
-		}
-		.first {
-			grid-column: 3 / span 1;
-			grid-row: 1 / span 1;
-		}
-		.prev {
-			grid-column: 3 / span 1;
-			grid-row: 2 / span 1;
-		}
-		.next {
-			grid-column: 3 / span 1;
-			grid-row: 3 / span 1;
-		}
-		.last {
-			grid-column: 3 / span 1;
-			grid-row: 4 / span 1;
-		}
+		grid-column: 3 / span 1;
+		grid-row: 4 / span 1;
 	}
 </style>

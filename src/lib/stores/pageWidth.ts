@@ -1,3 +1,4 @@
+/* c8 ignore start */
 import type { Writable } from 'svelte/store';
 import { writable } from 'svelte/store';
 
@@ -18,3 +19,4 @@ export const getPageWidth = (): Writable<number> => {
 		return svelteDiv ? syncWidth(svelteDiv) : null;
 	}
 };
+/* c8 ignore stop */

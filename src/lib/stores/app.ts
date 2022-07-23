@@ -1,6 +1,6 @@
 import { getPageWidth } from '$lib/stores/pageWidth';
 import { state } from '$lib/stores/state';
-import type { AppState, AppStore, Base64Encoding, ButtonColor, Encoding, OutputChunk } from '$lib/types';
+import type { AppState, AppStore, Base64Encoding, ButtonColor, ButtonSize, Encoding, OutputChunk } from '$lib/types';
 import { hexStringFromByteArray } from '$lib/util';
 import type { Readable } from 'svelte/store';
 import { derived } from 'svelte/store';
@@ -61,6 +61,7 @@ function createAppStore(state: AppState): Readable<AppStore> {
 
 		const getSwitchModeButtonColor = (): ButtonColor => (encoderMode() ? 'teal' : 'green');
 		const getButtonColor = (): ButtonColor => (inputStringIsValid() ? (encoderMode() ? 'teal' : 'green') : 'red');
+		const getButtonSize = (): ButtonSize => (isMobileDisplay() ? 'sm' : 'xs');
 
 		return {
 			encoderMode: encoderMode(),
@@ -79,6 +80,7 @@ function createAppStore(state: AppState): Readable<AppStore> {
 			formTitle: encoderMode() ? 'Base64 Encoder' : 'Base64 Decoder',
 			switchModeButtonColor: getSwitchModeButtonColor(),
 			inputStringIsValid: inputStringIsValid(),
+			buttonSize: getButtonSize(),
 			buttonColor: getButtonColor(),
 			buttonLabel: encoderMode() ? 'Encode' : 'Decode',
 		};

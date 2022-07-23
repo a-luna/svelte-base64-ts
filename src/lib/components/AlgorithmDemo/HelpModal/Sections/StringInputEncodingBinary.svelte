@@ -1,10 +1,13 @@
 <script lang="ts">
-	import { binStringFormats, stringInputEncoding4 } from '$lib/components/AlgorithmDemo/HelpModal/Sections/_helpText';
+	import {
+		binStringFormats,
+		stringInputEncodingBinary,
+	} from '$lib/components/AlgorithmDemo/HelpModal/Sections/_helpText';
 </script>
 
 <div class="settings-help help-module">
 	<div class="encoding-description">
-		{#each stringInputEncoding4 as paragraph}
+		{#each stringInputEncodingBinary as paragraph}
 			<p>{@html paragraph}</p>
 		{/each}
 		<div class="valid-binary-format">

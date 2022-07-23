@@ -1,5 +1,5 @@
 <script lang="ts">
-	import ReturnRight from '../ReturnRight.svelte';
+	import ReturnRight from '$lib/components/Icons/ReturnRight.svelte';
 </script>
 
 <kbd title="Return Key"><ReturnRight /><span>Return</span></kbd>

@@ -5,7 +5,6 @@
 	import DemoText from '$lib/components/AlgorithmDemo/Base64EncodeDemo/DemoText.svelte';
 	import FinalResults from '$lib/components/AlgorithmDemo/Base64EncodeDemo/FinalResults.svelte';
 	import InputForm from '$lib/components/AlgorithmDemo/Base64EncodeDemo/InputForm/InputForm.svelte';
-	import OpenHelpDocsLarge from '$lib/components/AlgorithmDemo/Base64EncodeDemo/InputForm/OpenHelpDocsLarge.svelte';
 	import LookupTables from '$lib/components/AlgorithmDemo/Base64EncodeDemo/LookupTables.svelte';
 	import EncoderHelpModal from '$lib/components/AlgorithmDemo/HelpModal/EncoderHelpModal.svelte';
 	import FormTitle from '$lib/components/FormTitle.svelte';
@@ -67,37 +66,10 @@
 		inputText = defaultEncoderInput.inputText;
 		inputTextEncoding = defaultEncoderInput.inputEncoding;
 		outputBase64Encoding = defaultEncoderInput.outputEncoding;
-		eventLog.clear();
+		// eventLog.clear();
 	}
 	$: bottomRowHeight = $demoState.isMobileDisplay ? 'auto' : '260px';
 	$: formTitleFontSize = $demoState.isMobileDisplay ? '1.6rem' : '1.9rem';
-
-	// $: if (typeof window !== 'undefined') {
-	// 	// const i_b64 = '4pyTIMOgIGxhIG1vZGU=';
-	// 	const i_b64 = 'JUUyJTg4JTkxJUMzJTlGJUMzJUE1JUM1JTkzJTIwJUUyJTg5JTg4JTIwJUUyJTg4JTg2Yw==';
-	// 	const decoded = b64Decode(validateDecoderInput(i_b64, 'base64url'));
-	// 	const i_hex = decoded.chunks.map((chunk) => chunk.hex).join('');
-	// 	// const i_hex = b64Decode(validateDecoderInput(i_b64, 'base64url')).output;
-	// 	const j_bytes = hexStringToByteArray(i_hex);
-	// 	const k_utf8 = utf8StringFromByteArray(j_bytes);
-	// 	console.log({ decoded });
-	// }
-	// $: if (typeof window !== 'undefined') {
-	// 	const i_utf8 = '✓ à la mode';
-	// 	// const i_utf8 = '∑ßåœ ≈ ∆c';
-	// 	const l_bytes = utf8StringToByteArray(i_utf8);
-	// 	const m_hex = hexStringFromByteArray(l_bytes);
-	// 	const m_utf8encoded = utf8StringFromByteArray(l_bytes);
-	// 	const n_b64 = b64Encode(validateEncoderInput(m_hex, 'ASCII', 'base64')).output;
-	// 	console.log({ i_utf8, l_bytes, m_hex, m_utf8encoded, n_b64 });
-	// }
-	// $: if (typeof window !== 'undefined') {
-	// 	const input = '∑ßåœ ≈ ∆c';
-	// 	console.log(validateEncoderInput(input, 'UTF-8', 'base64'));
-	// 	console.log(
-	// 		validateDecoderInput('JUUyJTg4JTkxJUMzJTlGJUMzJUE1JUM1JTkzJTIwJUUyJTg5JTg4JTIwJUUyJTg4JTg2Yw==', 'base64'),
-	// 	);
-	// }
 
 	function openHelpDocsModal() {
 		if (!$state.context.autoplay) {
@@ -218,13 +190,12 @@
 	<div class="demo-steps" data-testid="demo-steps">
 		<!-- <InspectStateMachineButton on:click={() => inspect({ iframe: false })} /> -->
 		<div id="demo-text" data-testid="demo-text" data-state={machineState} data-sub-state={machineSubState}>
-			<DemoText />
+			<DemoText on:openHelpModal={() => openHelpDocsModal()} />
 		</div>
 		<DemoResults bind:highlightHexByte bind:highlightBase64 />
 	</div>
 </div>
 <div class="bottom-row" style="flex: 1 0 {bottomRowHeight}">
-	<OpenHelpDocsLarge on:click={() => openHelpDocsModal()} />
 	<LookupTables {outputBase64Encoding} {highlightBase64} {highlightHexByte} />
 	<FinalResults />
 </div>

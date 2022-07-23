@@ -1,7 +1,16 @@
 import { rotatingColors } from '$lib/constants';
 import { getAsciiCharacterDescription } from '$lib/maps';
-import type { Base64ByteMap, Base64Encoding, EncoderInputChunk, OutputChunk, StringEncoding } from '$lib/types';
-import { chunkify, decimalToBinaryString, hexStringFromByte, parseGroupId, stringToByteArray } from '$lib/util';
+import type {
+	Base64ByteMap,
+	Base64Encoding,
+	EncoderInputChunk,
+	OutputChunk,
+	StringEncoding,
+	Utf8StandardCharacterMap,
+	Utf8StringComposition,
+} from '$lib/types';
+import { decomposeUtf8String } from '$lib/utf8';
+import { decimalToBinaryString, hexStringFromByte, parseGroupId, stringToByteArray } from '$lib/util';
 
 const convertNumber = (num: number) =>
 	(num < 4 || num > 20) && num.toString().slice(-1)[0] === '1'
@@ -33,7 +42,7 @@ const getChunkBytesHtml = (chunk: EncoderInputChunk | OutputChunk, chunkIndex: n
 	Array.from({ length: chunk.bytes.length }, (_, i) => getByteNumHtml(3 * chunkIndex + i + 1, chunkIndex));
 const getChunkB64CharsHtml = (totalB64Chars: number, chunkIndex: number) =>
 	Array.from({ length: totalB64Chars }, (_, i) => getB64CharNumHtml(4 * chunkIndex + i + 1, chunkIndex)).join(', ');
-const getHexBytesHtml = (bytes: number[]): string => bytes.map((b) => `<span>${hexStringFromByte(b)}</span>`).join(' ');
+const getHexBytesHtml = (hex: string[]): string => hex.map((b) => `<span>${b}</span>`).join(' ');
 
 export const getBase64AlphabetVerbose = (encoding: Base64Encoding) =>
 	encoding === 'base64' ? 'standard Base64 alphabet' : 'URL-safe Base64 alphabet';
@@ -50,9 +59,8 @@ export const getInactive_AppNavDemoText = (): string[] => [
 	'You can stop autoplaying and return to manually stepping through the demo with the <strong>Stop Autoplay</strong> button (You can also start/stop autoplay using the <kbd>Space</kbd> bar).',
 ];
 
-export function getEncodeInputText_IdleDemoText(input: string, encoding: StringEncoding, chunkSize: number): string[] {
+export function getEncodeInputText_IdleDemoText(input: string, encoding: StringEncoding): string[] {
 	const bytes = stringToByteArray(input, encoding);
-	const chunkedBytes = chunkify<number>({ inputList: bytes, chunkSize });
 	const totalBytes = bytes.length;
 	let demoText: string[] = [];
 	if (encoding === 'ASCII') {
@@ -61,10 +69,10 @@ export function getEncodeInputText_IdleDemoText(input: string, encoding: StringE
 			`The input data contains ${totalBytes} ASCII characters. <strong>As each character is converted to an 8-bit value, the corresponding row in the table below will be highlighted.</strong>`,
 		];
 	} else if (encoding === 'UTF-8') {
-		const byteString = chunkedBytes.map((chunk) => `<code>${getHexBytesHtml(chunk)}</code>`);
+		const utf8Composition = decomposeUtf8String(input);
 		demoText = [
-			`In UTF-8 encoding, some characters translate to a single byte, but others translate to pairs or triplets of bytes. The string you provided translates to the following bytes:`,
-			...byteString,
+			`In UTF-8 encoding, some characters (e.g., any character in the ASCII set) are represented by a single byte, but the vast majority of chracters translate to multiple bytes.`,
+			`For example, <strong>the string you provided contains ${utf8Composition.stringLength} characters, but translates to ${utf8Composition.totalBytes} bytes in UTF-8 encoding</strong>:`,
 		];
 	} else if (encoding === 'hex') {
 		demoText = [
@@ -77,6 +85,42 @@ export function getEncodeInputText_IdleDemoText(input: string, encoding: StringE
 		'<strong>The first step in the Base64 encoding process is to convert the input data to binary</strong> (i.e, a string consisting of only <code>0</code> and <code>1</code> characters).',
 		...demoText,
 	];
+}
+
+export function explainCombinedUtf8Chars(utf8: Utf8StringComposition): string {
+	const totalWithCombined = utf8.charMap.filter((c) => c.isCombined).length;
+	const style = 'font-size: 0.9rem; padding: 0; background-color: inherit;';
+	const pluralMaybe =
+		totalWithCombined > 1 ? `${totalWithCombined} emojis that are` : `${totalWithCombined} emoji that is`;
+	return `Why so many bytes? You provided ${pluralMaybe} actually comprised of several characters (You can view these separated characters by toggling the <code style="${style}">+</code> button).`;
+}
+
+export function getUtf8ByteMapHtml(input: string): string {
+	const byteMapOpenTag = 'div class="utf8-byte-map"';
+	const utf8ByteMap = decomposeUtf8String(input);
+	const byteMapHtml = utf8ByteMap.charMap.map((byteMap) => {
+		if (byteMap.isCombined) {
+			return byteMap.charMap.map((combinedByteMap) => getStandardUtf8ByteMapHtml(combinedByteMap)).join('\n');
+		} else {
+			return getStandardUtf8ByteMapHtml(byteMap);
+		}
+	});
+	return `<${byteMapOpenTag}>${byteMapHtml.join('\n')}</div>`;
+}
+
+function getStandardUtf8ByteMapHtml(byteMap: Utf8StandardCharacterMap): string {
+	const utf8Char = byteMap.encoded === '%EF%B8%8F' ? 'VS16' : byteMap.encoded === '%E2%80%8D' ? 'ZWJ' : byteMap.char;
+	const openTag =
+		byteMap.encoded === '%EF%B8%8F'
+			? 'code class="variation"'
+			: byteMap.encoded === '%E2%80%8D'
+			? 'code class="zwj"'
+			: byteMap.hexBytes.length === 1 && byteMap.hexBytes[0] === '20'
+			? 'code class="whitespace"'
+			: 'code class="char"';
+	const hexBytes = `<${openTag}>${getHexBytesHtml(byteMap.hexBytes)}</code>`;
+	const wrapperOpenTag = 'div class="utf8-bytes-for-char"';
+	return `<${wrapperOpenTag}><${openTag}>${utf8Char}</code>${hexBytes}</div>`;
 }
 
 export function describeInputByte(
@@ -180,7 +224,7 @@ export function explainLastPaddedOutputChunk(inputChunk: EncoderInputChunk): str
 	const b64DigitsInChunk = inputChunk.bytes.length === 1 ? 'two' : 'three';
 	const b64DigitsInChunkNum = inputChunk.bytes.length === 1 ? 2 : 3;
 	return [
-		`Since the final input chunk only contains ${remainingBytes}, ${padLength} were added to pad the length to ${necessaryLength} bits.`,
+		`Since the final input chunk contains only ${remainingBytes}, ${padLength} were added to pad the length to ${necessaryLength} bits.`,
 		`Unlike 24-bit chunks which result in four Base64 digits, a chunk that is padded to contain a total of ${necessaryLength} bits results in ${b64DigitsInChunk} 6-bit Base64 digits (${b64DigitsInChunkNum}x6 = ${necessaryLength} bits).`,
 	];
 }

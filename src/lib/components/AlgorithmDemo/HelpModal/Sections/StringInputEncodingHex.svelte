@@ -1,14 +1,14 @@
 <script lang="ts">
 	import {
 		hexStringFormats,
-		stringInputEncoding3a,
-		stringInputEncoding3b,
+		stringInputEncodingHex1,
+		stringInputEncodingHex2,
 	} from '$lib/components/AlgorithmDemo/HelpModal/Sections/_helpText';
 </script>
 
 <div class="settings-help help-module">
 	<div class="encoding-description">
-		{#each stringInputEncoding3a as paragraph}
+		{#each stringInputEncodingHex1 as paragraph}
 			<p>{@html paragraph}</p>
 		{/each}
 		<div class="valid-hex-format">
@@ -17,7 +17,7 @@
 				<span class="format">{@html format}</span>
 			{/each}
 		</div>
-		{#each stringInputEncoding3b as paragraph}
+		{#each stringInputEncodingHex2 as paragraph}
 			<p>{@html paragraph}</p>
 		{/each}
 	</div>

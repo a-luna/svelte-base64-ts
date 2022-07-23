@@ -1540,7 +1540,7 @@ const binValidationErrorEvents: TestFunctionInputData = {
 };
 
 const utf8HappyPathEvents: TestFunctionInputData = {
-	scriptName: 'utf8HappyPathEvents',
+	scriptName: 'utf8HappyPath',
 	description: 'encode utf8 string, execute all steps manually',
 	type: 'fast',
 	events: [
@@ -1549,7 +1549,7 @@ const utf8HappyPathEvents: TestFunctionInputData = {
 				type: 'VALIDATE_TEXT',
 				inputText: 'do§',
 				inputEncoding: 'UTF-8',
-				outputEncoding: 'base64url',
+				outputEncoding: 'base64',
 			},
 			expectedState: {
 				state: 'validateInputText',
@@ -1563,42 +1563,6 @@ const utf8HappyPathEvents: TestFunctionInputData = {
 			expectedState: {
 				state: 'encodeInput',
 				substate: 'idle',
-			},
-		},
-		{
-			event: {
-				type: 'GO_TO_NEXT_STEP',
-			},
-			expectedState: {
-				state: 'encodeInput',
-				substate: 'encodeByte',
-			},
-		},
-		{
-			event: {
-				type: 'GO_TO_NEXT_STEP',
-			},
-			expectedState: {
-				state: 'encodeInput',
-				substate: 'encodeByte',
-			},
-		},
-		{
-			event: {
-				type: 'GO_TO_NEXT_STEP',
-			},
-			expectedState: {
-				state: 'encodeInput',
-				substate: 'encodeByte',
-			},
-		},
-		{
-			event: {
-				type: 'GO_TO_NEXT_STEP',
-			},
-			expectedState: {
-				state: 'encodeInput',
-				substate: 'encodeByte',
 			},
 		},
 		{
@@ -1670,15 +1634,6 @@ const utf8HappyPathEvents: TestFunctionInputData = {
 			},
 			expectedState: {
 				state: 'createInputChunks',
-				substate: 'createInputChunk',
-			},
-		},
-		{
-			event: {
-				type: 'GO_TO_NEXT_STEP',
-			},
-			expectedState: {
-				state: 'createInputChunks',
 				substate: 'explainLastPaddedChunk',
 			},
 		},
@@ -1698,15 +1653,6 @@ const utf8HappyPathEvents: TestFunctionInputData = {
 			expectedState: {
 				state: 'createOutputChunks',
 				substate: 'regularIdle',
-			},
-		},
-		{
-			event: {
-				type: 'GO_TO_NEXT_STEP',
-			},
-			expectedState: {
-				state: 'createOutputChunks',
-				substate: 'createOutputChunk',
 			},
 		},
 		{
@@ -1831,40 +1777,93 @@ const utf8HappyPathEvents: TestFunctionInputData = {
 				type: 'GO_TO_NEXT_STEP',
 			},
 			expectedState: {
-				state: 'encodeOutput',
-				substate: 'encodeBase64',
+				state: 'finished',
+				substate: 'none',
 			},
 		},
+	],
+};
+
+const utf8MixedAsciiEvents: TestFunctionInputData = {
+	scriptName: 'utf8MixedAscii',
+	description: 'encode multiple utf8 strings, mix of ascii and utf8',
+	type: 'fast',
+	events: [
 		{
 			event: {
-				type: 'GO_TO_NEXT_STEP',
+				type: 'VALIDATE_TEXT',
+				inputText: '✓ à la mode',
+				inputEncoding: 'UTF-8',
+				outputEncoding: 'base64',
 			},
 			expectedState: {
-				state: 'encodeOutput',
-				substate: 'encodeBase64',
+				state: 'validateInputText',
+				substate: 'success',
 			},
 		},
 		{
 			event: {
-				type: 'GO_TO_NEXT_STEP',
+				type: 'GO_TO_LAST_STEP',
 			},
 			expectedState: {
-				state: 'encodeOutput',
-				substate: 'encodeBase64',
+				state: 'finished',
+				substate: 'none',
 			},
 		},
 		{
 			event: {
-				type: 'GO_TO_NEXT_STEP',
+				type: 'GO_TO_FIRST_STEP',
 			},
 			expectedState: {
-				state: 'encodeOutput',
-				substate: 'encodeBase64',
+				state: 'inactive',
+				substate: 'none',
 			},
 		},
 		{
 			event: {
-				type: 'GO_TO_NEXT_STEP',
+				type: 'VALIDATE_TEXT',
+				inputText: '∑ßåœ ≈ ∆c',
+				inputEncoding: 'UTF-8',
+				outputEncoding: 'base64',
+			},
+			expectedState: {
+				state: 'validateInputText',
+				substate: 'success',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_LAST_STEP',
+			},
+			expectedState: {
+				state: 'finished',
+				substate: 'none',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_FIRST_STEP',
+			},
+			expectedState: {
+				state: 'inactive',
+				substate: 'none',
+			},
+		},
+		{
+			event: {
+				type: 'VALIDATE_TEXT',
+				inputText: '日本語文字列',
+				inputEncoding: 'UTF-8',
+				outputEncoding: 'base64',
+			},
+			expectedState: {
+				state: 'validateInputText',
+				substate: 'success',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_LAST_STEP',
 			},
 			expectedState: {
 				state: 'finished',
@@ -1894,5 +1893,6 @@ export const testScriptEvents = [
 	binHappyPathSkipDemoEvents,
 	binValidationErrorEvents,
 	utf8HappyPathEvents,
+	utf8MixedAsciiEvents,
 ];
 /* c8 ignore stop */

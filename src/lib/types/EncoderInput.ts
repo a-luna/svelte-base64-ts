@@ -1,4 +1,4 @@
-import type { Base64Encoding, EncoderInputChunk, Result, StringEncoding } from '.';
+import type { Base64Encoding, EncoderInputChunk, Result, StringEncoding, Utf8StringComposition } from '.';
 
 export interface EncoderInput {
 	inputText: string;
@@ -9,7 +9,7 @@ export interface EncoderInput {
 	hexBytes?: string[];
 	hex?: string;
 	ascii?: string;
-	utf8encoded?: string;
+	utf8?: Utf8StringComposition;
 	binary?: string;
 	totalChunks?: number;
 	lastChunkPadded?: boolean;

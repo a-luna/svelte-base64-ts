@@ -1,18 +1,22 @@
 <script lang="ts">
 	import { Hsl, parseHslColorFromString } from '$lib/hsl';
-	import type { ButtonColor } from '$lib/types';
+	import { app } from '$lib/stores/app';
+	import type { ButtonColor, ButtonSize } from '$lib/types';
 	import { getCSSPropValue } from '$lib/util';
 
-	export let size: 'xs' | 'sm' | 'md' | 'lg' = 'sm';
+	export let size: ButtonSize = 'sm';
 	export let color: ButtonColor = 'blue';
 	export let disabled = false;
 	export let width = 'auto';
 	let bgColor: Hsl;
 	let edgeGradient = '';
 
-	$: fontSize = size === 'xs' ? '0.75rem' : size === 'sm' ? '1rem' : size === 'md' ? '1.2rem' : '1.4rem';
-	$: fgColorCssPropName = disabled ? '--button-disabled-text-color' : `--fg-color-on-${color}`;
-	$: bgColorCssPropName = disabled ? '--button-disabled-bg-color' : `--bg-color-${color}`;
+	$: fontSize = size === 'xs' ? '0.75rem' : size === 'sm' ? '0.85rem' : size === 'md' ? '1rem' : '1.2rem';
+	$: priColor = $app.encoderMode ? 'teal' : 'green';
+	$: secColor = $app.encoderMode ? 'pink' : 'indigo';
+	$: colorName = color === 'pri' ? priColor : color === 'sec' ? secColor : color;
+	$: fgColorCssPropName = disabled ? '--button-disabled-text-color' : `--fg-color-on-${colorName}`;
+	$: bgColorCssPropName = disabled ? '--button-disabled-bg-color' : `--bg-color-${colorName}`;
 	$: if (typeof window !== 'undefined')
 		bgColor = parseHslColorFromString(getCSSPropValue(document.body, bgColorCssPropName));
 	$: if (bgColor)

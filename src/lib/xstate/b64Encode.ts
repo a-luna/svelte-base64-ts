@@ -9,6 +9,7 @@ import {
 	defaultOutputChunk,
 } from '$lib/constants';
 import { validateEncoderInput } from '$lib/dataPrep';
+import { isTextEncoding } from '$lib/typeguards';
 import type {
 	Base64ByteMap,
 	Base64Encoding,
@@ -1295,8 +1296,13 @@ export const encodingMachineOptions: MachineOptions<
 			updatedByteMaps: (context: EncodingContext) => context.byteMaps.slice(0, context.byteIndex + 1),
 		}),
 		generateByteMaps: assign({
-			byteMaps: (context: EncodingContext) =>
-				context.input.chunks.map((chunk) => chunk.inputMap.map((map) => map)).flat(),
+			byteMaps: (context: EncodingContext) => {
+				if (isTextEncoding(context.input.inputEncoding)) {
+					return context.output.utf8.hexMap;
+				} else {
+					return context.input.chunks.map((chunk) => chunk.inputMap.map((map) => map)).flat();
+				}
+			},
 			updatedByteMaps: (_) => [],
 		}),
 		resetRemainingBytes: assign({

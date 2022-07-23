@@ -5,8 +5,9 @@
 		getInactive_WelcomeDemoText,
 	} from '$lib/components/AlgorithmDemo/Base64EncodeDemo/_demoText';
 	import ArrowKey from '$lib/components/Icons/KeyboardIcons/ArrowKey.svelte';
+	import type { EncodingMachineStateStore } from '$lib/types';
 	import type { DemoStore } from '$lib/types/DemoStore';
-	import { getContext } from 'svelte';
+	import { createEventDispatcher, getContext } from 'svelte';
 	import type { Readable } from 'svelte/store';
 	import { slide } from 'svelte/transition';
 
@@ -15,8 +16,10 @@
 	let encodingDetailsElement: HTMLDetailsElement;
 	let appNavDetailsElement: HTMLDetailsElement;
 	let openSection: 'none' | 'welcome' | 'settings' | 'navigation' = 'welcome';
+	const openHelpModalEventDispatcher = createEventDispatcher<{ openHelpModal: Record<string, never> }>();
+	let state: EncodingMachineStateStore;
 	let demoState: Readable<DemoStore>;
-	({ demoState } = getContext('demo'));
+	({ state, demoState } = getContext('demo'));
 
 	$: arrowSize = $demoState.isMobileDisplay ? 'sm' : 'md';
 
@@ -49,6 +52,12 @@
 			openSection = 'none';
 		}
 	}
+
+	function openHelpDocsModal() {
+		if (!$state.context.autoplay) {
+			openHelpModalEventDispatcher('openHelpModal');
+		}
+	}
 </script>
 
 <details bind:this={welcomeDetailsElement} on:toggle={() => toggleWelcomeDetails()} open>
@@ -58,6 +67,16 @@
 			<p>
 				Welcome to the <strong>Base64 Algorithm Demo</strong> app! Enter a string value in the text box above to get started.
 			</p>
+			<p>
+				<strong>If you are unfamiliar with Base64 encoding or any of the following concepts:</strong> hexadecimal and
+				binary values, ASCII and UTF-8 encoding,
+				<span class="help-docs-link" on:click={() => openHelpDocsModal()}>please read the help docs!</span>.
+			</p>
+			<!-- <p>
+				<ul></ul>If you are unfamiliar with Base64 encoding or any of the following concepts:</strong> hexadecimal and
+				binary values, ASCII and UTF-8 encoding,
+				<span class="help-docs-link" on:click={() => openHelpDocsModal()}>please read the help docs!</span>.
+			</p> -->
 		</div>
 	{/if}
 </details>

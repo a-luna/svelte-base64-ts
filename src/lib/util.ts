@@ -1,4 +1,5 @@
 import type { Result, StringEncoding } from '$lib/types';
+import { decomposeUtf8String } from '$lib/utf8';
 import { validateAsciiBytes } from '$lib/validation';
 
 export const HEX_BIT_GROUP_REGEX = /hex-chunk-(?<chunk>\d+)-byte-(?<byte>1|2|3)/;
@@ -15,15 +16,18 @@ export const stringToByteArray = (s: string, encoding: StringEncoding): number[]
 		? utf8StringToByteArray(s)
 		: genericStringToByteArray(s);
 
+export const hexStringToByte = (hex: string): number => parseInt(hex, 16);
+
 export const hexStringToByteArray = (hex: string): number[] =>
-	Array.from({ length: hex.length / 2 }, (_, i) => parseInt(hex.slice(i * 2, i * 2 + 2), 16));
+	Array.from({ length: hex.length / 2 }, (_, i) => hexStringToByte(hex.slice(i * 2, i * 2 + 2)));
 
 export const binaryStringToByteArray = (bin: string): number[] =>
 	Array.from({ length: bin.length / 8 }, (_, i) => parseInt(bin.slice(i * 8, i * 8 + 8), 2));
 
-export const utf8StringToByteArray = (s: string): number[] => genericStringToByteArray(encodeURIComponent(s));
+export const utf8StringToByteArray = (s: string): number[] => decomposeUtf8String(s).bytes;
 
-const genericStringToByteArray = (s: string): number[] => Array.from(s, (_, i) => s.charCodeAt(i));
+export const genericStringToByteArray = (s: string): number[] =>
+	Array.from({ length: s.length }, (_, i) => s.charCodeAt(i));
 
 export const asciiStringFromByteArray = (byteArray: number[]): string =>
 	validateAsciiBytes(byteArray) ? Array.from(byteArray, (x) => String.fromCharCode(x)).join('') : '';
@@ -41,14 +45,15 @@ export const decimalToBinaryString = (val: number): string => val.toString(2).pa
 
 export function utf8StringFromByteArray(byteArray: number[]): string {
 	try {
-		return decodeURIComponent(genericStringFromByteArray(byteArray));
+		const utfEncoded = byteArray
+			.map((byte) => hexStringFromByte(byte))
+			.map((hex) => `%${hex}`)
+			.join('');
+		return decodeURIComponent(utfEncoded);
 	} catch (ex) {
 		return '';
 	}
 }
-
-const genericStringFromByteArray = (byteArray: number[]): string =>
-	byteArray.map((byte) => String.fromCharCode(byte)).join('');
 
 export function chunkify<T>(args: { inputList: T[]; chunkSize: number }): T[][] {
 	const { inputList, chunkSize } = args;

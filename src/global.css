@@ -126,7 +126,7 @@
 	--default-border-color: hsla(0, 0%, 85%, 0.45);
 
 	/* Modal Window */
-	--modal-outer-bg-color: hsla(0, 0%, 0%, 0.5);
+	--modal-outer-bg-color: hsla(0, 0%, 0%, 0.75);
 	--modal-dialog-bg-color: hsl(0, 0%, 10%);
 	--modal-body-bg-color: hsl(0, 0%, 13%);
 	--modal-header-text-color: var(--white1);
@@ -358,6 +358,10 @@ details > summary::-webkit-details-marker {
 	margin: 0 0 0 1rem;
 }
 
+#demo-text details:last-child .details-content > p:last-child {
+	margin: 0 0 0.5rem 1rem;
+}
+
 #demo-text p {
 	margin: 0 0 0.5rem 0;
 }
@@ -518,7 +522,7 @@ button {
 	margin: 0;
 }
 
-.demo-steps .ascii,
+.demo-steps .char,
 .demo-steps .hex,
 .demo-steps .input-byte,
 .demo-steps .base64,
@@ -527,7 +531,7 @@ button {
 	font-size: 10px;
 }
 
-.ascii,
+.char,
 .hex {
 	color: var(--pri-color);
 }
@@ -537,7 +541,7 @@ button {
 	color: var(--sec-color);
 }
 
-.ascii,
+.char,
 .base64 {
 	flex: 0 1 6px;
 }
@@ -689,23 +693,23 @@ button {
 
 .help-docs-section-title h2 {
 	display: flex;
+	flex-flow: row nowrap;
 	justify-content: space-between;
-	align-items: center;
+	align-items: baseline;
 	color: var(--nav-button-active-bg-color);
-	font-size: 0.9rem;
+	font-size: 1rem;
 	font-weight: 500;
 	letter-spacing: 0.6px;
 	line-height: 1;
 	text-align: center;
 	margin: 0;
-	padding: 0.5rem 1rem;
+	padding: 0;
 	flex: 1;
 	border-bottom: 0.5px solid var(--help-docs-border-color);
 }
 
-.help-docs-section-title h2 span {
-	flex: 1;
-	margin: 0 auto;
+.help-docs-section-title span {
+	align-self: center;
 }
 
 .help-docs-content-wrapper {
@@ -756,14 +760,13 @@ button {
 .help-docs .nav-buttons {
 	display: flex;
 	justify-content: space-between;
-	padding: 0.5rem 0.75rem;
+	padding: 0.5rem 0.75rem 0.75rem 0.75rem;
 	color: var(--nav-button-active-bg-color);
-	background-color: var(--help-docs-ref-bg-color);
+	background-color: var(--help-docs-bg-color);
 	border-top-left-radius: 0;
 	border-top-right-radius: 0;
 	border-bottom-left-radius: 6px;
 	border-bottom-right-radius: 6px;
-	border-top: 0.5px solid var(--help-docs-border-color);
 }
 
 .help-docs .nav {
@@ -778,7 +781,7 @@ button {
 
 .help-docs .nav-buttons .nav-link {
 	color: var(--nav-button-active-bg-color);
-	font-size: 0.75rem;
+	font-size: 0.85rem;
 }
 
 .help-docs .nav-buttons .nav-icon {
@@ -803,11 +806,10 @@ button {
 }
 
 .help-docs h3 {
-	color: var(--pri-color);
+	color: var(--nav-button-active-bg-color);
 	font-size: 1rem;
 	letter-spacing: 0.4px;
-	padding: 0.5rem 1rem;
-	border-bottom: 0.5px solid var(--help-docs-border-color);
+	padding: 1rem 1rem 0.5rem 1rem;
 	margin: 0;
 }
 
@@ -1154,7 +1156,7 @@ button {
 	.b64Char-number {
 		font-size: 8px;
 	}
-	.demo-steps .ascii,
+	.demo-steps .char,
 	.demo-steps .hex,
 	.demo-steps .input-byte,
 	.demo-steps .base64,
@@ -1194,12 +1196,27 @@ button {
 		border-bottom-right-radius: 6px;
 	}
 	.help-docs-section-title h2 {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		flex: 1;
 		font-size: 1rem;
+		font-weight: 500;
+		color: var(--nav-button-active-bg-color);
+		letter-spacing: 0.6px;
+		line-height: 1;
+		text-align: center;
+		margin: 0;
+		padding: 1rem 1rem 0.5rem 1rem;
 		height: 16px;
+		border-bottom: none;
 	}
 	.help-docs-section-title .btn-close {
 		width: 1.1rem;
 		height: 1.1rem;
+	}
+	.help-docs-section-title h2 span {
+		flex: 1;
 	}
 	.help-docs-content {
 		padding: 0.5rem 0;

@@ -17,16 +17,15 @@
 	const eventLog = createEventLogStore(state);
 	setContext('demo', { state, demoState, demoUIState, eventLog, send });
 
-	$: height = $demoState.isMobileDisplay ? 'auto' : '100vh';
 	$: gridStyles =
 		$demoState.isMobileDisplay || $state.matches('finished')
 			? 'auto auto auto 1fr'
 			: $state.matches('inactive') || $state.matches({ validateInputText: 'error' })
 			? 'auto auto auto 1fr'
-			: 'auto auto 1fr 276px';
+			: 'auto auto minmax(250px, 1fr) 276px';
 </script>
 
-<div class="base64-algo-demo" style="height: {height}; grid-template-rows: {gridStyles};">
+<div class="base64-algo-demo" data-testid="demo-form" style="grid-template-rows: {gridStyles};">
 	{#if $demoUIState.mode === 'encode'}
 		<Base64EncodeDemo />
 		<!-- {:else if $demoState === 'decode'} -->

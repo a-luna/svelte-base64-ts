@@ -1,6 +1,11 @@
 <script lang="ts">
 	import EncodedChunk from '$lib/components/Visualization/EncodedChunk.svelte';
 	import { app } from '$lib/stores/app';
+	import { state } from '$lib/stores/state';
+
+	$: isUTF8 = $state.decoderOutput.outputEncoding === 'UTF-8' || $state.encoderOutput.inputEncoding === 'UTF-8';
+	$: textEncoding = isUTF8 || $app.isAscii;
+	$: charType = isUTF8 ? 'UTF-8' : 'ASCII';
 </script>
 
 <div class="visualization-wrapper">
@@ -8,7 +13,7 @@
 		<div class="encoding-key">
 			<div class="input-key">
 				<div>
-					<code class:hide-element={!$app.isAscii}>ASCII</code>
+					<code class:hide-element={!textEncoding}>{charType}</code>
 					<code>Hex</code>
 					<code>8-bit</code>
 				</div>

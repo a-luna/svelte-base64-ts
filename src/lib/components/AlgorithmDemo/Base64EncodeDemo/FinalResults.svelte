@@ -11,6 +11,8 @@
 	let demoState: Readable<DemoStore>;
 	({ state, demoState } = getContext('demo'));
 
+	$: inputEncoding = $state.context.output.isASCII ? 'ASCII' : $state.context.output.inputEncoding;
+	$: utf8 = $state.context.output.inputEncoding === 'UTF-8';
 	$: copyToClipboardButtonStyle = $demoState.isMobileDisplay
 		? 'font-weight: 700; align-self: flex-end;'
 		: 'font-weight: 700;';
@@ -28,9 +30,9 @@
 		<div class="result input-value">
 			<div class="result-label-wrapper">
 				<span class="result-label">Input</span>
-				<span class="encoding-type" title="Input Encoding">{$state.context.input.inputEncoding}</span>
+				<span class="encoding-type" title="Input Encoding">{inputEncoding}</span>
 			</div>
-			<span class="result-value">{$state.context.input.inputText}</span>
+			<span class="result-value" class:utf8>{$state.context.input.inputText}</span>
 		</div>
 		<div class="result output-value">
 			<div class="result-label-wrapper">
@@ -100,6 +102,10 @@
 
 		grid-column: 2 / span 1;
 		grid-row: 1 / span 1;
+	}
+	.utf8 {
+		letter-spacing: 5px;
+		font-size: 1.2rem;
 	}
 	.encoding-type {
 		font-size: 0.7rem;

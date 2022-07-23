@@ -1,8 +1,12 @@
 <script lang="ts">
+	import { app } from '$lib/stores/app';
 	import { state } from '$lib/stores/state';
 	import type { Base64ByteMap, HexByteMap, OutputChunk } from '$lib/types';
 
 	export let chunk: OutputChunk;
+
+	$: isUTF8 = $state.decoderOutput.outputEncoding === 'UTF-8' || $state.encoderOutput.inputEncoding === 'UTF-8';
+	$: textEncoding = isUTF8 || $app.isAscii;
 
 	function highlightHexByteValue(highlight: boolean, hexMap: HexByteMap) {
 		$state.highlightHexByte = highlight ? hexMap.byte : null;
@@ -34,10 +38,10 @@
 							class="hex-ascii"
 							data-ascii={hexMap.ascii}
 							data-hex-byte={hexMap.byte}
-							class:hide-element={!chunk.isASCII}
+							class:hide-element={!textEncoding}
 							class:black={hexMap.isWhiteSpace}
 						>
-							{@html hexMap.isWhiteSpace ? '&nbsp;' : hexMap.ascii}
+							{@html hexMap.char}
 						</code>
 						<code data-ascii={hexMap.ascii} data-hex-byte={hexMap.byte}>
 							<span class="hex-digit" data-hex={hexMap.hex_word1} data-four-bit={hexMap.bin_word1}>

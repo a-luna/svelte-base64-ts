@@ -63,6 +63,8 @@
 		margin: 0 0 0.5rem 0;
 	}
 	.input-text-label {
+		justify-self: center;
+
 		grid-column: 1 / span 1;
 		grid-row: 1 / span 1;
 	}
@@ -72,14 +74,15 @@
 		grid-row: 2 / span 1;
 	}
 	.input-encoding-label {
+		justify-self: center;
 		line-height: 1;
 
 		grid-column: 1 / span 1;
 		grid-row: 3 / span 1;
 	}
 	.output-encoding-label {
+		justify-self: center;
 		line-height: 1;
-		justify-self: flex-end;
 
 		grid-column: 3 / span 1;
 		grid-row: 3 / span 1;
@@ -113,6 +116,8 @@
 			grid-row: 2 / span 1;
 		}
 		.input-text-label {
+			justify-self: start;
+
 			grid-column: 1 / span 2;
 			grid-row: 1 / span 1;
 		}

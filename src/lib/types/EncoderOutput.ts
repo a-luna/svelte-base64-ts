@@ -1,4 +1,4 @@
-import type { Base64Encoding, OutputChunk, StringEncoding } from '.';
+import type { Base64Encoding, OutputChunk, StringEncoding, Utf8StringComposition } from '.';
 
 export interface EncoderOutput {
 	input: string;
@@ -8,4 +8,5 @@ export interface EncoderOutput {
 	bytes: number[];
 	outputEncoding: Base64Encoding;
 	chunks: OutputChunk[];
+	utf8?: Utf8StringComposition;
 }

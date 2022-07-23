@@ -1,6 +1,7 @@
 import { getBase64Alphabet } from '$lib/maps';
 import type { Base64Encoding, Result, StringEncoding } from '$lib/types';
-import { utf8StringFromByteArray, utf8StringToByteArray } from '$lib/util';
+import { decomposeUtf8String } from '$lib/utf8';
+import { genericStringToByteArray } from '$lib/util';
 
 const BASE64_STANDARD_ALPHABET = /^[0-9A-Za-z+/=]+$/;
 const BASE64_STANDARD_FORMAT = /^[0-9A-Za-z+/]+[=]{0,2}$/;
@@ -39,15 +40,17 @@ function validateAsciiString(input: string): Result<string> {
 }
 
 function getNonAsciiCharsFromString(input: string): string[] {
-	const bytes = Array.from(input, (_, i) => input.charCodeAt(i));
+	const bytes = genericStringToByteArray(input);
 	const nonAsciiBytes = [...new Set(bytes)].filter((byte) => 32 > byte || byte > 126);
 	const byteCounts = nonAsciiBytes.map((byte) => ({ byte, count: bytes.filter((b) => b === byte)?.length ?? 0 }));
 	return byteCounts.sort((a, b) => b.count - a.count).map(getInvalidCharReport);
 }
 
 const charCodeIsWhitespace = (byte: number): boolean => /\s/.test(String.fromCharCode(byte));
+
 const getStringRepresentationOfCharCode = (byte: number): string =>
 	charCodeIsWhitespace(byte) ? `' '` : String.fromCharCode(byte);
+
 const getInvalidCharReport = (details: { byte: number; count: number }): string =>
 	`\t${getStringRepresentationOfCharCode(details.byte)} (0x${details.byte
 		.toString(16)
@@ -85,15 +88,14 @@ function validateBinaryString(input: string): Result<string> {
 
 export function validateUtf8String(input: string): Result<string> {
 	try {
-		const bytes = utf8StringToByteArray(input);
-		const utf8 = utf8StringFromByteArray(bytes);
-		if (utf8 === input) {
+		const roundtrip = decodeURIComponent(decomposeUtf8String(input).encoded);
+		if (roundtrip === input) {
 			return { success: true, value: input };
 		} else {
 			return { success: false, error: Error(`Error occurred when encoding URI component: ${input}`) };
 		}
-	} catch (ex) {
-		return { success: false, error: Error(`Error occurred when encoding URI component: ${input}`) };
+	} catch (ex: unknown) {
+		return { success: false, error: Error(`Error occurred when encoding URI component: ${input}\n${ex.toString()}`) };
 	}
 }
 

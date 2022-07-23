@@ -1,5 +1,8 @@
 <script lang="ts">
 	import { app } from '$lib/stores/app';
+	import { state } from '$lib/stores/state';
+
+	$: utf8 = $state.decoderOutput.outputEncoding === 'UTF-8';
 </script>
 
 <fieldset class="results-out">
@@ -12,7 +15,7 @@
 			</div>
 		{/if}
 	</div>
-	<textarea id="copyable-output-text" readonly rows="1" bind:value={$app.outputText} />
+	<textarea class:utf8 id="copyable-output-text" readonly rows="1" bind:value={$app.outputText} />
 </fieldset>
 
 <style lang="postcss">
@@ -40,6 +43,10 @@
 		box-shadow: none;
 		resize: vertical;
 		padding: 0.4375rem 0 0.375rem 0;
+	}
+	.utf8 {
+		letter-spacing: 5px;
+		font-size: 1rem;
 	}
 	fieldset {
 		border: 1px solid var(--fieldset-border-color);

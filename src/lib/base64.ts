@@ -14,14 +14,20 @@ import type {
 	HexByteMap,
 	OutputChunk,
 	StringEncoding,
+	Utf8ComplexCharacterMap,
+	Utf8StandardCharacterMap,
+	Utf8StringComposition,
 } from '$lib/types';
+import { decomposeUtf8String } from '$lib/utf8';
 import {
 	asciiStringFromByteArray,
+	chunkify,
 	hexStringFromByteArray,
 	hexStringToByteArray,
 	utf8StringFromByteArray,
 } from '$lib/util';
 import { validateAsciiBytes } from '$lib/validation';
+import { isTextEncoding } from './typeguards';
 
 export class Base64Encoder implements Encoder {
 	validateInput = (input: string, stringEncoding: StringEncoding, base64Encoding: Base64Encoding): EncoderInput =>
@@ -36,9 +42,9 @@ export class Base64Decoder implements Decoder {
 }
 
 export function b64Encode(encoderInput: EncoderInput): EncoderOutput {
-	const { inputText, inputEncoding, outputEncoding } = encoderInput;
+	const { inputText, inputEncoding, outputEncoding, utf8 } = encoderInput;
 	const encodedChunks = encoderInput.chunks.map((chunk, i) => encodeChunk(chunk, i, outputEncoding));
-	return {
+	let encoderOutput: EncoderOutput = {
 		input: inputText,
 		inputEncoding,
 		isASCII: encodedChunks.every((chunk) => chunk.isASCII),
@@ -47,6 +53,12 @@ export function b64Encode(encoderInput: EncoderInput): EncoderOutput {
 		outputEncoding,
 		chunks: encodedChunks,
 	};
+	if (isTextEncoding(inputEncoding)) {
+		const updatedUtf8 = createEncodedCharacterMap(utf8, encodedChunks);
+		const updatedChunks = updateEncoderOutputChunks(updatedUtf8, encodedChunks);
+		encoderOutput = { ...encoderOutput, utf8: updatedUtf8, chunks: updatedChunks };
+	}
+	return encoderOutput;
 }
 
 function encodeChunk(
@@ -105,14 +117,22 @@ export function b64Decode(decoderInput: DecoderInput): DecoderOutput {
 	const isASCII = validateAsciiBytes(bytes);
 	const utf8 = utf8StringFromByteArray(bytes);
 	const isUTF8 = utf8 !== '';
-	return {
+	const outputEncoding: StringEncoding = isUTF8 ? 'UTF-8' : isASCII ? 'ASCII' : 'hex';
+	let decoderOutput = {
 		input: inputText,
 		inputEncoding,
 		output: isUTF8 ? utf8 : isASCII ? asciiStringFromByteArray(bytes) : hexString,
 		bytes: outputChunks.map((chunk) => chunk.bytes).flat(),
-		outputEncoding: isUTF8 ? 'UTF-8' : isASCII ? 'ASCII' : 'hex',
+		outputEncoding,
 		chunks: outputChunks,
 	};
+	if (isUTF8) {
+		const utf8Decomposed = decomposeUtf8String(utf8);
+		const updatedUtf8 = createEncodedCharacterMap(utf8Decomposed, outputChunks);
+		const updatedChunks = updateEncoderOutputChunks(updatedUtf8, outputChunks);
+		decoderOutput = { ...decoderOutput, chunks: updatedChunks };
+	}
+	return decoderOutput;
 }
 
 function createHexMap(inputChunks: DecoderInputChunk[]): HexByteMap[] {
@@ -234,4 +254,38 @@ function addBitGroupsToOutputChunk(chunk: OutputChunk, i: number): OutputChunk {
 		base64Digit4.bitGroups = [{ groupId: 'pad', bits: hexBits3b }];
 	}
 	return chunk;
+}
+
+function createEncodedCharacterMap(utf8: Utf8StringComposition, encodedChunks: OutputChunk[]): Utf8StringComposition {
+	const hexMap = encodedChunks.map((chunk) => chunk.hexMap).flat();
+	let [isolatedStart, isolatedEnd, combinedStart, combinedEnd] = [0, 0, 0, 0];
+	const complexCharMapWithHexMap = utf8.charMap.map((complexCharMap) => {
+		combinedEnd += complexCharMap.totalBytes;
+		const combinedHexMap = hexMap.slice(combinedStart, combinedEnd);
+		const updatedComplexCharMap: Utf8ComplexCharacterMap = { ...complexCharMap, hexMap: combinedHexMap };
+		combinedStart = combinedEnd;
+		if (complexCharMap.isCombined) {
+			const standardCharMapWithHexMap = updatedComplexCharMap.charMap.map((standardCharMap) => {
+				isolatedEnd += standardCharMap.totalBytes;
+				const isolatedHexMap = hexMap.slice(isolatedStart, isolatedEnd);
+				const updatedStandardCharMap: Utf8StandardCharacterMap = { ...standardCharMap, hexMap: isolatedHexMap };
+				isolatedStart = isolatedEnd;
+				return updatedStandardCharMap;
+			});
+			updatedComplexCharMap.charMap = standardCharMapWithHexMap;
+		}
+		return updatedComplexCharMap;
+	});
+	const updatedHexMaps = complexCharMapWithHexMap.map((complexCharMap) => {
+		const hexMapForChar = complexCharMap.hexMap;
+		hexMapForChar[0].char = complexCharMap.char;
+		hexMapForChar.slice(1).forEach((hexMap) => (hexMap.char = '&nbsp;'));
+		return hexMapForChar;
+	});
+	return { ...utf8, charMap: complexCharMapWithHexMap, hexMap: updatedHexMaps.flat() };
+}
+
+function updateEncoderOutputChunks(utf8: Utf8StringComposition, encodedChunks: OutputChunk[]): OutputChunk[] {
+	const hexMapsChunked = chunkify<HexByteMap>({ inputList: utf8.hexMap, chunkSize: 3 });
+	return encodedChunks.map((chunk, i) => ({ ...chunk, hexMap: hexMapsChunked[i] }));
 }

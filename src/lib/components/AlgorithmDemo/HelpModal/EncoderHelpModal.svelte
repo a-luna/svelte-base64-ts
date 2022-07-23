@@ -1,4 +1,6 @@
 <script lang="ts">
+	import CloseModalButton from '$lib/components/AlgorithmDemo/Buttons/CloseModalButton.svelte';
+	import ShowHelpTopicsButton from '$lib/components/AlgorithmDemo/Buttons/ShowHelpTopicsButton.svelte';
 	import { encodingHelpSections } from '$lib/components/AlgorithmDemo/HelpModal/_helpSections';
 	import ChevronLeft from '$lib/components/Icons/ChevronLeft.svelte';
 	import ChevronRight from '$lib/components/Icons/ChevronRight.svelte';
@@ -8,8 +10,6 @@
 	import { getContext } from 'svelte';
 	import type { Readable, Writable } from 'svelte/store';
 	import { slide } from 'svelte/transition';
-	import CloseModalButton from '../Buttons/CloseModalButton.svelte';
-	import ShowHelpTopicsButton from '../Buttons/ShowHelpTopicsButton.svelte';
 
 	export let index = 0;
 	let demoState: Readable<DemoStore>;
@@ -21,16 +21,18 @@
 
 	$: $demoUIState.modalOpen = !closed;
 	$: title = $demoState.isMobileDisplay ? 'Base64 Encoding Help Docs' : '';
-	$: showContentsPanel = !$demoState.isMobileDisplay;
+	$: showContentsPanel = $demoState.pageWidth >= 762;
 	$: displayedSectionTitle = helpTopicsExpanded ? 'Help Topics' : encodingHelpSections[index].title;
-
-	export function toggleModal() {
-		index = 0;
-		modal.toggleModal();
-	}
 
 	const getNextIndex = (i: number) => (i + 1) % encodingHelpSections.length;
 	const getPrevIndex = (i: number) => (i > 0 ? (i - 1) % encodingHelpSections.length : encodingHelpSections.length - 1);
+	const next = () => (index = getNextIndex(index));
+	const prev = () => (index = getPrevIndex(index));
+
+	export function toggleModal(startIndex = 0) {
+		index = startIndex;
+		modal.toggleModal();
+	}
 
 	function handleKeyPress(key: string) {
 		if (key === 'ArrowRight') {
@@ -45,9 +47,6 @@
 		index = newSection;
 		helpTopicsExpanded = false;
 	}
-
-	const next = () => (index = getNextIndex(index));
-	const prev = () => (index = getPrevIndex(index));
 </script>
 
 <svelte:window on:keydown={(e) => handleKeyPress(e.code)} />
