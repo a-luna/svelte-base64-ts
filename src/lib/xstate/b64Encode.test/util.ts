@@ -38,8 +38,6 @@ function removeRedundantAutoPlayEntries(events: MachineEvent[], states: MachineS
 		for (const i of redundentIndices.reverse()) {
 			reconciledEvents = [...events.slice(0, i), ...events.slice(i + 1)];
 			reconciledStates = [...states.slice(0, i), ...states.slice(i + 1)];
-			console.log({ reconciledEvents });
-			console.log({ reconciledStates });
 		}
 		return { events: reconciledEvents, states: reconciledStates };
 	}
@@ -174,7 +172,7 @@ function getMachineStateDemoTextMap(): Map<string, string> {
 	machineStateDemoTextMap.set('createInputChunks-createLastPaddedChunk', ' and final chunk (');
 	machineStateDemoTextMap.set(
 		'createOutputChunks-regularIdle',
-		'Next, for each chunk of input data with three 8-bit bytes',
+		'Next, for each chunk of input data with 24 bits (three 8-bit bytes)',
 	);
 	machineStateDemoTextMap.set(
 		'createOutputChunks-autoPlayIdle',
@@ -184,7 +182,7 @@ function getMachineStateDemoTextMap(): Map<string, string> {
 	machineStateDemoTextMap.set('createOutputChunks-autoPlayCreateOutputChunk', ' bits in this chunk are taken from ');
 	machineStateDemoTextMap.set(
 		'createOutputChunks-explainLastPaddedChunk',
-		'Since the final input chunk only contains ',
+		'Since the final input chunk contains only ',
 	);
 	machineStateDemoTextMap.set(
 		'createOutputChunks-explainPadCharacter',
@@ -198,6 +196,10 @@ function getMachineStateDemoTextMap(): Map<string, string> {
 	machineStateDemoTextMap.set('encodeOutput-encodeBase64', 'Base64 digit');
 	machineStateDemoTextMap.set('encodeOutput-autoPlayEncodeBase64', 'Base64 digit');
 	machineStateDemoTextMap.set('encodeOutput-encodeLastBase64', 'Base64 digit');
+	machineStateDemoTextMap.set(
+		'verifyResults',
+		'The input data has been successfully encoded as a string of Base64 characters!',
+	);
 	machineStateDemoTextMap.set('finished', 'The encoding process is complete!');
 	return machineStateDemoTextMap;
 }

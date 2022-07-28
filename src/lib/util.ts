@@ -131,11 +131,23 @@ export function parseGroupId(groupId: string): {
 			b64IndexWithinChunk,
 		};
 	}
+	return {
+		chunkIndex: null,
+		byteIndex: null,
+		byteIndexWithinChunk: null,
+		b64CharIndex: null,
+		b64IndexWithinChunk: null,
+	};
 }
 
 export function getBase64CharIndexFromGroupId(groupId: string): number {
 	const { b64CharIndex } = parseGroupId(groupId);
 	return b64CharIndex ?? 0;
+}
+
+export function getHexByteIndexFromGroupId(groupId: string): number {
+	const { byteIndex } = parseGroupId(groupId);
+	return byteIndex ?? 0;
 }
 
 export const getChunkIndexFromByteIndex = (byteIndex: number): number => (byteIndex / 3) | 0;

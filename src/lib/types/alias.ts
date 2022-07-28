@@ -1,4 +1,5 @@
 import type { EncodingContext, EncodingEvent, EncodingSchema, EncodingTypeStates } from '$lib/xstate/b64Encode';
+import type { Typegen0 } from '$lib/xstate/b64Encode.typegen';
 import type { DispatchOptions } from 'svelte/internal';
 import type { Readable } from 'svelte/store';
 import type {
@@ -29,7 +30,7 @@ export type EncodingMachineState = State<
 	EncodingEvent,
 	EncodingSchema,
 	EncodingTypeStates,
-	ResolveTypegenMeta<TypegenDisabled, EncodingEvent, BaseActionObject, ServiceMap>
+	ResolveTypegenMeta<Typegen0, EncodingEvent, BaseActionObject, ServiceMap>
 >;
 
 export type EncodingMachineStateStore = Readable<EncodingMachineState>;

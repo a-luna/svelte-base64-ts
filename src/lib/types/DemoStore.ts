@@ -1,6 +1,11 @@
+import type { StateValue } from 'xstate';
+
 export interface DemoStore {
 	pageWidth: number;
 	errorOccurred: boolean;
+	machineState: StateValue;
+	machineSubState: StateValue;
+	startedSubProcess: boolean;
 	isMobileDisplay: boolean;
 	showInputBytes: boolean;
 	showInputChunks: boolean;

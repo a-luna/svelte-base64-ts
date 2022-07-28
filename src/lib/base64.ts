@@ -1,6 +1,7 @@
 import { BIN_TO_HEX } from '$lib/constants';
 import { validateDecoderInput, validateEncoderInput } from '$lib/dataPrep';
 import { getBase64Alphabet } from '$lib/maps';
+import { isTextEncoding } from '$lib/typeguards';
 import type {
 	Base64Encoding,
 	Decoder,
@@ -27,7 +28,6 @@ import {
 	utf8StringFromByteArray,
 } from '$lib/util';
 import { validateAsciiBytes } from '$lib/validation';
-import { isTextEncoding } from './typeguards';
 
 export class Base64Encoder implements Encoder {
 	validateInput = (input: string, stringEncoding: StringEncoding, base64Encoding: Base64Encoding): EncoderInput =>
@@ -117,7 +117,7 @@ export function b64Decode(decoderInput: DecoderInput): DecoderOutput {
 	const isASCII = validateAsciiBytes(bytes);
 	const utf8 = utf8StringFromByteArray(bytes);
 	const isUTF8 = utf8 !== '';
-	const outputEncoding: StringEncoding = isUTF8 ? 'UTF-8' : isASCII ? 'ASCII' : 'hex';
+	const outputEncoding: StringEncoding = isASCII ? 'ASCII' : isUTF8 ? 'UTF-8' : 'hex';
 	let decoderOutput = {
 		input: inputText,
 		inputEncoding,

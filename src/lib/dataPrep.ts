@@ -1,5 +1,6 @@
 import { BIN_TO_HEX, defaultDecoderInput, defaultEncoderInput } from '$lib/constants';
 import { getBase64LookupMap } from '$lib/maps';
+import { isTextEncoding } from '$lib/typeguards';
 import type {
 	Base64ByteMap,
 	Base64Encoding,
@@ -18,7 +19,6 @@ import {
 	stringToByteArray,
 } from '$lib/util';
 import { validateAsciiBytes, validateBase64Encoding, validateTextEncoding } from '$lib/validation';
-import { isTextEncoding } from './typeguards';
 
 export function validateEncoderInput(
 	inputText: string,

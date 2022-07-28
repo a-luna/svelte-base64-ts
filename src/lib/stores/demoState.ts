@@ -6,14 +6,31 @@ import { derived, writable, type Readable } from 'svelte/store';
 export const demoUIState = writable<DemoState>({
 	mode: 'encode',
 	modalOpen: false,
+	highlightHexByte: null,
+	highlightBase64: '',
+	highlightHexBitGroup: '',
+	highlightBase64BitGroup: '',
 });
 
 export function createDemoStateStore(state: EncodingMachineStateStore): Readable<DemoStore> {
 	return derived([state, getPageWidth()], ([$state, $pageWidth]) => {
-		const errorOccurred = () =>
-			$state?.context?.input?.validationResult?.error?.message ? $state.matches({ validateInputText: 'error' }) : false;
+		const machineState = () =>
+			$state.matches('inactive') || $state.matches('finished') || $state.matches('verifyResults')
+				? $state.value
+				: Object.keys($state.value)[0];
 
-		const isMobileDisplay = (): boolean => $pageWidth < 762;
+		const machineSubState = () =>
+			$state.matches('inactive') || $state.matches('finished') || $state.matches('verifyResults')
+				? 'none'
+				: Object.values($state.value)[0];
+
+		const startedSubProcess = () =>
+			$state.matches({ encodeInput: 'idle' }) ||
+			$state.matches({ createInputChunks: 'idle' }) ||
+			$state.matches({ createInputChunks: 'autoPlayIdle' }) ||
+			$state.matches({ createOutputChunks: 'idle' }) ||
+			$state.matches({ createOutputChunks: 'autoPlayIdle' }) ||
+			$state.matches({ encodeOutput: 'idle' });
 
 		const showInputBytes = () =>
 			$state.matches({ encodeInput: 'autoPlayEncodeByte' }) ||
@@ -29,7 +46,8 @@ export function createDemoStateStore(state: EncodingMachineStateStore): Readable
 			$state.matches({ createOutputChunks: 'createdAllOutputChunks' }) ||
 			$state.matches({ encodeOutput: 'autoPlayEncodeBase64' }) ||
 			$state.matches({ encodeOutput: 'encodeBase64' }) ||
-			$state.matches({ encodeOutput: 'encodingComplete' });
+			$state.matches({ encodeOutput: 'encodingComplete' }) ||
+			$state.matches('verifyResults');
 
 		const showInputChunks = () =>
 			$state.matches({ createInputChunks: 'autoPlayCreateInputChunk' }) ||
@@ -44,7 +62,8 @@ export function createDemoStateStore(state: EncodingMachineStateStore): Readable
 			$state.matches({ createOutputChunks: 'createdAllOutputChunks' }) ||
 			$state.matches({ encodeOutput: 'autoPlayEncodeBase64' }) ||
 			$state.matches({ encodeOutput: 'encodeBase64' }) ||
-			$state.matches({ encodeOutput: 'encodingComplete' });
+			$state.matches({ encodeOutput: 'encodingComplete' }) ||
+			$state.matches('verifyResults');
 
 		const showOutputBytePlaceholders = () =>
 			$state.matches({ createOutputChunks: 'autoPlayCreateOutputChunk' }) ||
@@ -55,7 +74,8 @@ export function createDemoStateStore(state: EncodingMachineStateStore): Readable
 		const showOutputBytes = () =>
 			$state.matches({ encodeOutput: 'autoPlayEncodeBase64' }) ||
 			$state.matches({ encodeOutput: 'encodeBase64' }) ||
-			$state.matches({ encodeOutput: 'encodingComplete' });
+			$state.matches({ encodeOutput: 'encodingComplete' }) ||
+			$state.matches('verifyResults');
 
 		const showAsciiTable = () =>
 			$state.context.input.inputEncoding === 'ASCII' &&
@@ -68,8 +88,11 @@ export function createDemoStateStore(state: EncodingMachineStateStore): Readable
 
 		return {
 			pageWidth: $pageWidth,
-			errorOccurred: errorOccurred(),
-			isMobileDisplay: isMobileDisplay(),
+			isMobileDisplay: $pageWidth < 762,
+			machineState: machineState(),
+			machineSubState: machineSubState(),
+			startedSubProcess: startedSubProcess(),
+			errorOccurred: $state.matches({ validateInputText: 'error' }),
 			showInputBytes: showInputBytes(),
 			showInputChunks: showInputChunks(),
 			showOutputChunks: showOutputChunks(),

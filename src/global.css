@@ -254,14 +254,13 @@ main {
 	--list-button-disabled-bg-color: var(--button-disabled-bg-color);
 	--list-button-disabled-text-color: var(--button-disabled-text-color);
 
-
 	/* Select Menu - Dropdown List */
 	--dropdown-bg-color: var(--nav-button-hover-bg-color);
 	--dropdown-text-color: var(--nav-button-text-color);
 	--dropdown-border-color: var(--nav-button-border-color);
 	--selected-item-bg-color: var(--nav-button-active-bg-color);
 
-	/* Help Docs */	
+	/* Help Docs */
 	--help-docs-bg-color: hsl(0, 0%, 16%);
 	--help-docs-border-color: hsl(0, 0%, 60%);
 	--help-docs-ref-bg-color: hsl(0, 0%, 15%);
@@ -314,36 +313,7 @@ textarea {
 	box-sizing: border-box;
 }
 
-details {
-	width: 100%;
-	font-family: 'Roboto Mono', menlo, monospace;
-}
-
-details:not(:last-child):not(:only-child) {
-	margin: 0 0 0.5rem 0;
-}
-
-details[open] > summary {
-	margin: 0 0 0.5rem 0;
-}
-
-details > summary {
-	display: block;
-	color: var(--pri-color);
-	cursor: pointer;
-	font-size: 0.9rem;
-	font-weight: 500;
-	padding: 0.25rem 0;
-	list-style-type: none;
-}
-details > summary .list-icon {
-	color: var(--pri-color);
-}
-details > summary::-webkit-details-marker {
-    display: none;
-}
-
-.details-content > p,
+.details-content > *,
 #demo-text p {
 	font-size: 0.7rem;
 	line-height: 1.7;
@@ -405,7 +375,7 @@ button {
 #demo-text .input-chunk code {
 	padding: 1px 0;
 	line-height: 1;
-    text-align: center;
+	text-align: center;
 	color: var(--light-gray3);
 	font-size: 10px;
 }
@@ -467,7 +437,7 @@ button {
 }
 #demo-text #byte-map-demo .input-chunk .bit,
 #demo-text #byte-map-demo .output-chunk .bit {
-    width: 11px;
+	width: 11px;
 }
 #demo-text #byte-map-demo code {
 	font-size: 7.5px;
@@ -484,19 +454,21 @@ button {
 	display: flex;
 	gap: 4px;
 	margin: 0 0 1px 0;
+	height: 14.5px;
+	align-items: center;
 }
 
 .byte-id,
 .chunk-id,
 .b64Char-id {
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: flex-start;
+	display: flex;
+	flex-flow: row nowrap;
+	justify-content: flex-start;
 	gap: 1px;
 	font-size: 10px;
 	font-style: italic;
 	margin: 0;
-} 
+}
 
 .byte-id,
 .b64Char-id {
@@ -541,11 +513,6 @@ button {
 	color: var(--sec-color);
 }
 
-.char,
-.base64 {
-	flex: 0 1 6px;
-}
-
 .hex,
 .dec {
 	flex: 0 1 14px;
@@ -556,12 +523,12 @@ button {
 .chunk-byte,
 .base64-char,
 .hex-bit-group {
-    display: flex;
-    flex-flow: row nowrap;
-    justify-content: flex-start;
+	display: flex;
+	flex-flow: row nowrap;
+	justify-content: flex-start;
 	align-items: center;
 	gap: 0;
-    font-size: 10px;
+	font-size: 10px;
 }
 
 .input-chunk,
@@ -593,11 +560,11 @@ button {
 #output-b64 .bit,
 .input-chunk .bit,
 .output-chunk .bit {
-    border: 0.5px solid var(--black2);
-    line-height: 1;
-    text-align: center;
-    padding: 1px 0;
-    width: 11px;
+	border: 0.5px solid var(--black2);
+	line-height: 1;
+	text-align: center;
+	padding: 1px 0;
+	width: 11px;
 }
 
 .base64-bit-group {
@@ -610,13 +577,13 @@ button {
 
 #input-hex .bit,
 .input-chunk .bit {
-    background-color: var(--dark-gray4);
+	background-color: var(--dark-gray4);
 }
 
 #output-b64 .bit,
 .output-chunk .bit {
-    background-color: var(--gray3);
-    font-weight: 500;
+	background-color: var(--gray3);
+	font-weight: 500;
 }
 
 .bit span {
@@ -637,16 +604,15 @@ button {
 
 .input-chunk .pad-bit,
 #demo-text .input-chunk .pad-bit {
-    color: var(--gray3);
-    background-color: var(--black1);
+	background-color: var(--black1);
 }
 
 .output-chunk .pad-bit {
-    background-color: var(--gray3);
+	background-color: var(--gray3);
 }
 
 .output-chunk .mapping .pad-bit {
-    background-color: var(--dark-gray2);
+	background-color: var(--dark-gray2);
 }
 
 /* Help Docs Modal */
@@ -696,7 +662,8 @@ button {
 	flex-flow: row nowrap;
 	justify-content: space-between;
 	align-items: baseline;
-	color: var(--nav-button-active-bg-color);
+	background-color: var(--help-docs-border-color);
+	color: var(--black2);
 	font-size: 1rem;
 	font-weight: 500;
 	letter-spacing: 0.6px;
@@ -706,6 +673,8 @@ button {
 	padding: 0;
 	flex: 1;
 	border-bottom: 0.5px solid var(--help-docs-border-color);
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
 }
 
 .help-docs-section-title span {
@@ -721,6 +690,7 @@ button {
 
 .help-docs-content {
 	overflow: auto;
+	padding: 0.5rem 0;
 
 	grid-column: 2 / span 1;
 }
@@ -798,7 +768,7 @@ button {
 .help-docs .nav-next {
 	justify-content: flex-end;
 
-	grid-column: 5 / span 1
+	grid-column: 5 / span 1;
 }
 
 .help-docs .help-module {
@@ -846,8 +816,8 @@ button {
 .b64-reference {
 	display: flex;
 	flex-flow: column nowrap;
-	background-color: var(--help-docs-ref-bg-color);	
-    border: 1px solid var(--modal-dialog-bg-color);
+	background-color: var(--help-docs-ref-bg-color);
+	border: 1px solid var(--modal-dialog-bg-color);
 	border-radius: 6px;
 }
 .b64-reference h4,
@@ -867,10 +837,10 @@ button {
 	flex-flow: column nowrap;
 	gap: 0.5rem;
 	padding: 0.5rem;
-    background-color: var(--modal-dialog-bg-color);
-    border-top-left-radius: 6px;
-    border-top-right-radius: 6px;
-    border-bottom: 1px solid var(--modal-dialog-bg-color);
+	background-color: var(--modal-dialog-bg-color);
+	border-top-left-radius: 6px;
+	border-top-right-radius: 6px;
+	border-bottom: 1px solid var(--modal-dialog-bg-color);
 }
 .b64-ref-url,
 .b64-ref-content {
@@ -884,8 +854,7 @@ button {
 	font-size: 0.75rem;
 	line-height: 1;
 	padding: 0.5rem;
-    border-bottom: 1px solid var(--modal-dialog-bg-color);
-
+	border-bottom: 1px solid var(--modal-dialog-bg-color);
 }
 .b64-ref-content {
 	display: flex;
@@ -915,10 +884,10 @@ button {
 /* Input Form, Nav Buttons*/
 
 .form-label {
-    line-height: 1;
-    font-size: 0.75rem;
-    letter-spacing: 0.4px;
-    color: var(--nav-button-active-bg-color);
+	line-height: 1;
+	font-size: 0.75rem;
+	letter-spacing: 0.4px;
+	color: var(--nav-button-active-bg-color);
 }
 
 .nav-buttons .form-label {
@@ -1128,7 +1097,7 @@ button {
 	html,
 	body {
 		background-color: var(--dark-gray1);
-	} 
+	}
 	kbd {
 		font-size: 0.65rem;
 		padding: 1px 2px;
@@ -1136,11 +1105,11 @@ button {
 	details > summary {
 		font-size: 1.1rem;
 	}
-.form-label,
-.nav-buttons .form-label {
-	margin: 0;
-}
-	.details.content > p,
+	.form-label,
+	.nav-buttons .form-label {
+		margin: 0;
+	}
+	.details-content > *,
 	#demo-text p {
 		font-size: 0.8rem;
 		line-height: 1.5;
@@ -1163,6 +1132,10 @@ button {
 	.demo-steps .dec,
 	.demo-steps .base64-char {
 		font-size: 11px;
+	}
+	.encoded-byte,
+	.encoded-base64 {
+		height: 15px;
 	}
 	.input-byte,
 	.base64-bit-group,
@@ -1201,8 +1174,9 @@ button {
 		align-items: center;
 		flex: 1;
 		font-size: 1rem;
-		font-weight: 500;
+		font-weight: 700;
 		color: var(--nav-button-active-bg-color);
+		background-color: var(--help-docs-bg-color);
 		letter-spacing: 0.6px;
 		line-height: 1;
 		text-align: center;
@@ -1210,6 +1184,8 @@ button {
 		padding: 1rem 1rem 0.5rem 1rem;
 		height: 16px;
 		border-bottom: none;
+		border-top-left-radius: 0;
+		border-top-right-radius: 5px;
 	}
 	.help-docs-section-title .btn-close {
 		width: 1.1rem;
@@ -1217,9 +1193,8 @@ button {
 	}
 	.help-docs-section-title h2 span {
 		flex: 1;
-	}
-	.help-docs-content {
-		padding: 0.5rem 0;
+		background-color: inherit;
+		color: inherit;
 	}
 	.help-docs .nav-buttons {
 		padding: 0.75rem 1rem;

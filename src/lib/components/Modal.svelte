@@ -3,7 +3,7 @@
 	import { getRandomHexString } from '$lib/util';
 
 	export let modalId = `modal-${getRandomHexString(4)}`;
-	export let title: string;
+	export let title: string = '';
 	export let closed = true;
 	export let noHeader = false;
 	export let noFooter = false;

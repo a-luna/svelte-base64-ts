@@ -16,11 +16,11 @@ const asciiHappyPath: JSDomTestFunction = async (
 	await userEvent.click(stringEncodingMenu);
 	const asciiEncodingMenuItem = await screen.findByTestId('select-string-encoding-option-1');
 	await userEvent.click(asciiEncodingMenuItem);
-	// Change output encoding setting to base64url
+	// Change output encoding setting to base64
 	const base64EncodingMenu = await screen.findByTestId('select-base64-encoding-open-list-button');
 	await userEvent.click(base64EncodingMenu);
-	const base64urlEncodingMenuItem = await screen.findByTestId('select-base64-encoding-option-2');
-	await userEvent.click(base64urlEncodingMenuItem);
+	const base64EncodingMenuItem = await screen.findByTestId('select-base64-encoding-option-1');
+	await userEvent.click(base64EncodingMenuItem);
 
 	// Click GO_TO_NEXT_STEP button
 	const nextStepButton = await screen.findByTestId('next-step-button');
@@ -123,7 +123,7 @@ const asciiHappyPath: JSDomTestFunction = async (
 	// Verify transition to state: createOutputChunks-regularIdle after event GO_TO_NEXT_STEP
 	domReflectsCurrentState = document.querySelector('[data-state="createOutputChunks"][data-sub-state="regularIdle"]');
 	expect(domReflectsCurrentState).toBeTruthy();
-	expectedTextForState = `Next, for each chunk of input data with three 8-bit bytes`;
+	expectedTextForState = `Next, for each chunk of input data with 24 bits (three 8-bit bytes)`;
 	expect(demoText.innerHTML).toContain(expectedTextForState);
 
 	// Click GO_TO_NEXT_STEP button
@@ -143,7 +143,7 @@ const asciiHappyPath: JSDomTestFunction = async (
 		'[data-state="createOutputChunks"][data-sub-state="explainLastPaddedChunk"]',
 	);
 	expect(domReflectsCurrentState).toBeTruthy();
-	expectedTextForState = `Since the final input chunk only contains `;
+	expectedTextForState = `Since the final input chunk contains only `;
 	expect(demoText.innerHTML).toContain(expectedTextForState);
 
 	// Click GO_TO_NEXT_STEP button
@@ -240,6 +240,14 @@ const asciiHappyPath: JSDomTestFunction = async (
 
 	// Click GO_TO_NEXT_STEP button
 	await userEvent.click(nextStepButton);
+	// Verify transition to state: verifyResults after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="verifyResults"][data-sub-state="none"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `The input data has been successfully encoded as a string of Base64 characters!`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
 	// Verify transition to state: finished after event GO_TO_NEXT_STEP
 	domReflectsCurrentState = document.querySelector('[data-state="finished"][data-sub-state="none"]');
 	expect(domReflectsCurrentState).toBeTruthy();
@@ -260,11 +268,11 @@ const asciiHappyPathAutoplay: JSDomTestFunction = async (
 	await userEvent.click(stringEncodingMenu);
 	const asciiEncodingMenuItem = await screen.findByTestId('select-string-encoding-option-1');
 	await userEvent.click(asciiEncodingMenuItem);
-	// Change output encoding setting to base64url
+	// Change output encoding setting to base64
 	const base64EncodingMenu = await screen.findByTestId('select-base64-encoding-open-list-button');
 	await userEvent.click(base64EncodingMenu);
-	const base64urlEncodingMenuItem = await screen.findByTestId('select-base64-encoding-option-2');
-	await userEvent.click(base64urlEncodingMenuItem);
+	const base64EncodingMenuItem = await screen.findByTestId('select-base64-encoding-option-1');
+	await userEvent.click(base64EncodingMenuItem);
 
 	// Click RESUME_AUTO_PLAY button
 	const startAutoplayButton = await screen.findByTestId('start-autoplay-button');
@@ -374,7 +382,7 @@ const asciiHappyPathAutoplay: JSDomTestFunction = async (
 		'[data-state="createOutputChunks"][data-sub-state="explainLastPaddedChunk"]',
 	);
 	expect(domReflectsCurrentState).toBeTruthy();
-	expectedTextForState = `Since the final input chunk only contains `;
+	expectedTextForState = `Since the final input chunk contains only `;
 	expect(demoText.innerHTML).toContain(expectedTextForState);
 
 	// Verify machine automatically transitions to next state: createOutputChunks-explainPadCharacter
@@ -465,13 +473,20 @@ const asciiHappyPathAutoplay: JSDomTestFunction = async (
 	expectedTextForState = `Base64 digit`;
 	expect(demoText.innerHTML).toContain(expectedTextForState);
 
-	// Verify machine automatically transitions to next state: encodeOutput-encodeLastBase64
-	await new Promise((r) => setTimeout(r, 100));
+	// Verify machine automatically transitions to next state: encodeOutput-autoPlayEncodeBase64
+	await new Promise((r) => setTimeout(r, 1100));
 	domReflectsCurrentState = document.querySelector(
 		'[data-state="encodeOutput"][data-sub-state="autoPlayEncodeBase64"]',
 	);
 	expect(domReflectsCurrentState).toBeTruthy();
 	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Verify machine automatically transitions to next state: verifyResults
+	await new Promise((r) => setTimeout(r, 1100));
+	domReflectsCurrentState = document.querySelector('[data-state="verifyResults"][data-sub-state="none"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `The input data has been successfully encoded as a string of Base64 characters!`;
 	expect(demoText.innerHTML).toContain(expectedTextForState);
 
 	// Verify machine automatically transitions to next state: finished
@@ -868,7 +883,7 @@ const hexHappyPath: JSDomTestFunction = async (
 	// Verify transition to state: createOutputChunks-regularIdle after event GO_TO_NEXT_STEP
 	domReflectsCurrentState = document.querySelector('[data-state="createOutputChunks"][data-sub-state="regularIdle"]');
 	expect(domReflectsCurrentState).toBeTruthy();
-	expectedTextForState = `Next, for each chunk of input data with three 8-bit bytes`;
+	expectedTextForState = `Next, for each chunk of input data with 24 bits (three 8-bit bytes)`;
 	expect(demoText.innerHTML).toContain(expectedTextForState);
 
 	// Click GO_TO_NEXT_STEP button
@@ -888,7 +903,7 @@ const hexHappyPath: JSDomTestFunction = async (
 		'[data-state="createOutputChunks"][data-sub-state="explainLastPaddedChunk"]',
 	);
 	expect(domReflectsCurrentState).toBeTruthy();
-	expectedTextForState = `Since the final input chunk only contains `;
+	expectedTextForState = `Since the final input chunk contains only `;
 	expect(demoText.innerHTML).toContain(expectedTextForState);
 
 	// Click GO_TO_NEXT_STEP button
@@ -981,6 +996,22 @@ const hexHappyPath: JSDomTestFunction = async (
 	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
 	expect(domReflectsCurrentState).toBeTruthy();
 	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: verifyResults after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="verifyResults"][data-sub-state="none"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `The input data has been successfully encoded as a string of Base64 characters!`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: finished after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="finished"][data-sub-state="none"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `The encoding process is complete!`;
 	expect(demoText.innerHTML).toContain(expectedTextForState);
 };
 
@@ -1076,11 +1107,11 @@ const binHappyPath: JSDomTestFunction = async (
 	await userEvent.click(stringEncodingMenu);
 	const binEncodingMenuItem = await screen.findByTestId('select-string-encoding-option-4');
 	await userEvent.click(binEncodingMenuItem);
-	// Change output encoding setting to base64url
+	// Change output encoding setting to base64
 	const base64EncodingMenu = await screen.findByTestId('select-base64-encoding-open-list-button');
 	await userEvent.click(base64EncodingMenu);
-	const base64urlEncodingMenuItem = await screen.findByTestId('select-base64-encoding-option-2');
-	await userEvent.click(base64urlEncodingMenuItem);
+	const base64EncodingMenuItem = await screen.findByTestId('select-base64-encoding-option-1');
+	await userEvent.click(base64EncodingMenuItem);
 
 	// Click GO_TO_NEXT_STEP button
 	const nextStepButton = await screen.findByTestId('next-step-button');
@@ -1183,7 +1214,7 @@ const binHappyPath: JSDomTestFunction = async (
 	// Verify transition to state: createOutputChunks-regularIdle after event GO_TO_NEXT_STEP
 	domReflectsCurrentState = document.querySelector('[data-state="createOutputChunks"][data-sub-state="regularIdle"]');
 	expect(domReflectsCurrentState).toBeTruthy();
-	expectedTextForState = `Next, for each chunk of input data with three 8-bit bytes`;
+	expectedTextForState = `Next, for each chunk of input data with 24 bits (three 8-bit bytes)`;
 	expect(demoText.innerHTML).toContain(expectedTextForState);
 
 	// Click GO_TO_NEXT_STEP button
@@ -1203,7 +1234,7 @@ const binHappyPath: JSDomTestFunction = async (
 		'[data-state="createOutputChunks"][data-sub-state="explainLastPaddedChunk"]',
 	);
 	expect(domReflectsCurrentState).toBeTruthy();
-	expectedTextForState = `Since the final input chunk only contains `;
+	expectedTextForState = `Since the final input chunk contains only `;
 	expect(demoText.innerHTML).toContain(expectedTextForState);
 
 	// Click GO_TO_NEXT_STEP button
@@ -1296,6 +1327,14 @@ const binHappyPath: JSDomTestFunction = async (
 	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
 	expect(domReflectsCurrentState).toBeTruthy();
 	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: verifyResults after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="verifyResults"][data-sub-state="none"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `The input data has been successfully encoded as a string of Base64 characters!`;
 	expect(demoText.innerHTML).toContain(expectedTextForState);
 
 	// Click GO_TO_NEXT_STEP button
@@ -1422,9 +1461,9 @@ const utf8HappyPath: JSDomTestFunction = async (
 	userEvent: UserEvent,
 	expect: Vi.ExpectStatic,
 ): Promise<void> => {
-	// Set the value of the input data text box: do§
+	// Set the value of the input data text box: 🦦👨‍🌾🫥🏃🏿‍♀️☝🏾
 	const inputTextBox = await screen.findByTestId('input-text');
-	await userEvent.type(inputTextBox, 'do§');
+	await userEvent.type(inputTextBox, '🦦👨‍🌾🫥🏃🏿‍♀️☝🏾');
 	// Change input encoding setting to UTF-8
 	const stringEncodingMenu = await screen.findByTestId('select-string-encoding-open-list-button');
 	await userEvent.click(stringEncodingMenu);
@@ -1488,6 +1527,318 @@ const utf8HappyPath: JSDomTestFunction = async (
 
 	// Click GO_TO_NEXT_STEP button
 	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeInput-encodeByte after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="encodeByte"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `, which has binary value`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeInput-encodeByte after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="encodeByte"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `, which has binary value`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeInput-encodeByte after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="encodeByte"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `, which has binary value`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeInput-encodeByte after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="encodeByte"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `, which has binary value`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeInput-encodeByte after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="encodeByte"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `, which has binary value`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeInput-encodeByte after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="encodeByte"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `, which has binary value`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeInput-encodeByte after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="encodeByte"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `, which has binary value`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeInput-encodeByte after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="encodeByte"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `, which has binary value`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeInput-encodeByte after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="encodeByte"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `, which has binary value`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeInput-encodeByte after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="encodeByte"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `, which has binary value`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeInput-encodeByte after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="encodeByte"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `, which has binary value`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeInput-encodeByte after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="encodeByte"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `, which has binary value`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeInput-encodeByte after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="encodeByte"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `, which has binary value`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeInput-encodeByte after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="encodeByte"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `, which has binary value`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeInput-encodeByte after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="encodeByte"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `, which has binary value`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeInput-encodeByte after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="encodeByte"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `, which has binary value`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeInput-encodeByte after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="encodeByte"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `, which has binary value`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeInput-encodeByte after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="encodeByte"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `, which has binary value`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeInput-encodeByte after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="encodeByte"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `, which has binary value`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeInput-encodeByte after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="encodeByte"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `, which has binary value`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeInput-encodeByte after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="encodeByte"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `, which has binary value`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeInput-encodeByte after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="encodeByte"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `, which has binary value`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeInput-encodeByte after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="encodeByte"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `, which has binary value`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeInput-encodeByte after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="encodeByte"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `, which has binary value`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeInput-encodeByte after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="encodeByte"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `, which has binary value`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeInput-encodeByte after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="encodeByte"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `, which has binary value`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeInput-encodeByte after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="encodeByte"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `, which has binary value`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeInput-encodeByte after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="encodeByte"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `, which has binary value`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeInput-encodeByte after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="encodeByte"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `, which has binary value`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeInput-encodeByte after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="encodeByte"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `, which has binary value`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeInput-encodeByte after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="encodeByte"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `, which has binary value`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeInput-encodeByte after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="encodeByte"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `, which has binary value`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeInput-encodeByte after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="encodeByte"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `, which has binary value`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeInput-encodeByte after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="encodeByte"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `, which has binary value`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeInput-encodeByte after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="encodeByte"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `, which has binary value`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeInput-encodeByte after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="encodeByte"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `, which has binary value`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeInput-encodeByte after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="encodeByte"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `, which has binary value`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeInput-encodeByte after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="encodeByte"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `, which has binary value`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeInput-encodeByte after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="encodeByte"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `, which has binary value`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
 	// Verify transition to state: encodeInput-explainByteMapping after event GO_TO_NEXT_STEP
 	domReflectsCurrentState = document.querySelector('[data-state="encodeInput"][data-sub-state="explainByteMapping"]');
 	expect(domReflectsCurrentState).toBeTruthy();
@@ -1500,6 +1851,136 @@ const utf8HappyPath: JSDomTestFunction = async (
 	domReflectsCurrentState = document.querySelector('[data-state="createInputChunks"][data-sub-state="regularIdle"]');
 	expect(domReflectsCurrentState).toBeTruthy();
 	expectedTextForState = `Three 8-bit bytes of input data (3x8 = 24 bits) can be represented by four 6-bit Base64 digits (4x6 = 24 bits).`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: createInputChunks-createInputChunk after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector(
+		'[data-state="createInputChunks"][data-sub-state="createInputChunk"]',
+	);
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = ` chunk (`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: createInputChunks-createInputChunk after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector(
+		'[data-state="createInputChunks"][data-sub-state="createInputChunk"]',
+	);
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = ` chunk (`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: createInputChunks-createInputChunk after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector(
+		'[data-state="createInputChunks"][data-sub-state="createInputChunk"]',
+	);
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = ` chunk (`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: createInputChunks-createInputChunk after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector(
+		'[data-state="createInputChunks"][data-sub-state="createInputChunk"]',
+	);
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = ` chunk (`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: createInputChunks-createInputChunk after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector(
+		'[data-state="createInputChunks"][data-sub-state="createInputChunk"]',
+	);
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = ` chunk (`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: createInputChunks-createInputChunk after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector(
+		'[data-state="createInputChunks"][data-sub-state="createInputChunk"]',
+	);
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = ` chunk (`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: createInputChunks-createInputChunk after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector(
+		'[data-state="createInputChunks"][data-sub-state="createInputChunk"]',
+	);
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = ` chunk (`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: createInputChunks-createInputChunk after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector(
+		'[data-state="createInputChunks"][data-sub-state="createInputChunk"]',
+	);
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = ` chunk (`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: createInputChunks-createInputChunk after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector(
+		'[data-state="createInputChunks"][data-sub-state="createInputChunk"]',
+	);
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = ` chunk (`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: createInputChunks-createInputChunk after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector(
+		'[data-state="createInputChunks"][data-sub-state="createInputChunk"]',
+	);
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = ` chunk (`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: createInputChunks-createInputChunk after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector(
+		'[data-state="createInputChunks"][data-sub-state="createInputChunk"]',
+	);
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = ` chunk (`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: createInputChunks-createInputChunk after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector(
+		'[data-state="createInputChunks"][data-sub-state="createInputChunk"]',
+	);
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = ` chunk (`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: createInputChunks-createInputChunk after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector(
+		'[data-state="createInputChunks"][data-sub-state="createInputChunk"]',
+	);
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = ` chunk (`;
 	expect(demoText.innerHTML).toContain(expectedTextForState);
 
 	// Click GO_TO_NEXT_STEP button
@@ -1537,7 +2018,137 @@ const utf8HappyPath: JSDomTestFunction = async (
 	// Verify transition to state: createOutputChunks-regularIdle after event GO_TO_NEXT_STEP
 	domReflectsCurrentState = document.querySelector('[data-state="createOutputChunks"][data-sub-state="regularIdle"]');
 	expect(domReflectsCurrentState).toBeTruthy();
-	expectedTextForState = `Next, for each chunk of input data with three 8-bit bytes`;
+	expectedTextForState = `Next, for each chunk of input data with 24 bits (three 8-bit bytes)`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: createOutputChunks-createOutputChunk after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector(
+		'[data-state="createOutputChunks"][data-sub-state="createOutputChunk"]',
+	);
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = ` bits in this chunk are taken from `;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: createOutputChunks-createOutputChunk after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector(
+		'[data-state="createOutputChunks"][data-sub-state="createOutputChunk"]',
+	);
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = ` bits in this chunk are taken from `;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: createOutputChunks-createOutputChunk after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector(
+		'[data-state="createOutputChunks"][data-sub-state="createOutputChunk"]',
+	);
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = ` bits in this chunk are taken from `;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: createOutputChunks-createOutputChunk after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector(
+		'[data-state="createOutputChunks"][data-sub-state="createOutputChunk"]',
+	);
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = ` bits in this chunk are taken from `;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: createOutputChunks-createOutputChunk after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector(
+		'[data-state="createOutputChunks"][data-sub-state="createOutputChunk"]',
+	);
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = ` bits in this chunk are taken from `;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: createOutputChunks-createOutputChunk after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector(
+		'[data-state="createOutputChunks"][data-sub-state="createOutputChunk"]',
+	);
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = ` bits in this chunk are taken from `;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: createOutputChunks-createOutputChunk after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector(
+		'[data-state="createOutputChunks"][data-sub-state="createOutputChunk"]',
+	);
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = ` bits in this chunk are taken from `;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: createOutputChunks-createOutputChunk after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector(
+		'[data-state="createOutputChunks"][data-sub-state="createOutputChunk"]',
+	);
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = ` bits in this chunk are taken from `;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: createOutputChunks-createOutputChunk after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector(
+		'[data-state="createOutputChunks"][data-sub-state="createOutputChunk"]',
+	);
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = ` bits in this chunk are taken from `;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: createOutputChunks-createOutputChunk after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector(
+		'[data-state="createOutputChunks"][data-sub-state="createOutputChunk"]',
+	);
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = ` bits in this chunk are taken from `;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: createOutputChunks-createOutputChunk after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector(
+		'[data-state="createOutputChunks"][data-sub-state="createOutputChunk"]',
+	);
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = ` bits in this chunk are taken from `;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: createOutputChunks-createOutputChunk after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector(
+		'[data-state="createOutputChunks"][data-sub-state="createOutputChunk"]',
+	);
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = ` bits in this chunk are taken from `;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: createOutputChunks-createOutputChunk after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector(
+		'[data-state="createOutputChunks"][data-sub-state="createOutputChunk"]',
+	);
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = ` bits in this chunk are taken from `;
 	expect(demoText.innerHTML).toContain(expectedTextForState);
 
 	// Click GO_TO_NEXT_STEP button
@@ -1557,7 +2168,7 @@ const utf8HappyPath: JSDomTestFunction = async (
 		'[data-state="createOutputChunks"][data-sub-state="explainLastPaddedChunk"]',
 	);
 	expect(domReflectsCurrentState).toBeTruthy();
-	expectedTextForState = `Since the final input chunk only contains `;
+	expectedTextForState = `Since the final input chunk contains only `;
 	expect(demoText.innerHTML).toContain(expectedTextForState);
 
 	// Click GO_TO_NEXT_STEP button
@@ -1650,6 +2261,430 @@ const utf8HappyPath: JSDomTestFunction = async (
 	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
 	expect(domReflectsCurrentState).toBeTruthy();
 	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: encodeOutput-encodeBase64 after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="encodeOutput"][data-sub-state="encodeBase64"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `Base64 digit`;
+	expect(demoText.innerHTML).toContain(expectedTextForState);
+
+	// Click GO_TO_NEXT_STEP button
+	await userEvent.click(nextStepButton);
+	// Verify transition to state: verifyResults after event GO_TO_NEXT_STEP
+	domReflectsCurrentState = document.querySelector('[data-state="verifyResults"][data-sub-state="none"]');
+	expect(domReflectsCurrentState).toBeTruthy();
+	expectedTextForState = `The input data has been successfully encoded as a string of Base64 characters!`;
 	expect(demoText.innerHTML).toContain(expectedTextForState);
 
 	// Click GO_TO_NEXT_STEP button

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import InputForm from '$lib/components/InputForm/InputForm.svelte';
-	import LookupTables from '$lib/components/LookupTables/LookupTables.svelte';
 	import InputResults from '$lib/components/Results/InputResults.svelte';
+	import LookupTables from '$lib/components/Results/LookupTables/LookupTables.svelte';
 	import OutputResults from '$lib/components/Results/OutputResults.svelte';
 	import Visualization from '$lib/components/Visualization/Visualization.svelte';
 </script>

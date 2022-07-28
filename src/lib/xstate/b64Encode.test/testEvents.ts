@@ -8,10 +8,58 @@ const asciiHappyPathEvents: TestFunctionInputData = {
 	events: [
 		{
 			event: {
+				type: 'UPDATE_TEXT',
+				inputText: 't',
+				inputEncoding: 'ASCII',
+				outputEncoding: 'base64',
+			},
+			expectedState: {
+				state: 'inactive',
+				substate: 'none',
+			},
+		},
+		{
+			event: {
+				type: 'UPDATE_TEXT',
+				inputText: 'te',
+				inputEncoding: 'ASCII',
+				outputEncoding: 'base64',
+			},
+			expectedState: {
+				state: 'inactive',
+				substate: 'none',
+			},
+		},
+		{
+			event: {
+				type: 'UPDATE_TEXT',
+				inputText: 'tes',
+				inputEncoding: 'ASCII',
+				outputEncoding: 'base64',
+			},
+			expectedState: {
+				state: 'inactive',
+				substate: 'none',
+			},
+		},
+		{
+			event: {
+				type: 'UPDATE_TEXT',
+				inputText: 'test',
+				inputEncoding: 'ASCII',
+				outputEncoding: 'base64',
+			},
+			expectedState: {
+				state: 'inactive',
+				substate: 'none',
+			},
+		},
+		{
+			event: {
 				type: 'VALIDATE_TEXT',
 				inputText: 'test',
 				inputEncoding: 'ASCII',
-				outputEncoding: 'base64url',
+				outputEncoding: 'base64',
 			},
 			expectedState: {
 				state: 'validateInputText',
@@ -239,6 +287,15 @@ const asciiHappyPathEvents: TestFunctionInputData = {
 				type: 'GO_TO_NEXT_STEP',
 			},
 			expectedState: {
+				state: 'verifyResults',
+				substate: 'none',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
 				state: 'finished',
 				substate: 'none',
 			},
@@ -256,7 +313,7 @@ const asciiHappyPathAutoplayEvents: TestFunctionInputData = {
 				type: 'UPDATE_TEXT',
 				inputText: 't',
 				inputEncoding: 'ASCII',
-				outputEncoding: 'base64url',
+				outputEncoding: 'base64',
 			},
 			expectedState: {
 				state: 'inactive',
@@ -268,7 +325,7 @@ const asciiHappyPathAutoplayEvents: TestFunctionInputData = {
 				type: 'UPDATE_TEXT',
 				inputText: 'te',
 				inputEncoding: 'ASCII',
-				outputEncoding: 'base64url',
+				outputEncoding: 'base64',
 			},
 			expectedState: {
 				state: 'inactive',
@@ -280,7 +337,7 @@ const asciiHappyPathAutoplayEvents: TestFunctionInputData = {
 				type: 'UPDATE_TEXT',
 				inputText: 'tes',
 				inputEncoding: 'ASCII',
-				outputEncoding: 'base64url',
+				outputEncoding: 'base64',
 			},
 			expectedState: {
 				state: 'inactive',
@@ -292,7 +349,7 @@ const asciiHappyPathAutoplayEvents: TestFunctionInputData = {
 				type: 'UPDATE_TEXT',
 				inputText: 'test',
 				inputEncoding: 'ASCII',
-				outputEncoding: 'base64url',
+				outputEncoding: 'base64',
 			},
 			expectedState: {
 				state: 'inactive',
@@ -304,7 +361,7 @@ const asciiHappyPathAutoplayEvents: TestFunctionInputData = {
 				type: 'START_AUTOPLAY',
 				inputText: 'test',
 				inputEncoding: 'ASCII',
-				outputEncoding: 'base64url',
+				outputEncoding: 'base64',
 			},
 			expectedState: {
 				state: 'validateInputText',
@@ -524,7 +581,16 @@ const asciiHappyPathAutoplayEvents: TestFunctionInputData = {
 			},
 			expectedState: {
 				state: 'encodeOutput',
-				substate: 'encodeLastBase64',
+				substate: 'autoPlayEncodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'AUTOPLAYING',
+			},
+			expectedState: {
+				state: 'verifyResults',
+				substate: 'none',
 			},
 		},
 		{
@@ -834,6 +900,30 @@ const hexHappyPathEvents: TestFunctionInputData = {
 	events: [
 		{
 			event: {
+				type: 'UPDATE_TEXT',
+				inputText: '0d47bc37af',
+				inputEncoding: 'ASCII',
+				outputEncoding: 'base64',
+			},
+			expectedState: {
+				state: 'inactive',
+				substate: 'none',
+			},
+		},
+		{
+			event: {
+				type: 'UPDATE_TEXT',
+				inputText: '0d47bc37af',
+				inputEncoding: 'hex',
+				outputEncoding: 'base64',
+			},
+			expectedState: {
+				state: 'inactive',
+				substate: 'none',
+			},
+		},
+		{
+			event: {
 				type: 'VALIDATE_TEXT',
 				inputText: '0d47bc37af',
 				inputEncoding: 'hex',
@@ -1069,6 +1159,24 @@ const hexHappyPathEvents: TestFunctionInputData = {
 				substate: 'encodeBase64',
 			},
 		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'verifyResults',
+				substate: 'none',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'finished',
+				substate: 'none',
+			},
+		},
 	],
 };
 
@@ -1218,8 +1326,20 @@ const binHappyPathEvents: TestFunctionInputData = {
 			event: {
 				type: 'UPDATE_TEXT',
 				inputText: '01110100011001010111001101110100',
+				inputEncoding: 'ASCII',
+				outputEncoding: 'base64',
+			},
+			expectedState: {
+				state: 'inactive',
+				substate: 'none',
+			},
+		},
+		{
+			event: {
+				type: 'UPDATE_TEXT',
+				inputText: '01110100011001010111001101110100',
 				inputEncoding: 'bin',
-				outputEncoding: 'base64url',
+				outputEncoding: 'base64',
 			},
 			expectedState: {
 				state: 'inactive',
@@ -1231,324 +1351,6 @@ const binHappyPathEvents: TestFunctionInputData = {
 				type: 'VALIDATE_TEXT',
 				inputText: '01110100011001010111001101110100',
 				inputEncoding: 'bin',
-				outputEncoding: 'base64url',
-			},
-			expectedState: {
-				state: 'validateInputText',
-				substate: 'success',
-			},
-		},
-		{
-			event: {
-				type: 'GO_TO_NEXT_STEP',
-			},
-			expectedState: {
-				state: 'encodeInput',
-				substate: 'idle',
-			},
-		},
-		{
-			event: {
-				type: 'GO_TO_NEXT_STEP',
-			},
-			expectedState: {
-				state: 'encodeInput',
-				substate: 'encodeByte',
-			},
-		},
-		{
-			event: {
-				type: 'GO_TO_NEXT_STEP',
-			},
-			expectedState: {
-				state: 'encodeInput',
-				substate: 'encodeByte',
-			},
-		},
-		{
-			event: {
-				type: 'GO_TO_NEXT_STEP',
-			},
-			expectedState: {
-				state: 'encodeInput',
-				substate: 'encodeByte',
-			},
-		},
-		{
-			event: {
-				type: 'GO_TO_NEXT_STEP',
-			},
-			expectedState: {
-				state: 'encodeInput',
-				substate: 'encodeByte',
-			},
-		},
-		{
-			event: {
-				type: 'GO_TO_NEXT_STEP',
-			},
-			expectedState: {
-				state: 'encodeInput',
-				substate: 'explainByteMapping',
-			},
-		},
-		{
-			event: {
-				type: 'GO_TO_NEXT_STEP',
-			},
-			expectedState: {
-				state: 'createInputChunks',
-				substate: 'regularIdle',
-			},
-		},
-		{
-			event: {
-				type: 'GO_TO_NEXT_STEP',
-			},
-			expectedState: {
-				state: 'createInputChunks',
-				substate: 'createInputChunk',
-			},
-		},
-		{
-			event: {
-				type: 'GO_TO_NEXT_STEP',
-			},
-			expectedState: {
-				state: 'createInputChunks',
-				substate: 'explainLastPaddedChunk',
-			},
-		},
-		{
-			event: {
-				type: 'GO_TO_NEXT_STEP',
-			},
-			expectedState: {
-				state: 'createInputChunks',
-				substate: 'createLastPaddedChunk',
-			},
-		},
-		{
-			event: {
-				type: 'GO_TO_NEXT_STEP',
-			},
-			expectedState: {
-				state: 'createOutputChunks',
-				substate: 'regularIdle',
-			},
-		},
-		{
-			event: {
-				type: 'GO_TO_NEXT_STEP',
-			},
-			expectedState: {
-				state: 'createOutputChunks',
-				substate: 'createOutputChunk',
-			},
-		},
-		{
-			event: {
-				type: 'GO_TO_NEXT_STEP',
-			},
-			expectedState: {
-				state: 'createOutputChunks',
-				substate: 'explainLastPaddedChunk',
-			},
-		},
-		{
-			event: {
-				type: 'GO_TO_NEXT_STEP',
-			},
-			expectedState: {
-				state: 'createOutputChunks',
-				substate: 'explainPadCharacter',
-			},
-		},
-		{
-			event: {
-				type: 'GO_TO_NEXT_STEP',
-			},
-			expectedState: {
-				state: 'createOutputChunks',
-				substate: 'createLastPaddedChunk',
-			},
-		},
-		{
-			event: {
-				type: 'GO_TO_NEXT_STEP',
-			},
-			expectedState: {
-				state: 'encodeOutput',
-				substate: 'idle',
-			},
-		},
-		{
-			event: {
-				type: 'GO_TO_NEXT_STEP',
-			},
-			expectedState: {
-				state: 'encodeOutput',
-				substate: 'encodeBase64',
-			},
-		},
-		{
-			event: {
-				type: 'GO_TO_NEXT_STEP',
-			},
-			expectedState: {
-				state: 'encodeOutput',
-				substate: 'encodeBase64',
-			},
-		},
-		{
-			event: {
-				type: 'GO_TO_NEXT_STEP',
-			},
-			expectedState: {
-				state: 'encodeOutput',
-				substate: 'encodeBase64',
-			},
-		},
-		{
-			event: {
-				type: 'GO_TO_NEXT_STEP',
-			},
-			expectedState: {
-				state: 'encodeOutput',
-				substate: 'encodeBase64',
-			},
-		},
-		{
-			event: {
-				type: 'GO_TO_NEXT_STEP',
-			},
-			expectedState: {
-				state: 'encodeOutput',
-				substate: 'encodeBase64',
-			},
-		},
-		{
-			event: {
-				type: 'GO_TO_NEXT_STEP',
-			},
-			expectedState: {
-				state: 'encodeOutput',
-				substate: 'encodeBase64',
-			},
-		},
-		{
-			event: {
-				type: 'GO_TO_NEXT_STEP',
-			},
-			expectedState: {
-				state: 'encodeOutput',
-				substate: 'encodeBase64',
-			},
-		},
-		{
-			event: {
-				type: 'GO_TO_NEXT_STEP',
-			},
-			expectedState: {
-				state: 'encodeOutput',
-				substate: 'encodeBase64',
-			},
-		},
-		{
-			event: {
-				type: 'GO_TO_NEXT_STEP',
-			},
-			expectedState: {
-				state: 'finished',
-				substate: 'none',
-			},
-		},
-	],
-};
-
-const binHappyPathSkipDemoEvents: TestFunctionInputData = {
-	scriptName: 'binHappyPathSkipDemo',
-	description: 'encode bin string, skip demo',
-	type: 'fast',
-	events: [
-		{
-			event: {
-				type: 'SKIP_DEMO',
-				inputText: '01110100011001010111001101110100',
-				inputEncoding: 'ASCII',
-				outputEncoding: 'base64url',
-			},
-			expectedState: {
-				state: 'finished',
-				substate: 'none',
-			},
-		},
-	],
-};
-
-const binValidationErrorEvents: TestFunctionInputData = {
-	scriptName: 'binValidationError',
-	description: 'encode bin string, validation error',
-	type: 'fast',
-	events: [
-		{
-			event: {
-				type: 'START_AUTOPLAY',
-				inputText: 'test',
-				inputEncoding: 'bin',
-				outputEncoding: 'base64url',
-			},
-			expectedState: {
-				state: 'validateInputText',
-				substate: 'error',
-			},
-		},
-		{
-			event: {
-				type: 'SKIP_DEMO',
-				inputText: '0101',
-				inputEncoding: 'bin',
-				outputEncoding: 'base64url',
-			},
-			expectedState: {
-				state: 'validateInputText',
-				substate: 'error',
-			},
-		},
-		{
-			event: {
-				type: 'VALIDATE_TEXT',
-				inputText: '01110100011001010111001101110100',
-				inputEncoding: 'bin',
-				outputEncoding: 'base64url',
-			},
-			expectedState: {
-				state: 'validateInputText',
-				substate: 'success',
-			},
-		},
-		{
-			event: {
-				type: 'GO_TO_LAST_STEP',
-			},
-			expectedState: {
-				state: 'finished',
-				substate: 'none',
-			},
-		},
-	],
-};
-
-const utf8HappyPathEvents: TestFunctionInputData = {
-	scriptName: 'utf8HappyPath',
-	description: 'encode utf8 string, execute all steps manually',
-	type: 'fast',
-	events: [
-		{
-			event: {
-				type: 'VALIDATE_TEXT',
-				inputText: 'do§',
-				inputEncoding: 'UTF-8',
 				outputEncoding: 'base64',
 			},
 			expectedState: {
@@ -1770,6 +1572,1419 @@ const utf8HappyPathEvents: TestFunctionInputData = {
 			expectedState: {
 				state: 'encodeOutput',
 				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'verifyResults',
+				substate: 'none',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'finished',
+				substate: 'none',
+			},
+		},
+	],
+};
+
+const binHappyPathSkipDemoEvents: TestFunctionInputData = {
+	scriptName: 'binHappyPathSkipDemo',
+	description: 'encode bin string, skip demo',
+	type: 'fast',
+	events: [
+		{
+			event: {
+				type: 'SKIP_DEMO',
+				inputText: '01110100011001010111001101110100',
+				inputEncoding: 'ASCII',
+				outputEncoding: 'base64url',
+			},
+			expectedState: {
+				state: 'finished',
+				substate: 'none',
+			},
+		},
+	],
+};
+
+const binValidationErrorEvents: TestFunctionInputData = {
+	scriptName: 'binValidationError',
+	description: 'encode bin string, validation error',
+	type: 'fast',
+	events: [
+		{
+			event: {
+				type: 'START_AUTOPLAY',
+				inputText: 'test',
+				inputEncoding: 'bin',
+				outputEncoding: 'base64url',
+			},
+			expectedState: {
+				state: 'validateInputText',
+				substate: 'error',
+			},
+		},
+		{
+			event: {
+				type: 'SKIP_DEMO',
+				inputText: '0101',
+				inputEncoding: 'bin',
+				outputEncoding: 'base64url',
+			},
+			expectedState: {
+				state: 'validateInputText',
+				substate: 'error',
+			},
+		},
+		{
+			event: {
+				type: 'VALIDATE_TEXT',
+				inputText: '01110100011001010111001101110100',
+				inputEncoding: 'bin',
+				outputEncoding: 'base64url',
+			},
+			expectedState: {
+				state: 'validateInputText',
+				substate: 'success',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_LAST_STEP',
+			},
+			expectedState: {
+				state: 'finished',
+				substate: 'none',
+			},
+		},
+	],
+};
+
+const utf8HappyPathEvents: TestFunctionInputData = {
+	scriptName: 'utf8HappyPath',
+	description: 'encode utf8 string, execute all steps manually',
+	type: 'fast',
+	events: [
+		{
+			event: {
+				type: 'UPDATE_TEXT',
+				inputText: '🦦👨‍🌾🫥🏃🏿‍♀️☝🏾',
+				inputEncoding: 'ASCII',
+				outputEncoding: 'base64',
+			},
+			expectedState: {
+				state: 'inactive',
+				substate: 'none',
+			},
+		},
+		{
+			event: {
+				type: 'UPDATE_TEXT',
+				inputText: '🦦👨‍🌾🫥🏃🏿‍♀️☝🏾',
+				inputEncoding: 'UTF-8',
+				outputEncoding: 'base64',
+			},
+			expectedState: {
+				state: 'inactive',
+				substate: 'none',
+			},
+		},
+		{
+			event: {
+				type: 'VALIDATE_TEXT',
+				inputText: '🦦👨‍🌾🫥🏃🏿‍♀️☝🏾',
+				inputEncoding: 'UTF-8',
+				outputEncoding: 'base64',
+			},
+			expectedState: {
+				state: 'validateInputText',
+				substate: 'success',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'idle',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'encodeByte',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'encodeByte',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'encodeByte',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'encodeByte',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'encodeByte',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'encodeByte',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'encodeByte',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'encodeByte',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'encodeByte',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'encodeByte',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'encodeByte',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'encodeByte',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'encodeByte',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'encodeByte',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'encodeByte',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'encodeByte',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'encodeByte',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'encodeByte',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'encodeByte',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'encodeByte',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'encodeByte',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'encodeByte',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'encodeByte',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'encodeByte',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'encodeByte',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'encodeByte',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'encodeByte',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'encodeByte',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'encodeByte',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'encodeByte',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'encodeByte',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'encodeByte',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'encodeByte',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'encodeByte',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'encodeByte',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'encodeByte',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'encodeByte',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'encodeByte',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'encodeByte',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'encodeByte',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'encodeByte',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'encodeByte',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'encodeByte',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeInput',
+				substate: 'explainByteMapping',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'createInputChunks',
+				substate: 'regularIdle',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'createInputChunks',
+				substate: 'createInputChunk',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'createInputChunks',
+				substate: 'createInputChunk',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'createInputChunks',
+				substate: 'createInputChunk',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'createInputChunks',
+				substate: 'createInputChunk',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'createInputChunks',
+				substate: 'createInputChunk',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'createInputChunks',
+				substate: 'createInputChunk',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'createInputChunks',
+				substate: 'createInputChunk',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'createInputChunks',
+				substate: 'createInputChunk',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'createInputChunks',
+				substate: 'createInputChunk',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'createInputChunks',
+				substate: 'createInputChunk',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'createInputChunks',
+				substate: 'createInputChunk',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'createInputChunks',
+				substate: 'createInputChunk',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'createInputChunks',
+				substate: 'createInputChunk',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'createInputChunks',
+				substate: 'createInputChunk',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'createInputChunks',
+				substate: 'explainLastPaddedChunk',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'createInputChunks',
+				substate: 'createLastPaddedChunk',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'createOutputChunks',
+				substate: 'regularIdle',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'createOutputChunks',
+				substate: 'createOutputChunk',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'createOutputChunks',
+				substate: 'createOutputChunk',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'createOutputChunks',
+				substate: 'createOutputChunk',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'createOutputChunks',
+				substate: 'createOutputChunk',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'createOutputChunks',
+				substate: 'createOutputChunk',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'createOutputChunks',
+				substate: 'createOutputChunk',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'createOutputChunks',
+				substate: 'createOutputChunk',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'createOutputChunks',
+				substate: 'createOutputChunk',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'createOutputChunks',
+				substate: 'createOutputChunk',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'createOutputChunks',
+				substate: 'createOutputChunk',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'createOutputChunks',
+				substate: 'createOutputChunk',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'createOutputChunks',
+				substate: 'createOutputChunk',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'createOutputChunks',
+				substate: 'createOutputChunk',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'createOutputChunks',
+				substate: 'createOutputChunk',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'createOutputChunks',
+				substate: 'explainLastPaddedChunk',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'createOutputChunks',
+				substate: 'explainPadCharacter',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'createOutputChunks',
+				substate: 'createLastPaddedChunk',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'idle',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'encodeOutput',
+				substate: 'encodeBase64',
+			},
+		},
+		{
+			event: {
+				type: 'GO_TO_NEXT_STEP',
+			},
+			expectedState: {
+				state: 'verifyResults',
+				substate: 'none',
 			},
 		},
 		{

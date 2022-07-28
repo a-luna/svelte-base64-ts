@@ -33,6 +33,7 @@
 		"@typescript-eslint/eslint-plugin": "^5.30.7",
 		"@typescript-eslint/parser": "^5.30.7",
 		"@vitest/ui": "^0.5.9",
+		"@xstate/cli": "^0.2.1",
 		"@xstate/graph": "^1.4.2",
 		"@xstate/svelte": "^2.0.0",
 		"@xstate/test": "^0.5.1",

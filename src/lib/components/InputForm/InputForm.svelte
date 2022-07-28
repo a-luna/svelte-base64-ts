@@ -57,13 +57,21 @@
 <div class="form-top">
 	<FormTitle title={$app.formTitle} />
 	<div class="switch-mode-button-wrapper">
-		<PushableButton size={$app.buttonSize} color={'pri'} width={'100%'} on:click={() => toggleMode()}
-			>Switch Mode</PushableButton
+		<PushableButton
+			size={$app.buttonSize}
+			color={'pri'}
+			width={'100%'}
+			testid={'switch-mode-button'}
+			on:click={() => toggleMode()}>Switch Mode</PushableButton
 		>
 	</div>
 	<div class="reset-form-button-wrapper">
-		<PushableButton size={$app.buttonSize} color={'sec'} width={'100%'} on:click={() => resetForm()}
-			>Reset</PushableButton
+		<PushableButton
+			size={$app.buttonSize}
+			color={'sec'}
+			width={'100%'}
+			testid={'reset-form-button'}
+			on:click={() => resetForm()}>Reset</PushableButton
 		>
 	</div>
 </div>
@@ -90,7 +98,9 @@
 	style={inputTextBoxGridStyles}
 	on:submit={() => submitForm()}
 />
-<PushableButton size={'xs'} color={$app.buttonColor} on:click={() => submitForm()}>{$app.buttonLabel}</PushableButton>
+<PushableButton size={'xs'} color={$app.buttonColor} testid={'execute-button'} on:click={() => submitForm()}
+	>{$app.buttonLabel}</PushableButton
+>
 
 <style lang="postcss">
 	.form-top {

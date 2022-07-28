@@ -18,6 +18,7 @@ specifiers:
   '@typescript-eslint/eslint-plugin': ^5.30.7
   '@typescript-eslint/parser': ^5.30.7
   '@vitest/ui': ^0.5.9
+  '@xstate/cli': ^0.2.1
   '@xstate/graph': ^1.4.2
   '@xstate/inspect': ^0.7.0
   '@xstate/svelte': ^2.0.0
@@ -78,6 +79,7 @@ devDependencies:
   '@typescript-eslint/eslint-plugin': 5.30.7_6wltbjakwuqm7awqswigmiuhd4
   '@typescript-eslint/parser': 5.30.7_he2ccbldppg44uulnyq4rwocfa
   '@vitest/ui': 0.5.9
+  '@xstate/cli': 0.2.1_prettier@2.7.1
   '@xstate/graph': 1.4.2_xstate@4.32.1
   '@xstate/svelte': 2.0.0_5nqzgo6nrjikrre2vucxc5symi
   '@xstate/test': 0.5.1_xstate@4.32.1
@@ -1786,6 +1788,21 @@ packages:
       sirv: 2.0.2
     dev: true
 
+  /@xstate/cli/0.2.1_prettier@2.7.1:
+    resolution: {integrity: sha512-DNX3webiPGinEJd50uB6j41q5NAOqoMHUIC1fsCaTL+JAWe+gvOT69MievNRJ0c56s/49Vf3bCGrCdHXt/5pGg==}
+    hasBin: true
+    dependencies:
+      '@babel/core': 7.18.9
+      '@xstate/machine-extractor': 0.7.0_rqs7og7jumwflqr5t56e3nu5ru
+      '@xstate/tools-shared': 1.1.7_vgt2vxdwytiugixz6jjiyni6x4
+      chokidar: 3.5.3
+      commander: 8.3.0
+      xstate: 4.32.1
+    transitivePeerDependencies:
+      - prettier
+      - supports-color
+    dev: true
+
   /@xstate/graph/1.4.2_xstate@4.32.1:
     resolution: {integrity: sha512-XIh6opCf9ukXRj4dXe2fv2kwFFUl15B5Ob8ELNOOqDXB2BPyNwp6TaLe5KJn/na3gzC9B7LyOo+2d0dPkC8PWQ==}
     peerDependencies:
@@ -1808,6 +1825,16 @@ packages:
       ws: 8.8.1
       xstate: 4.32.1
     dev: false
+
+  /@xstate/machine-extractor/0.7.0_rqs7og7jumwflqr5t56e3nu5ru:
+    resolution: {integrity: sha512-dXHI/sWWWouN/yG687ZuRCP7Cm6XggFWSK1qWj3NohBTyhaYWSR7ojwP6OUK6e1cbiJqxmM9EDnE2Auf+Xlp+A==}
+    peerDependencies:
+      '@babel/core': ^7
+      xstate: ^4
+    dependencies:
+      '@babel/core': 7.18.9
+      xstate: 4.32.1
+    dev: true
 
   /@xstate/svelte/2.0.0_5nqzgo6nrjikrre2vucxc5symi:
     resolution: {integrity: sha512-051btq174/fc0lsFUsl5xLbpzEGF4lg6unV1uimjQwKxYTwF2GZXKlcQx2dW7WYpqeH0CWoKvKtb2qIBsnxq5A==}
@@ -1833,6 +1860,19 @@ packages:
       '@xstate/graph': 1.4.2_xstate@4.32.1
       chalk: 2.4.2
       xstate: 4.32.1
+    dev: true
+
+  /@xstate/tools-shared/1.1.7_vgt2vxdwytiugixz6jjiyni6x4:
+    resolution: {integrity: sha512-q+GzSHfhx9ld0UK9rqYz/QI+rE6oEP3M9FI5ybmXKOMZ6739YKzdY3iQAfYfLZP8/Y6xdfvcpSmOzfFQvjnpcw==}
+    peerDependencies:
+      prettier: ^2.3.1
+      xstate: ^4
+    dependencies:
+      '@xstate/machine-extractor': 0.7.0_rqs7og7jumwflqr5t56e3nu5ru
+      prettier: 2.7.1
+      xstate: 4.32.1
+    transitivePeerDependencies:
+      - '@babel/core'
     dev: true
 
   /abab/2.0.6:
@@ -2390,6 +2430,11 @@ packages:
   /commander/7.2.0:
     resolution: {integrity: sha512-QrWXB+ZQSVPmIWIhtEO9H+gwHaMGYiF5ChvoJ+K9ZGHG/sVsa6yiesAD1GC/x46sET00Xlwo1u49RVVVzvcSkw==}
     engines: {node: '>= 10'}
+    dev: true
+
+  /commander/8.3.0:
+    resolution: {integrity: sha512-OkTL9umf+He2DZkUq8f8J9of7yL6RJKI24dVITBmNfZBmri9zYZQrKkuXiKhyfPSu8tUhnVBB1iKXevvnlR4Ww==}
+    engines: {node: '>= 12'}
     dev: true
 
   /commander/9.4.0:
