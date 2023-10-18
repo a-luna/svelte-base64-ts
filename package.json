@@ -72,7 +72,7 @@
 		"node": ">= 12.17.0"
 	},
 	"dependencies": {
-		"@sveltejs/kit": "^1.5.0",
+		"@sveltejs/kit": "^1.26.0",
 		"@xstate/inspect": "^0.7.1",
 		"svelte-preprocess": "^4.10.7"
 	}
