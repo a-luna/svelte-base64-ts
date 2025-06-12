@@ -74,6 +74,6 @@
 	"dependencies": {
 		"@sveltejs/kit": "^1.5.0",
 		"@xstate/inspect": "^0.7.1",
-		"svelte-preprocess": "^4.10.7"
+		"svelte-preprocess": "^6.0.0"
 	}
 }
